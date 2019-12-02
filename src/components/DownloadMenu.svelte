@@ -76,7 +76,7 @@ function validateForm() {
         position: absolute;
         top: 30px;
         right: 10px;
-        border-bottom: 1px solid red;
+        border-bottom: 3px solid black;
     }
 
     .option-wrapper > input {
