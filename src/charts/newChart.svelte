@@ -1,87 +1,216 @@
 <script>
-	import { scaleLinear } from 'd3-scale';
-	import Tspan from '../components/tspan.svelte';
+import { scaleLinear } from 'd3-scale';
+import { onMount }  from 'svelte';
 
-	import {afterUpdate} from 'svelte';
-    export let data = '';
-	export let p_color = '';
-	export let reportPeriod = '';
-	export let yData = '';
+import {afterUpdate} from 'svelte';
+export let data = '';
+export let reportPeriod = [];
+export let reportYear;
+export let yData = '';
+export let yPoints;
 
-	let primary_fill_color = '';
-	$: primary_fill_color = p_color;
+// y Tick marks
+$: yTicks = yPoints;
 
-	export let points = '';
-	$: points = data;
+// primary color prop
+export let p_color;
+export let s_color;
 
-	export let xTicks;
-	$: xTicks = reportPeriod;
+export let mappedPoints = [];
 
-	export let yTicks = [];
-	$: yTicks = yData;
+let primary_fill_color = '';
+$: primary_fill_color = p_color;
 
-	export let padding = { top: 45, right: 15, bottom: 55, left: 25 };
+let points = [];
+$: points = [...data];
 
-	export let width = 1280;
-	export let height = 800;
+let xTicks = [];
 
-	export let xScale = scaleLinear();
-	export let yScale = scaleLinear();
-	export let innerWidth;
-	export let barWidth;
-
-	$: xScale = scaleLinear()
-		.domain([0, xTicks.length])
-		.range([padding.left, width - padding.right]);
-
-	$: yScale = scaleLinear()
-	 	.domain([0, Math.max.apply(null, yTicks)])
-		 .range([height - padding.bottom, padding.top]);
-
-	$: innerWidth = width - (padding.left + padding.right);
-	$: barWidth = innerWidth / xTicks.length;
-
-function formatTick(tick) {
-	if ( tick >= 1000) {
-		return tick / 1000;
+let tmpDate;
+$: xTicks = reportPeriod.map((r, i) => {
+	if (i == 0 || i == 2) {
+		tmpDate = r;
+	} else {
+		tmpDate = 'ytd';
 	}
 
-	return tick;
+	return tmpDate;
+});
+
+let tempValue;
+$: swapXTicksElements(xTicks);
+
+function swapXTicksElements(xTicks) {
+	tempValue = xTicks[2];
+	xTicks[2] = xTicks[1];
+	xTicks[1] = tempValue;
 }
 
-let tickSplits;
+let tempPoint;
+let pointOne;
+$: swapPointsElements(points);
+
+function swapPointsElements(points) {
+	tempPoint = points[2];
+	points[2] = points[1];
+	points[1] =  tempPoint;
+}
+
+// chart and misc dimensions
+const padding = { top: 20, right: 15, bottom: 29, left: 25 };
+let width = 488;
+let height = 474;
+let textWidth = 488;
+
+$: bdOne = width < 488 ? 70 : 80;
+$: bdTwo = width < 488 ? 20 : 10;
+
+// primary color
+$: primary_fill_color = p_color;
+$: secondary_fill_color = s_color;
+
+// initializing x scale
+$: xScale = scaleLinear()
+	.domain([0, xTicks.length])
+	.range([0, width]);
+
+// initializing y scale
+$: yScale = scaleLinear()
+	.domain([0, Math.max.apply(null, yTicks)])
+	.range([height - padding.bottom, padding.top]);
+	// .range([height, padding.top]);
+
+// set the inner width of the chart
+$: innerWidth = width - (padding.left + padding.right);
+// set the text width
+$: textWidth = innerWidth / (xTicks.length / 2);
+const barWidth = 40;
+
+let tickSplits = '';
 export let monthYear = '';
 let month;
 $:month = monthYear.month;
 
 let year;
 $:year = monthYear.year;
-
 function formatText(tick) {
+	
 	let res = tick.split("<br>");
 	tickSplits = {
 		"month": res[0],
 		"year": res[1]
 	};
 
-	return tickSplits
+	return tickSplits.month;
 }
+
+function formatYear(tick) {
+	let res = tick.split("<br>");
+	tickSplits = {
+		"month": res[0],
+		"year": res[1]
+	};
+
+	return tickSplits.year.replace('20', "'");
+}
+
+function formatLastTick(tick) {
+	return tick;
+}
+
+
+function formatLastTickYear(tick) {
+	return reportYear.replace('20', " '");
+}
+
+function formatTick(tick, i, length) {
+
+    if (tick >= 1000 && tick < 10000) {
+		tick /= 1000;
+		tick = Math.ceil(tick);
+       tick += i === length ? ' per 1,000 ' : '';
+    }
+
+    if (tick >= 10000 && tick < 100000) {
+		tick /= 10000;
+		tick = Math.ceil(tick);
+        tick += i === length ? ' / 10K' : '';
+	}
+	
+	if (tick >= 100000 && tick < 1000000) {
+		tick /= 100000;
+		tick = Math.ceil(tick);
+        tick += i === length ? ' / 100K' : '';
+	}
+
+	return tick;
+}
+
+function formatPoint(point, strtPos = 90) {
+	let len = point.length;
+	let mv = 0;
+	if (len <= 3) {
+		mv = 2
+	}
+
+	if (len >= 4) {
+		mv = 4
+	}
+
+	if (len >= 6) {
+		mv = 6
+	}
+
+	return strtPos - (len + mv);
+}
+
+function formatPointText(point) {
+	if (point >= 1000 && point < 10000) {
+		point /= 1000;
+		point = Math.ceil(point);
+       	point += 'K';
+    }
+
+    if (point >= 10000 && point < 100000) {
+		point /= 1000;
+		point = Math.ceil(point);
+        point += 'K';
+	}
+	
+	if (point >= 100000 && point < 1000000) {
+		point /= 1000;
+		point = Math.ceil(point);
+        point += 'K';
+	}
+
+	return point;
+}
+
+onMount(() => {
+	let contentArea = document.querySelector('.content-area');
+	contentArea.style.maxHeight = '500px';
+});
 
 </script>
 
 <style>
+	
 	.chart {
 		width: 100%;
-		max-width: 1280px;
+		max-width: 488px;
 		margin: 0 auto;
+		max-height: 484px;
 		background-color: #ffffff;
-		margin-left: 10px;
+		/* margin-left: 10px; */
 	}
 
 	svg {
 		position: relative;
-		width: 100%;
-		height: 600px;
+		width: 488px;
+		height: 100%;
+		display: block;
+		margin-left: auto;
+		margin-right: auto;
 	}
 
 	.tick {
@@ -117,46 +246,127 @@ function formatText(tick) {
 		/* fill:blue; */
 		stroke: none;
 	}
+	.test {
+		display: flex;
+		width: 100%;
+		background-color: #ffffff;
+		margin-left: 10px;
+	}
+
+	@media only screen and (max-width: 768px) {
+		 .test {
+			 margin-left: 0px !important;
+		 }
+	 }
+
+	@media only screen and (max-width: 488px) {
+		svg {
+			width: 100% !important;
+		}
+	}
 </style>
+
+<div class="test">
+
+
+{#if yTicks.length > 0}
 
 <div class="chart" bind:clientWidth={width} bind:clientHeight={height}>
 	<svg>
-		<!-- y axis -->
-		<g class="axis y-axis" transform="translate(0,{padding.top})">
-			{#each yTicks as tick, i}
-				<g class="tick tick-{tick}" transform="translate(0, {yScale(tick) - padding.bottom + 10})">
-					<line x2="100%"></line>
-					<text y="-4">{formatTick(tick)} {i === yTicks.length ? ' per 1,000 ' : ''}</text>
-				</g>
-			{/each}
-		</g>
 
-		<!-- x axis -->
-		<g class="axis x-axis">
-			{#each xTicks as tick, i}
-				<g class="tick tick-{ tick }" transform="translate({xScale(i)},{height - 35})">
-					{#if !tick.includes('<br>') }
-						<text x="{barWidth/2}">{tick}</text>
-					{:else}
-						<text x="{barWidth/2}">
-							<Tspan xValue="{barWidth/2}" dyValue={20} monthYear={monthYear=formatText(tick)} />
-						</text>
-					{/if}
-				</g>
-			{/each}
-		</g>
+	<g class="axis y-axis" transform="translate(0,{padding.top})">
+		{#each yTicks as tick, i}
+			<g class="tick tick-{tick}" transform="translate(5, {yScale(tick) - padding.bottom + 10})">
+				<line x1="30" x2="100%"></line>
+				<text y="-4">{formatTick(tick, i, (yTicks.length - 1))}</text>
+			</g>
+		{/each}
+	</g>
 
-		<g class='bars'>
-		 
-			{#each points as point, i}
-				<rect
-					x="{xScale(i) + 2}"
+	{#each points as point, i}
+		{#if i == 0}
+		<rect
+					x="{xScale(i) + bdOne}"
 					y="{yScale(point)}"
-					width="{barWidth - 10}"
-					height="{height - padding.bottom - yScale(point) }"
+					width="{barWidth}"
+					height="{height - padding.bottom - yScale(point)}"
 					fill={primary_fill_color}
 				></rect>
-			{/each}
+		{/if}
+		{#if i == 1}
+		<rect
+					x="{xScale(i) + bdTwo}"
+					y="{yScale(point)}"
+					width="{barWidth}"
+					height="{height - padding.bottom - yScale(point)}"
+					fill={secondary_fill_color}
+				></rect>
+		{/if}
+		{#if i == 2}
+			
+		<rect
+					x="{xScale(i) + bdOne}"
+					y="{yScale(point)}"
+					width="{barWidth}"
+					height="{height - padding.bottom - yScale(point)}"
+					fill={primary_fill_color}
+				></rect>
+		{/if}
+		{#if i == 3}
+		<rect
+					x="{xScale(i) + bdTwo}"
+					y="{yScale(point)}"
+					width="{barWidth}"
+					height="{height - padding.bottom  -  yScale(point)}"
+					fill={secondary_fill_color}
+				></rect>
+		{/if}		
+	{/each}
+
+	{#each xTicks as tick, i}
+		<g class="tick" transform="translate({xScale(i)},{height - 10})">
+			{#if i == 0}
+				<text x="{xScale(i) + 110}">{formatText(tick)}</text>
+			{/if}	
+			{#if i == 2}
+				<text x="{xScale(i - 1) - 5}">{tick.toUpperCase()}</text>
+			{/if}
 		</g>
+	{/each}
+
+	{#each points as point, i}
+		<g class="tick">
+			{#if i == 0}
+				<text 
+					x="{xScale(i) + formatPoint(point)}" 
+					y="{yScale(point) - 5}"
+					height="{height}"
+					>{formatPointText(point)}</text>
+			{/if}	
+			{#if i == 1}
+				<text 
+					x="{xScale(i) + formatPoint(point, 22)}" 
+					y="{yScale(point) - 5}"
+					height="{height - padding.bottom - yScale(point)}"
+					>{formatPointText(point)}</text>
+			{/if}
+			{#if i == 2}
+				<text 
+					x="{xScale(i) + formatPoint(point)}" 
+					y="{yScale(point) - 5}"
+					height="{height - padding.bottom - yScale(point)}"
+					>{formatPointText(point)}</text>
+			{/if}	
+			{#if i == 3}
+				<text 
+					x="{xScale(i) + formatPoint(point, 22)}" 
+					y="{yScale(point) -5}"
+					
+					>{formatPointText(point)}</text>
+			{/if}
+		</g>
+	{/each}
 	</svg>
+</div>
+{/if}
 </div>

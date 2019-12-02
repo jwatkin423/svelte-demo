@@ -19,7 +19,7 @@ export let disclaimer;
     .footer-disclaimer > p {
         color: #666666;
         font-size: 8px;
-        max-width: 994px;
+        /* max-width: 994px; */
         display: inline-block;
         position: relative;
         margin-left: 10px;
@@ -38,9 +38,6 @@ export let disclaimer;
     <div class="footer-area">
         <div class="footer-disclaimer">
             <p>{disclaimer}</p>
-        </div>
-        <div class="broker-metrics">
-            <img src={'https://via.placeholder.com/286x50.png?text=Broker Metrics'} alt={'brand image'}/>
         </div>
     </div>
 </footer>    

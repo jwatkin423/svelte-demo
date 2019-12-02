@@ -1,17 +1,27 @@
 <script>
 // data from DDS
 export let ddsData;
+export let searchType;
 
 // imports
 import ChartTitleBar from '../components/ChartTitleBar.svelte';
 import Link from '../components/Link.svelte';
-import NewChart from '../charts/newChart.svelte';
-import LineChart from '../charts/lineChart.svelte';
+// import NewChart from '../charts/newChart.svelte';
+// import LineChart from '../charts/lineChart.svelte';
+import MnthYtd from '../charts/newChart.svelte';
 import { tickMarks } from '../utils/_utils';
 import { onMount } from 'svelte';
-import Test from '../main/test.svelte';
+import Linechart from '../charts/lineChart.svelte';
 import chartStore from '../utils/chart-store';
 import Table  from '../components/Table.svelte';
+import KMI from '../components/KMI.svelte';
+import NewLineCharts from '../main/newLineChart.svelte';
+
+/* 
+object from 
+the mobile link 
+*/
+let dLink = {};
 
 let yTicks = '';
 
@@ -19,10 +29,14 @@ let keys = ddsData.keys;
 let reportPeriod = ddsData.reportPeriod;
 let rpTest = ddsData.reportPeriod;
 let p_color = ddsData.p_color;
+let s_color = ddsData.s_color;
 let chartData = ddsData.chartData;
 let disclaimer = ddsData.strDisclaimer;
+export let mobileKey = 'has not been set';
 
 let title = ddsData.title;
+let year = '';
+$: year = ddsData.year;
 let chartTitle;
 let barData = '';
 let barChartData = '';
@@ -43,7 +57,17 @@ onMount(() => {
 	drawChart(key, 1);
 });
 
+function setKey (key) {
+	if (key) {
+		drawChart(key, 1);
+	}
+}
+
+// set the key to draw the chart
+$: setKey(mobileKey);
+
 function drawChart(event, initial = 0) {
+
 	let key = '';
 
 	if (initial) {
@@ -52,10 +76,13 @@ function drawChart(event, initial = 0) {
 		key = event.detail.text;
 	}
 
+	document.getElementById('m-' + key).click();
+
 	const setData = ddsData.chartData[key].data;
+	let dt = setData.map((d) => {return d});
 
 	barChartData = {
-	 	data: setData,
+	 	data: dt,
 	 	key: key,
 	 	label: ddsData.chartData[key].label,
 		p_color: p_color
@@ -69,7 +96,6 @@ function drawChart(event, initial = 0) {
 	});
 
 	yTicks = processPoints(setData);
-
 }
 
 function processPoints (data) {
@@ -88,40 +114,37 @@ function processPoints (data) {
      /* main content area */
      .content-area {
 		max-width: 1280px;
-		display: flex;
-		margin: auto;
-		max-height: 1024px;
+		display: block;
+		margin-left: 10px;
+		margin-right: 10px;
+		height: 760px;
      }
 
 	/* chart title */
-	/* .chart-title {
+	.chart-title {
 		height: 40px;
-		width: 100%;
-		/* position: relative;
-		
-		float: left;
-	}
-
-	.report-area {
+		max-width: 1280px;
 		position: relative;
-		width: 100%;
-		/* max-width: 1280px;
-		float: left;
-		clear: left; 
-	} */
+		line-height: 40px;
+	}
 
 	.chart-title-h3 {
 		text-align: center;
+		margin-top: 0;
+		margin-bottom: 0;
 	}
 
      .td-sidebar {
          width: 202px;
-         display: inline-block;
-         position: relative;
+		 float: left;
          margin-right: 0;
-         margin-left: 10px;
+		 margin-top: 0px;
  	}
 	
+	ul {
+		padding-left: 5px;
+	}
+
      .sidebar-title-area {
          background-color: #ffffff;
          height: 25px;
@@ -143,64 +166,116 @@ function processPoints (data) {
 		 margin: auto;
      }
 
-	/* div.table-area {
-		width: 1048px;
-		display: table;
-	} */
 
+	@media only screen and (max-width: 1289px) {
+		.chart-title {
+			width: 100%;
+		}
+	}
 
-	@media only screen and (max-width: 1024px) {
+	@media only screen and (max-width: 768px) {
  		.td-sidebar {
  			display: none;
-		}		
+		}
+		
+		.chart-wrapper {
+			margin-left: 0 !important;
+		}
+
+		.content-area {
+			 margin-left: 0 !important;
+			 margin-right: 0 !important;
+		 } 
+		
  	}
 
  	@media only screen and (max-height: 399px) {
 		.content-area {
- 			height: 100%;
+			 height: 50%;
  		}
  	}
 
- 	@media only screen and (min-height: 400px) and   (max-height: 799px) {
+ 	@media only screen and (min-height: 400px) and (max-height: 799px) {
  		.content-area {
- 			height: 400px;
+			 height: 100%;
  		}
  	}
 
- 	@media only screen and (min-height: 800px) {
+	@media only screen and (min-height: 801px) {
+		 .chart-wrapper {
+			 height: 50%;
+		 } 
+	}
+
+ 	@media only screen and (max-height: 800px) {
  		.content-area {
- 			height: 700px;
- 		}
-		.report-area {
+			 height: 75%;
+			 margin-left: 0 !important;
+			 margin-right: 0 !important;
+		 } 
+
+		 .chart-wrapper {
+			 height: 80%;
+		 } 
+	}
+	 
+	@media only screen and (max-width: 768px) {
+		.kmi-wrapper {
+			display: inline-block !important;
 			width: 100%;
-		} 
- 	}
+		}
+	}
 
+	.kmi-wrapper {
+		height: 60px;
+		line-height: 60px;
+		margin-bottom: 10px;
+		display: flex;
+		flex-basis: 100%;
+		flex: 1 1 auto;
+	}
+
+	.chart-wrapper {
+		display: flex;
+		margin-left: 10px;
+		height: calc(100% - 80px);
+		flex: 1 1 auto;
+		flex-basis: 100%;
+	}
  </style>
 
 
 
 {#if ddsData}
 
+<div class="chart-title">
+	<h3 class="chart-title-h3">{chartTitle}</h3>
+</div>
+
 <div class="content-area">
-	<!-- <div class="chart-title">
-		<h3 class="chart-title-h3">{chartTitle}</h3>
-	</div> -->
-	<!-- <div class="report-area"> -->
-		<div class="td-sidebar">
-			<div class="sidebar-title-area">
-				<h3 class="sidebar-menu-title text-center" style="color:{p_color};">{title} </h3>
-			</div>
-			<div class="sidebar-menu-links">
-				<ul>
-					<Link data={chartData} keys={keys} on:l={drawChart}/>
-				</ul>
-			</div>
+
+	<div class="td-sidebar">
+		<div class="sidebar-title-area">
+			<h3 class="sidebar-menu-title text-center" style="color:{p_color};">{title} </h3>
+		</div>
+		<div class="sidebar-menu-links">
+			<ul>
+				<Link data={chartData} keys={keys} on:l={drawChart}/>
+			</ul>
+		</div>
+	</div>
+
+		<div class="kmi-wrapper">
+			<KMI data={barData.data} year={year} reportPeriod={reportPeriod}  searchType={searchType} p_color={p_color} s_color={s_color}/>
+		</div>
+		<div class="chart-wrapper">
+		{#if searchType !== 'mnth-ytd'}
+			<Linechart data={barData.data} reportPeriod={reportPeriod} p_color={p_color} s_color={s_color} yPoints={yT} mappedPoints={mappedPoints} reportYear={year}/>
+		{:else}	
+			<MnthYtd data={barData.data} reportPeriod={reportPeriod} p_color={p_color} s_color={s_color} yPoints={yT} mappedPoints={mappedPoints} reportYear={year}/>
+		{/if}	
 		</div>
 		
-		<Test data={barData.data} reportPeriod={reportPeriod} p_color={p_color} yPoints={yT} mappedPoints={mappedPoints}/>
-		<!-- <Table tableData={ddsData} /> -->
-	<!-- </div> -->
 </div>
 
 {/if}

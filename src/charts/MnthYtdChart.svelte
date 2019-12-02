@@ -2,6 +2,7 @@
 import chartStore from '../utils/chart-store';
 import Tspan from '../charts/tspan.svelte';
 import { scaleLinear } from 'd3-scale';
+import KMI from '../components/KMI.svelte';
 
 // report period props
 export let reportPeriod;
@@ -39,6 +40,7 @@ let yScale = scaleLinear();
 // chart data key/value pair
 let chartData;
 let path;
+let xPlots = [];
 
 // primary color
 $: primary_fill_color = p_color;
@@ -46,6 +48,8 @@ $: primary_fill_color = p_color;
 // report period for the x axis
 $: xTicks = reportPeriod;
 
+// the chart data points
+$: xPlots = data;
 
 // initializing x scale
 $: xScale = scaleLinear()
@@ -66,9 +70,7 @@ $: chartData = mappedPoints.map((mp, i) => {
 	return {y:s, x:t};
 });
 
-// chart line
-$: path = `M${chartData.map(mp => `${xScale(mp.x)},${yScale(mp.y)}`).join('L')}`;
-$: path2 = `M${chartData.map(mp => `${xScale(mp.x)},${yScale(mp.y)}`).join('L')}`;
+
 
 // set the inner width of the chart
 $: innerWidth = width - (padding.left + padding.right);
@@ -78,16 +80,22 @@ $: textWidth = innerWidth / xTicks.length;
 // format ticks
 function formatTick(tick, i, length) {
 
+    if (tick >= 1000 && tick < 10000) {
+		tick /= 1000;
+		tick = Math.ceil(tick);
+       tick += i === length ? ' per 1,000 ' : '';
+    }
+
     if (tick >= 10000 && tick < 100000) {
 		tick /= 10000;
 		tick = Math.ceil(tick);
-        tick += '/10K';
+        tick += i === length ? ' / 10K' : '';
 	}
 	
 	if (tick >= 100000 && tick < 1000000) {
-		tick /= 1000;
+		tick /= 100000;
 		tick = Math.ceil(tick);
-        tick += '/K';
+        tick += i === length ? ' / 100K' : '';
 	}
 
 	return tick;
@@ -351,8 +359,15 @@ function hideToolTip() {
 			{/each}
 		</g>
 
-		<!-- data -->
-		<path class="path-line" d={path} stroke={primary_fill_color}></path>
+        <g>
+            {#each mthYtdChartData as point, i}
+                {#if i == 0 || i == 2}
+                <rect 
+                    x={xScale(i)}
+                ></rect>
+                {/if}
+            {/each}
+        </g>
 
 		<!-- set the circles for the data points -->
 		<g>

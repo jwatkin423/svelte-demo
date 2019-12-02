@@ -12,19 +12,22 @@ onMount(() => {
     active = data[keys[0]].key;
 });
 
-export function test(j) {
-    active = j;
-    dispatch('l', {
-        text: j
+// set key
+export function setChart(k) {
+    active = k;
+    
+    dispatch('mobileKey', {
+        text: k
     });
 }
 
 </script>
 
 <style>
-.td-list-par {
+    .td-list-par {
 		height: 25px;
 		vertical-align: middle;
+		list-style-type: none;
 	}
 
 	.td-list-active {
@@ -35,7 +38,7 @@ export function test(j) {
 	.td-list-item-link {
 		background-color: #ffffff;
 		color: #666666;
-		font-size: 12px !important;
+		font-size: 16px !important;
 		margin-left: 10px;
 		text-decoration: none;
 	}
@@ -50,11 +53,11 @@ export function test(j) {
 {#each keys as key}
     <li class="td-list-par">
         <a  
-            on:click|preventDefault={() => {test(key); }}
-            class="td-list-item-link"
+            on:click|preventDefault={() => {setChart(key); }}
             class:td-list-active={active === key}
+            class="td-list-item-link"
             href="."
-            id={key}>
+            id={'m-' + key}>
             {data[key].label}
         </a>
     </li>

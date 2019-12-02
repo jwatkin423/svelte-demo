@@ -6,12 +6,8 @@ export let xValue;
 export let dyValue = "1em";
 export let xLen;
 export let date;
-
 $: xLen = xValue;
 $: date = monthYear.month + " " + monthYear.year.replace('20', "'");
-
-onMount(() => {
-});
 
 </script>
 
