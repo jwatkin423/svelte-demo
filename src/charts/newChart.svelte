@@ -123,66 +123,68 @@ function formatLastTickYear(tick) {
 	return reportYear.replace('20', " '");
 }
 
-function formatTick(tick, i, length) {
+function formatTick(tick) {
 
-    if (tick >= 1000 && tick < 10000) {
+	if (tick >= 1000)  {
 		tick /= 1000;
-		tick = Math.ceil(tick);
-       tick += i === length ? ' per 1,000 ' : '';
-    }
+		tick = parseInt(tick);
+		let tMod = tick % 5;
+		console.log(tMod);
+		if (tMod != 0) {
+			tick += tMod;
+		}
 
-    if (tick >= 10000 && tick < 100000) {
-		tick /= 10000;
-		tick = Math.ceil(tick);
-        tick += i === length ? ' / 10K' : '';
+		tick += 'K';
 	}
-	
-	if (tick >= 100000 && tick < 1000000) {
-		tick /= 100000;
-		tick = Math.ceil(tick);
-        tick += i === length ? ' / 100K' : '';
-	}
+
+	if (tick >= 100 < 1000) {
+		let tMod = tick % 5;
+		if (tMod != 0) {
+			tick += tMod;
+		}
+	}	
 
 	return tick;
 }
 
-function formatPoint(point, strtPos = 90) {
+function formatPoint(point, strtPos = 90, tCount = 0) {
 	let len = point.length;
+
 	let mv = 0;
-	if (len <= 3) {
-		mv = 2
+	let mvOne = 0;
+	let mvTwo = 0;
+	
+	if (len == 1) {
+		mvTwo = -12;
 	}
 
-	if (len >= 4) {
-		mv = 4
+	if (len >= 2 && len < 4) {
+		mvOne = 1;
+		mvTwo = -7;
+	}
+
+	if (len >= 4 && len < 6) {
+		mvOne = 4;
+		mvTwo = -4;
 	}
 
 	if (len >= 6) {
-		mv = 6
+		mvOne = 6;
+		mvTwo = -10;
+	}
+
+	if (tCount == 0 || tCount == 2) {
+		mv = mvOne;
+	} else if (tCount == 3) {
+		mv = mvTwo - 7;
+	} else {
+		mv = mvTwo;
 	}
 
 	return strtPos - (len + mv);
 }
 
 function formatPointText(point) {
-	if (point >= 1000 && point < 10000) {
-		point /= 1000;
-		point = Math.ceil(point);
-       	point += 'K';
-    }
-
-    if (point >= 10000 && point < 100000) {
-		point /= 1000;
-		point = Math.ceil(point);
-        point += 'K';
-	}
-	
-	if (point >= 100000 && point < 1000000) {
-		point /= 1000;
-		point = Math.ceil(point);
-        point += 'K';
-	}
-
 	return point;
 }
 
@@ -228,6 +230,7 @@ onMount(() => {
 		fill: #737373;
 		text-anchor: start;
 		white-space: unset !important;
+		font-size: 10px;
 	}
 
 	.tick.tick-0 line {
@@ -278,7 +281,7 @@ onMount(() => {
 		{#each yTicks as tick, i}
 			<g class="tick tick-{tick}" transform="translate(5, {yScale(tick) - padding.bottom + 10})">
 				<line x1="30" x2="100%"></line>
-				<text y="-4">{formatTick(tick, i, (yTicks.length - 1))}</text>
+				<text y="-4">{formatTick(tick)}</text>
 			</g>
 		{/each}
 	</g>
@@ -337,31 +340,32 @@ onMount(() => {
 	{#each points as point, i}
 		<g class="tick">
 			{#if i == 0}
-				<text 
-					x="{xScale(i) + formatPoint(point)}" 
+				<text
+					class="point-text" 
+					x="{xScale(i) + bdOne + (10 - (point.length / 2))}"
 					y="{yScale(point) - 5}"
 					height="{height}"
 					>{formatPointText(point)}</text>
-			{/if}	
+			{/if}
 			{#if i == 1}
 				<text 
-					x="{xScale(i) + formatPoint(point, 22)}" 
+					x="{xScale(i) + bdTwo + (10 - (point.length / 2))}"
 					y="{yScale(point) - 5}"
 					height="{height - padding.bottom - yScale(point)}"
 					>{formatPointText(point)}</text>
 			{/if}
 			{#if i == 2}
 				<text 
-					x="{xScale(i) + formatPoint(point)}" 
+					x="{xScale(i) + bdOne + (10 - (point.length / 2))}"
 					y="{yScale(point) - 5}"
 					height="{height - padding.bottom - yScale(point)}"
 					>{formatPointText(point)}</text>
 			{/if}	
 			{#if i == 3}
 				<text 
-					x="{xScale(i) + formatPoint(point, 22)}" 
+					x="{xScale(i) + bdTwo + (10 - (point.length / 2))}"
 					y="{yScale(point) -5}"
-					
+					height="{height - padding.bottom - yScale(point)}"
 					>{formatPointText(point)}</text>
 			{/if}
 		</g>

@@ -80,36 +80,10 @@ $: textWidth = innerWidth / xTicks.length;
 // format ticks
 function formatTick(tick, i, length) {
 
-    if (tick >= 1000 && tick < 10000) {
-		tick /= 1000;
-		tick = Math.ceil(tick);
-       tick += i === length ? ' per 1,000 ' : '';
-    }
-
-    if (tick >= 10000 && tick < 100000) {
-		tick /= 10000;
-		tick = Math.ceil(tick);
-        tick += i === length ? ' / 10K' : '';
-	}
-	
-	if (tick >= 100000 && tick < 1000000) {
-		tick /= 100000;
-		tick = Math.ceil(tick);
-        tick += i === length ? ' / 100K' : '';
-	}
-
 	return tick;
 }
 
 function formatPlotPoint(point) {
-	if (point >= 1000 && point < 10000) {
-        point /= 1000;
-    }
-
-    if (point >= 10000) {
-        point /= 10000;
-    }
-
 	return point;
 }
 
@@ -125,7 +99,7 @@ $:year = monthYear.year;
 
 let test;
 
-export let lineHeight = -height + padding.bottom - 100;
+let lineHeight = -height + padding.bottom - 100;
 
 function showToolTip(i, leftX, topY, point) {
 	desc = document.getElementById('desc');
@@ -322,7 +296,7 @@ function hideToolTip() {
 			{#each yTicks as tick, i}
 				<g class="tick tick-{tick}" transform="translate(5, {yScale(tick) - padding.bottom + 10})">
 					<line x2="100%"></line>
-					<text y="-4">{formatTick(tick, i, (yTicks.length - 1))}</text>
+					<text y="-4">{formatTick(tick)}</text>
 				</g>
 			{/each}
 		</g>
