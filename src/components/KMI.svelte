@@ -36,9 +36,11 @@ function formatNumber(num) {
         if (num < 0 ) {
             // num = num.toString().replace(/\-/, '');
             num = num.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-            num = "(" + num + ")";
+            num = num.replace(/\-/, '');
+            num = "(-" + dollar + num + ")";
         } else {
             num = num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            num = dollar + num;
         }
     }
 
@@ -181,9 +183,9 @@ function formatYear(period) {
             </thead>
             <tbody>
                 <tr>
-                    <td id="inital-month">{dollar}{ formatNumber(initialMonth) }</td>
-                    <td id="last-month">{dollar}{ formatNumber(lastMonth) }</td>
-                    <td id="change">{dollar}{ formatNumber(change) }</td>
+                    <td id="inital-month">{ formatNumber(initialMonth) }</td>
+                    <td id="last-month">{ formatNumber(lastMonth) }</td>
+                    <td id="change">{ formatNumber(change) }</td>
                     <td>
                         {#if change >= 0}
                             <i class="chng chng-up"><Icon class="chng-up" tempId="change-pcrt-up" icon={icon[0]} /></i>
