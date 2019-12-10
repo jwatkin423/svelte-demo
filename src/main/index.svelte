@@ -37,7 +37,7 @@ export let mobileKey = 'has not been set';
 let title = ddsData.title;
 let year = '';
 $: year = ddsData.year;
-let chartTitle;
+let chartTitle = '';
 let barData = '';
 let barChartData = '';
 let yT = [];
@@ -47,6 +47,8 @@ $: mappedPoints = mPoints;
 
 $: barData = barChartData;
 $: yT = [...yTicks];
+
+$: dollar = (barData.key === 'soldMedian' || barData.key === 'soldAvgPriceSquareFt') ? true : false;
 
 onMount(() => {
 	// get keys of the different charts
@@ -99,7 +101,6 @@ function drawChart(event, initial = 0) {
 }
 
 function processPoints (data) {
-	let tmpEl = '';
 	let maxValue = Math.max.apply(null, data);
 	return tickMarks(maxValue)
 }
@@ -108,17 +109,41 @@ function processPoints (data) {
 
 <style>
 
- 	ul {
-   		list-style-type: none;
-  	}
      /* main content area */
      .content-area {
 		max-width: 1280px;
 		display: block;
 		margin-left: 10px;
 		margin-right: 10px;
-		height: 760px;
+		height: 675px;
      }
+	
+	.content-inner-wrapper {
+		display: flex;
+		flex-direction: column;
+		height: 635px;
+	}
+
+	.kmi-wrapper {
+		height: 60px;
+		line-height: 60px;
+		margin-bottom: 10px;
+		display: flex;
+		flex-direction: column;
+		/* flex-basis: 100%;
+		flex: 1 1 auto; */
+	}
+
+	.chart-wrapper {
+		display: flex;
+		margin-left: 10px;
+		flex-direction: column;
+		border: 1px solid green;
+		height: 100%;
+		max-height: 560px;
+		flex: 1 1 auto;
+		flex-basis: 100%;
+	}
 
 	/* chart title */
 	.chart-title {
@@ -142,20 +167,25 @@ function processPoints (data) {
  	}
 	
 	ul {
+		list-style-type: none;
+		padding-top: 0;
+		padding-bottom: 0;
+		margin-top: 0;
+		margin-bottom: 0;
 		padding-left: 5px;
 	}
 
      .sidebar-title-area {
          background-color: #ffffff;
          height: 25px;
-         margin-bottom: 5px;
+         margin-bottom: 1px;
 		 display: flex;
  	}
 	
  	.sidebar-menu-links {
-         background-color: #ffffff;
-         padding-top: 10px;
-         padding-bottom: 10px;
+        background-color: #ffffff;
+		padding-top: 10px;
+		padding-bottom: 10px;
      }
 
      .sidebar-menu-title {
@@ -203,7 +233,7 @@ function processPoints (data) {
 
 	@media only screen and (min-height: 801px) {
 		 .chart-wrapper {
-			 height: 50%;
+			 /* height: 50%; */
 		 } 
 	}
 
@@ -215,8 +245,12 @@ function processPoints (data) {
 		 } 
 
 		 .chart-wrapper {
-			 height: 80%;
-		 } 
+			 height: 100%;
+		 }
+
+		 .content-inner-wrapper {
+			 height: calc(100% - 50px) !important;
+		 }
 	}
 	 
 	@media only screen and (max-width: 768px) {
@@ -226,21 +260,8 @@ function processPoints (data) {
 		}
 	}
 
-	.kmi-wrapper {
-		height: 60px;
-		line-height: 60px;
-		margin-bottom: 10px;
-		display: flex;
-		flex-basis: 100%;
-		flex: 1 1 auto;
-	}
-
-	.chart-wrapper {
-		display: flex;
-		margin-left: 10px;
-		height: calc(100% - 80px);
-		flex: 1 1 auto;
-		flex-basis: 100%;
+	.sidebar-buffer {
+		height: 40px;
 	}
  </style>
 
@@ -248,13 +269,10 @@ function processPoints (data) {
 
 {#if ddsData}
 
-<div class="chart-title">
-	<h3 class="chart-title-h3">{chartTitle}</h3>
-</div>
-
 <div class="content-area">
 
 	<div class="td-sidebar">
+		<div class="sidebar-buffer"></div>
 		<div class="sidebar-title-area">
 			<h3 class="sidebar-menu-title text-center" style="color:{p_color};">{title} </h3>
 		</div>
@@ -263,19 +281,46 @@ function processPoints (data) {
 				<Link data={chartData} keys={keys} on:l={drawChart}/>
 			</ul>
 		</div>
-	</div>
-
-		<div class="kmi-wrapper">
-			<KMI data={barData.data} year={year} reportPeriod={reportPeriod}  searchType={searchType} p_color={p_color} s_color={s_color}/>
-		</div>
-		<div class="chart-wrapper">
-		{#if searchType !== 'mnth-ytd'}
-			<Linechart data={barData.data} reportPeriod={reportPeriod} p_color={p_color} s_color={s_color} yPoints={yT} mappedPoints={mappedPoints} reportYear={year}/>
-		{:else}	
-			<MnthYtd data={barData.data} reportPeriod={reportPeriod} p_color={p_color} s_color={s_color} yPoints={yT} mappedPoints={mappedPoints} reportYear={year}/>
-		{/if}	
-		</div>
 		
+	</div>
+	<div class="chart-title">
+			<h3 class="chart-title-h3">{chartTitle.toUpperCase()}</h3>
+	</div>
+		<div class="content-inner-wrapper">
+			<div class="kmi-wrapper">
+				<KMI 
+					data={barData.data} 
+					year={year} 
+					reportPeriod={reportPeriod}  
+					searchType={searchType} 
+					p_color={p_color} 
+					s_color={s_color}
+					showDollar={dollar}/>
+			</div>
+			
+			{#if searchType !== 'mnth-ytd'}
+				<Linechart 
+					data={barData.data} 
+					reportPeriod={reportPeriod} 
+					p_color={p_color} 
+					s_color={s_color} 
+					yPoints={yT} 
+					mappedPoints={mappedPoints} 
+					reportYear={year}/>
+			{:else}	
+			<div class="chart-wrapper"> -->
+				<MnthYtd 
+					data={barData.data} 
+					reportPeriod={reportPeriod} 
+					p_color={p_color} 
+					s_color={s_color} 
+					yPoints={yT} 
+					mappedPoints={mappedPoints} 
+					reportYear={year}/>
+			</div>
+			{/if}	
+			
+		</div>
 </div>
 
 {/if}

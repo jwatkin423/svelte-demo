@@ -24,9 +24,10 @@ export let mappedPoints = [];
 let heyo = false;
 
 // chart and misc dimensions
-let padding = { top: 45, right: 35, bottom: 60, left: 45 };
+// let padding = { top: 45, right: 35, bottom: 60, left: 75 };
+let padding = { top: 45, right: 5, bottom: 15, left: 50 };
 let width = 1048;
-let height = 700;
+let height = 575;
 let textWidth = 600;
 
 // desc ID
@@ -56,7 +57,7 @@ $: xScale = scaleLinear()
 $: yScale = scaleLinear()
 	.domain([0, Math.max.apply(null, yTicks)])
 	// .range([height - padding.bottom, padding.top]);
-	.range([height - 20, padding.top]);
+	.range([height - 60, padding.top]);
 
 // chart data mapped
 $: chartData = mappedPoints.map((mp, i) => {
@@ -76,30 +77,33 @@ $: innerWidth = width - (padding.left + padding.right);
 $: textWidth = innerWidth / xTicks.length;
 
 // format ticks
-function formatTick(tick, i, length) {
-
-    if (tick >= 10000 && tick < 100000) {
-		tick /= 10000;
-		tick = Math.ceil(tick);
-        tick += '/10K';
-	}
+function formatTick(tick) {
 	
-	if (tick >= 100000 && tick < 1000000) {
-		tick /= 1000;
+	if (tick >= 100 < 1000) {
+		let tMod = tick % 5;
+		if (tMod != 0) {
+			tick += tMod;
+		}
+	}	
+
+	if (tick >= 1000)  {
+		tick = (tick / 1000);
 		tick = Math.ceil(tick);
-        tick += '/K';
+		tick += 'K';
+	}
+
+	if (tick >= 1000000) {
+		tick = (tick / 1000000);
+		tick = Math.ceil(tick);
+		tick += 'M';
 	}
 
 	return tick;
 }
 
 function formatPlotPoint(point) {
-	if (point >= 1000 && point < 10000) {
-        point /= 1000;
-    }
-
-    if (point >= 10000) {
-        point /= 10000;
+	if (point) {
+		point = point.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
 
 	return point;
@@ -117,7 +121,9 @@ $:year = monthYear.year;
 
 let test;
 
-export let lineHeight = -height + padding.bottom - 100;
+let lineHeight = -height + 58;
+let line = width;
+$: line = width - 20;
 
 function showToolTip(i, leftX, topY, point) {
 	desc = document.getElementById('desc');
@@ -133,8 +139,8 @@ function showToolTip(i, leftX, topY, point) {
 	if (date.includes('<br>')) {
 		date = date.replace('<br>', '');
 	}
-
-	let p = point.y + " (" + date + ")";
+	let py = point.y.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	let p = py + " (" + date + ")";
 	desc.innerHTML = p;
 }
 
@@ -180,8 +186,8 @@ function hideToolTip() {
 	.chart {
 		margin-top: 0px;
 		background-color: #ffffff;
-		width: 100%;
 		display: block;
+		height: 100%;
 		margin-left: 10px;
 	}
 
@@ -199,7 +205,6 @@ function hideToolTip() {
 
 	.tick line {
 		stroke: #737373;
-		stroke-dasharray: 1;
 		stroke-opacity: .25;
 	}
 
@@ -301,7 +306,6 @@ function hideToolTip() {
 		 }
 	 }
 	
-
 </style>
 
 {#if path.length > 1}
@@ -310,28 +314,29 @@ function hideToolTip() {
 	<svg>
 
 		<!-- y axis -->
-		<g class="axis y-axis" transform="translate(0,{padding.top})">
+		<!-- <g class="axis y-axis" transform="translate(0,{padding.top})"> -->
 			{#each yTicks as tick, i}
-				<g class="tick tick-{tick}" transform="translate(5, {yScale(tick) - padding.bottom + 10})">
-					<line x2="100%"></line>
-					<text y="-4">{formatTick(tick, i, (yTicks.length - 1))}</text>
+				<!-- <g class="tick tick-{tick}" transform="translate(5, {yScale(tick) - padding.bottom})"> -->
+				<g class="tick tick-{tick}" transform="translate(5, {yScale(tick)})">
+					<line x1="40px" x2="{line - (width < 1200 ? 10 : 60)}"></line>
+					<text y="0">{tick > 10 ? formatTick(tick) : tick}</text>
 				</g>
 			{/each}
-		</g>
+		<!-- </g> -->
 
 		<!-- x axis -->
 		<g class="axis x-axis">
 			{#each xTicks as tick, i}
-				<g class="tick tick-{ tick }" transform="translate({xScale(i)},{height - 20})">
+				<g class="tick tick-{ tick }" transform="translate({xScale(i)},{height - 35})">
 					
                     {#if !tick.includes('<br>') }
-						<line y1="-30" y2="0" x="0" x2="0"></line>
+						<line class="small-tick" y1="-25" y2="3" x1="0" x2="0"></line>
 					{:else if (tick.includes('<br>') && i !== (xTicks.length - 1))}
-						<line y1="-{height}" y2="0" x="0" x2="0"></line>
+						<line y1="{lineHeight}" y2="-15" x1="0" x2="0"></line>
 						<text dx=0>{formatText(tick)}</text>
 					{/if}
 					{#if i === (xTicks.length - 1) }
-						<line y1="-{height}" y2="0" x="0" x2="0"></line>
+						<line y1="{lineHeight}" y2="-15" x="0" x2="0"></line>
 						<text dx=0>{formatLastTick(tick)}</text>
 					{/if}	
 				</g>
@@ -340,7 +345,7 @@ function hideToolTip() {
 
 		<g class="axis x-axis">
 			{#each xTicks as tick, i}
-				<g class="tick tick-{ tick }" transform="translate({xScale(i)},{height - 10})">
+				<g class="tick tick-{ tick }" transform="translate({xScale(i)},{height - 25})">
                     {#if (tick.includes('<br>') && i !== (xTicks.length - 1))}
 						<text dx=0>{formatYear(tick)}</text>
 					{/if}

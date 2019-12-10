@@ -83,21 +83,6 @@ function closeOpenedAreaMenus() {
     });
 }
 
-function disableAllArea() {
-    let checked = document.querySelector('.all-area-input-select').checked;
-    let areaTypeEls = document.querySelectorAll('.area-input-select');
-    if (checked === true) {
-        areaTypeEls.forEach((el) => {
-            el.disabled = true;
-            el.checked = false;
-        });
-    } else {
-        areaTypeEls.forEach((el) => {
-            el.disabled = false;
-        });
-    }
-}
-
 let allPropertyChecked = false;
 
 $: propertyChecked(allPropertyChecked);
@@ -172,9 +157,8 @@ onMount(() => {
             allPropertyChecked = true;
         }
     }
-    
-
-    disableAllArea();
+    // closes all opened menus on mount
+    closeOpenedAreaMenus();
 });
 
 </script>
@@ -196,16 +180,21 @@ onMount(() => {
         width: 230px;
         background-color: white;
         position: absolute;
+        border-top: 1px solid black;
+        border-left: 1px solid black;
+        border-right: 1px solid black;
         border-bottom: 3px solid black;
     }
  
     .option-wrapper {
         height: 20px;
         line-height: 10px;
+        text-align: left;
     }
 
     .option-wrapper > input {
         display: inline-block;
+        text-align: left;
     }
 
     input {
@@ -284,6 +273,14 @@ onMount(() => {
     }
 
     @media only screen and (max-width: 768px) {
+        .all-property-items {
+            margin-left: 30px;
+        }
+        
+        .poperty-item {
+            margin-left: 60px;
+        }
+
         #poperty-types-menu {
             top: 0px;
         }
@@ -297,16 +294,31 @@ onMount(() => {
         }
 
 		.select-menu-block {
-            width: 100%;
-            left: 0px !important;
-            
+            width: 400px;
             position: absolute;
             margin-top: 5px;
         }
         
+        .sub-menu-area-group, .option-wrapper {
+            text-align: left;
+        }
+
         .sub-menu-area {
             width: 100% !important;
             left: 0px !important;
+            text-align: left;
+        }
+
+        .area-wrapper {
+            text-align: left !important;
+        }
+
+        .area-option-menu {
+            margin-left: 30px;
+        }
+
+        .all-area-option-menu {
+            margin-left: 30px;
         }
 
     }
@@ -317,14 +329,14 @@ onMount(() => {
     <div class='select-menu-block' id='property-types-menu'>
         {#if items.length > 0}
         <h3>{menuTitle}</h3>
-        <div class='option-wrapper' id='{'all-group-menu'}'>
+        <div class='option-wrapper all-property-items' id='{'all-group-menu'}'>
             <input class='all-property-input-select' type='checkbox' name='all' value='all' bind:checked={allPropertyChecked}>
             <a href='.' on:click|preventDefault>
                 <label>ALL</label>
             </a>
         </div>
             {#each items as item}
-                <div class='option-wrapper' id='{item.group + '-menu'}'>
+                <div class='option-wrapper poperty-item' id='{item.group + '-menu'}'>
                         <input class='property-input-select {item.group}' type='checkbox' data-type='{item.group}' name='{item.group}' value='{item.group}' on:click={() => {groupCheckedItems(item.group)}}>
                         <a href='.' on:click|preventDefault on:click={() => showOptions(item.group)}>
                         <label>{item.value}</label>
@@ -349,33 +361,33 @@ onMount(() => {
     <div class="select-menu-block" id='area-types-menu'>
         {#if items.length > 0}
             <h3>{menuTitle}</h3>
-            <div class='option-wrapper' id='{'all-group-menu'}'>
+            <div class='option-wrapper all-area-option-menu' id='{'all-group-menu'}'>
                 {#if initialAreaType.toLowerCase() === 'all'}
-                    <input class='all-area-input-select' type='checkbox' name='all' value='all' checked='checked' on:change={disableAllArea}>
+                    <input class='all-area-input-select' type='radio' name='area-type' value='all' checked='checked'>
                 {:else}
-                    <input class='all-area-input-select' type='checkbox' name='all' value='all' on:change={disableAllArea}>
+                    <input class='all-area-input-select' type='radio' name='area-type' value='all' >
                 {/if}
                 <a href='.' on:click|preventDefault>
                     <label>ALL</label>
                 </a>
             </div>
             {#each items as item}
-                <div class='option-wrapper' id='{item.replace(/[^a-zA-Z0-9]+/g, '-').toLowerCase() + '-menu'}'>
+                <div class='option-wrapper area-option-menu' id='{item.replace(/[^a-zA-Z0-9]+/g, '-').toLowerCase() + '-menu'}'>
                     {#if item === typeSelected && initialAreaType.toLowerCase() !== 'all'}
                         <input 
                             class='input-select area-input-select'
-                            type='checkbox'
+                            type='radio'
                             data-type="{item}"
-                            name='{type}'
+                            name='area-type'
                             value='{item}'
                             checked='checked'
                             on:change="{(e) => checkAllArea(e.target)}" />
                     {:else}
                         <input 
                             class='input-select area-input-select' 
-                            type='checkbox' 
+                            type='radio' 
                             data-type="{item}" 
-                            name='{type}' 
+                            name='area-type' 
                             value='{item}' 
                             on:change="{(e) => checkAllArea(e.target)}" />
                     {/if}

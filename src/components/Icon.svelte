@@ -116,4 +116,7 @@ function setCustomColor(customColor, svgId) {
     margin-right: 2px;
   }
 
+  .search-menu-button, .dropdown-menu-button {
+        font-size: 18px !important;
+  }
 </style>

@@ -28,6 +28,13 @@ function toggleAll () {
     dlEls.forEach((el) => {
             el.checked = allChecked;
     });
+    validateForm();
+}
+
+function submitForm() {
+    let form = document.getElementById('pdf-download');
+    closeMenu();
+    form.submit();
 }
 
 function closeMenu() {
@@ -40,17 +47,20 @@ let fetchingPdf = false;
 
 let queryParams = window.location.search;
 let rawLocation = window.location.pathname;
-let baseUrl = 'http://staging.jw';
+let baseUrl = window.location.origin;
 let urlParams = getAllUrlParams(window.location.href);
 
 let location = rawLocation.replace('public', 'pdf') + '/';
+if (window.location.origin === 'http://localhost:5000') {
+    baseUrl = 'http://staging.jw'
+}
 let url = baseUrl + location + urlParams.set + '=' + '/' + queryParams;
-
 let disabled = true;
 
 function validateForm() {
     let els = document.querySelectorAll('.dl-item');
     let count = 0;
+
     els.forEach((el) => {
         if (el.checked) {
             count++;
@@ -158,13 +168,13 @@ function validateForm() {
                     <input class="input-select" id='all-dl' type="checkbox" data-type="all" name="all" value="all" on:change={toggleAll}>
                     <label>ALL</label>
                 </div>
-            <form id="pdf-download" action='{url}' method="post">
+            <form id="pdf-download" action='{url}' method="POST">
                 {#each options as option}
                     <div class="option-wrapper">
-                    <input 
-                        class="input-select dl-item" 
-                        type="checkbox" 
-                        name="arrayThreeYearMarketMetrics[]" 
+                    <input
+                        class="input-select dl-item"
+                        type="checkbox"
+                        name="matReports[]"
                         value="{option.value}"
                         on:change={validateForm}>
                     <label>{option.label}</label>
@@ -172,7 +182,7 @@ function validateForm() {
                 {/each}    
             <div class="pull-right done-btn">
                 <button on:click|preventDefault on:click={closeMenu} class="sub-menu-btn" >cancel</button>
-                <button id='submit-button' class="sub-menu-btn" disabled={disabled}>done</button>
+                <button on:click|preventDefault on:click={submitForm} id='submit-button' class="sub-menu-btn" disabled={disabled} type="submit">done</button>
             </div>
             </form>
     {/if}

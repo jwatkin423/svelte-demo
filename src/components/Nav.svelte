@@ -165,18 +165,11 @@ window.onclick = function(e) {
         margin-left: 10px;
         margin-top: 5px;
         margin-bottom: 5px;
-        background-color: #F2F2F2;
     }
 
     .pull-right {
         float: right;
-        margin-right: 5px;
-        height: 30px;
-    }
-
-    .pull-left {
-        float: left;
-        margin-right: 5px;
+        margin-right: 10px;
         height: 30px;
     }
 
@@ -277,14 +270,19 @@ window.onclick = function(e) {
     .showDownload {
         display: block;
     }
+
+    .logo {
+        height: 75px;
+    }
 </style>
 
 <div class="navbar-wrapper">
-    {#if logo}
-	<div class="logo">
-		<img src={logo} alt={'brand image'}/>
-	</div>
-    {/if}
+    <div class="logo">
+        {#if logo}
+        
+            <img src={logo} alt={'brand image'}/>
+        {/if}
+    </div>    
 	<div class="navbar-td" id="navbar-td" style="background-color: {background_color};">
 		<div class="menu-wrapper">
             <div class="menu">
@@ -293,7 +291,7 @@ window.onclick = function(e) {
                         on:click|preventDefault
                         on:click={toggleShowMenu}
                         href="."
-                        class="dropbtn"><i><Icon tempId="search-menu" icon={icon[0]} /></i>
+                        class="dropbtn"><i><Icon class="search-menu-button" tempId="search-menu" icon={icon[0]} /></i>
                     </a>
                         
                 </div> <!-- end dropdown -->
@@ -302,7 +300,7 @@ window.onclick = function(e) {
                         on:click|preventDefault 
                         on:click={toggleShowDownload}
                         href=".">
-                        <i><Icon tempId='download-menu' icon={icon[3]} /></i>
+                        <i><Icon class="dropdown-menu-button" tempId='download-menu' icon={icon[3]} /></i>
                     </a>
                 </div>
                 <div class:showDownload="{showDownload === true}" class="download-menu">

@@ -17,7 +17,7 @@ $: initialPropertyClassList = params.propertyClassList ? params.propertyClassLis
 let initalAreaType = 'none';
 $: initialAreaType = params.areaType ? params.areaType : false;
 
-// ?search=normal&areaType=ALL&areaValueList=&timePeriod=mth&timePeriodValue=13&propertyClassList=ALL&mlsId=BAREIS&set=MTAvNTk=
+//&set=MTAvNTk=
 
 let pathname = window.location.pathname;
 let isLoading = true;
@@ -33,13 +33,13 @@ const propertyTypesURL = '/demo/data/get-property-types';
 $: mlsId = params.mlsId;
 $: searchURL = url + propertyTypesURL + '/' + mlsId;
 $: searchParamsURL = url;
+
 let icon = [faCaretRight, faCaretDown];
 
 let leftEl;
 
 // property types after processing
 let pTypes = [];
-//http://localhost:5000/demo/public/market-area-trends/realty-world-selzer-realty?mlsId=BAREIS&search=normal&timePeriod=mth&timePeriodValue=13&areaType=Counties&areaValueList=Alameda,Amador,Contra%20Costa&propertyTypeList=5,10&areaValuesDisplayText=Alameda,Amador,Contra%20Costa&propertyTypeDisplayText=Single%20Family,Condo/Coop&propertyClassList=all&set=MTAvNTk=
 let allAreaTypes = [];
 let subAreaTypes;
 let apiAreaTypes;
@@ -167,14 +167,13 @@ function setTimeMenuleft(id) {
 
     let el = document.getElementById(id);
     let menu = document.getElementById(id + '-menu');
-        
+
     leftEl = el.offsetLeft + 'px';
     menu.style.left = leftEl;
 
     if (window.innerWidth <= 768) {
         let menuTop = el.style.top;
-        console.log(menuTop);
-        menu.style.top = menuTop + 30 + 'px';
+        menu.style.top = menuTop + 35 + 'px';
     }
 
     let els = document.querySelectorAll('.sub-menu-time');
@@ -243,7 +242,14 @@ function buildSearchParams() {
     let allArea = document.querySelector('.all-area-input-select').checked;
     let areaValueItems = [];
 
-    if (allArea) {
+    let inputAreaTypes = document.querySelectorAll('.area-input-select');
+    inputAreaTypes.forEach((cEl) => {
+        if (cEl.checked) {
+            areaType = cEl.dataset.type;
+        }
+    });
+    
+    if (!allArea) {
         areaValueItems = document.querySelectorAll('input[data-parent="' + areaType + '"]:checked');
     }
 
@@ -293,8 +299,8 @@ function buildSearchParams() {
 
         let querySrting = 'mlsId=' + mlsId + '&search=' + search + '&timePeriod=' + timePeriod + '&timePeriodValue=' + timePeriodValue + '&areaType=' + areaType + '&areaValueList=' + areaValueSelected + '&propertyTypeList=' + propertySelected + '&areaValuesDisplayText=' + areaValuesDisplayText +'&propertyTypeDisplayText=' + propertyTypeDisplayText;
         let newUrl = url + pathname + '?' + encodeURI(querySrting);
+        newUrl = newUrl.replace('http://localhost:5000', 'http://staging.jw');
 
-        newUrl = newUrl.replace(url, 'http://localhost:5000');
         location.replace(newUrl);
 
     } else {
@@ -361,6 +367,11 @@ onMount(() => {
         border-radius: 5px;
     }
 
+    .search-button-wrapper {
+        display: inline-block;
+        width: 150px;
+    }
+
     .search-button-themed {
         width: 60px;
         height: 30px;
@@ -368,6 +379,7 @@ onMount(() => {
         border: 1px solid #666666;
         border-radius: 5px;
         margin-left: 10px;
+        display: inline-block;
     }
 
     .label {
@@ -403,7 +415,6 @@ onMount(() => {
         width: 230px;
         background-color: white;
         position: absolute;
-        /* border-bottom: 1px solid steelblue; */
     }
 
     .search-menu-wrapper {
@@ -414,9 +425,7 @@ onMount(() => {
         display: inline-block;
     }
 
-    .search-menu-wrapper > .search-button-themed {
-        display: inline-block;
-    }
+    
 
     .elipsis-container {
         width: 100%;
@@ -440,14 +449,20 @@ onMount(() => {
     @media only screen and (max-width: 768px) {
 		.select-menu-block-outter {
             width: 100%;
-            left: 0px !important;
+            /* left: 0px !important; */
             position: absolute;
         }
 
+        .search-menu-wrapper {
+            text-align: center;
+        }
+
+        .type-menu {
+            margin-right: 10px;
+        }
+
         .themed {
-            width: 100%;
-            float: left;
-            margin-left: 0 !important;
+            width: 460px;
             margin-bottom: 10px;
         }
 
@@ -455,19 +470,16 @@ onMount(() => {
             top: 10px;
         }
 
-        .search-button-themed {
-            float: left;
+        .search-button-wrapper {
             width: 100%;
+            text-align: center;
         }
 
-        .search-button-themed {
-            float: left;
-            width: 100%;
+         .search-button-themed {
+            margin-left: 10px;
+            display: inline-block;
         }
 
-        .first-search-button-themed {
-            margin-bottom: 10px !important;
-        }
         .search-button-themed {
             margin-left: 0 !important;
         }
@@ -553,16 +565,18 @@ onMount(() => {
                     <Select items={[]} menuTitle='Time Frame' itemType="time-values" parentId='time-values' on:close={closeTimeMenu} searchParam={params.timePeriodValue}/>
                 </div>    
             </div>
-        <div class="search-button-themed first-search-button-themed">
-        <div class="label">
-            <button on:click|preventDefault on:click={clearAll} class="menu-button search-menu-button">Reset</button>
-        </div>
-        </div>
-        <div class="search-button-themed">
+        <div class="search-button-wrapper">
+            <div class="search-button-themed first-search-button-themed">
             <div class="label">
-                <button on:click|preventDefault class="menu-button search-menu-button" on:click={buildSearchParams}>Search</button>
+                <button on:click|preventDefault on:click={clearAll} class="menu-button search-menu-button">Reset</button>
             </div>
-        </div>    
+            </div>
+            <div class="search-button-themed">
+                <div class="label">
+                    <button on:click|preventDefault class="menu-button search-menu-button" on:click={buildSearchParams}>Search</button>
+                </div>
+            </div>
+        </div>
     </div>
     
     {:else} 

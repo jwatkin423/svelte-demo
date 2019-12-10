@@ -13,7 +13,6 @@ onMount(() => {
     var elems = document.querySelectorAll('select');
     console.log(elems);
     var instances = M.FormSelect.init(elems, options);
-    console.log(instances);
 });
 
 </script>

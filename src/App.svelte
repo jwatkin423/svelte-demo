@@ -12,11 +12,13 @@ import chartData from './helpers/chart';
 import { getAllUrlParams } from './helpers/parse-search-query';
 import SearchParams from './components/SearchParameters.svelte';
 
+// let baseUrl = '';
 let baseUrl = 'http://staging.jw';
 
 let queryParams = window.location.search;
 let rawLocation = window.location.pathname;
 let host = window.location.host;
+let origin = window.location.origin;
 
 let protocol = window.location.protocol;
 let location = rawLocation.replace('public', 'data');
@@ -36,7 +38,7 @@ function getKey(event) {
 
 if (host !== 'localhost:5000') {
 	baseUrl = protocol + '//' + host;
-}
+} 
 
 let title = "Terradatum";
 
@@ -86,6 +88,7 @@ onMount(() => {
 	.search-params {
 		background-color: #F2F2F2;
 		height: 40px;
+		margin-top: 10px;
 	}
 
 	@media only screen and (min-height: 1024px) {
@@ -131,7 +134,14 @@ onMount(() => {
 				<SearchParams searchParams={urlParams} />
 			</div>
 
-			<Footer disclaimer={pageData.strDisclaimer}/>
+			<Footer 
+				disclaimer={pageData.strDisclaimer} 
+				userType={pageData.userType} 
+				mlsName={pageData.mlsName} 
+				mlsId={pageData.mlsId}
+				sponsorDetails={pageData.sponsor_detail}
+				sponsorList={pageData.sponsor_list}
+				/>
 		{:else}	
 			<Nav background_color='#019184'/>
 				<Error />

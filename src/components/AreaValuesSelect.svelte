@@ -213,8 +213,11 @@ function currentAVType(thisEl) {
 
     @media only screen and (max-width: 768px) {
 		.sub-menu-area {
-            width: 100% !important;
-            left: 0px !important;
+            display: inline-block;
+            text-align: left;
+            margin-left: 60px;
+            width: -webkit-fill-available;
+            margin-right: 10px;
         }
 
 	}

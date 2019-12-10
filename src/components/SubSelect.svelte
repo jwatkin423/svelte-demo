@@ -106,11 +106,17 @@ onMount(() => {
         float: right;
     }
 
+    @media only screen and (max-width: 768px) {
+        .sub-menu-item {
+            text-align: left;
+            margin-left: 90px;
+        }
+    }
 </style>
 
 {#if data.length > 0}
     <div class="sub-menu-property" id="{type}" >
-        <hr />
+
         <div class="sub-menu-item">
                 <div class='option-wrapper'>
                     <input class='property-input-select-item input-select-item all-{type}' data-parent='all-{type}' type='checkbox' name='all-{type}' value='all' on:click="{() => {
@@ -141,7 +147,7 @@ onMount(() => {
                 </div>
         </div>
     {/each}
-    <hr />
+
     </div>
     
 {/if}
