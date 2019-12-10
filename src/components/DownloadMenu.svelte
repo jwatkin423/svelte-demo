@@ -51,9 +51,7 @@ let baseUrl = window.location.origin;
 let urlParams = getAllUrlParams(window.location.href);
 
 let location = rawLocation.replace('public', 'pdf') + '/';
-if (window.location.origin === 'http://localhost:5000') {
-    baseUrl = 'http://staging.jw'
-}
+
 let url = baseUrl + location + urlParams.set + '=' + '/' + queryParams;
 let disabled = true;
 

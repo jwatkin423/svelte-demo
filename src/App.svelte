@@ -12,8 +12,8 @@ import chartData from './helpers/chart';
 import { getAllUrlParams } from './helpers/parse-search-query';
 import SearchParams from './components/SearchParameters.svelte';
 
-// let baseUrl = '';
-let baseUrl = 'http://staging.jw';
+let baseUrl = '';
+// let baseUrl = 'http://staging.jw';
 
 let queryParams = window.location.search;
 let rawLocation = window.location.pathname;
