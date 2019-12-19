@@ -103,8 +103,6 @@ function formatYear(period) {
         margin-top: 10px;
         margin-left: auto;
         margin-right: auto;
-        border-collapse: collapse; 
-        border-spacing: 0;
     }
 
     .table-mnth-ytd {
@@ -120,6 +118,7 @@ function formatYear(period) {
         font-size: 10px;
         font-weight: 600;
         width: 150px;
+        color: #333333;
     }
 
     td {
@@ -128,6 +127,7 @@ function formatYear(period) {
         font-size: 16px;
         font-weight: 600;
         width: 150px;
+        color: #333333;
     }
 
     .chng {
@@ -203,6 +203,7 @@ function formatYear(period) {
                             <i class="chng chng-dn"><Icon class="chng-dn" tempId="change-prct-dn" icon={icon[1]} /></i>
                             ({((change/initialMonth * 100)).toFixed(2).toString().replace(/\-/, '')})
                         {/if}
+                        %
                      </td>
                 </tr>
             </tbody>
