@@ -22,8 +22,9 @@ export function test(j) {
 </script>
 
 <style>
-.td-list-par {
+	.td-list-par {
 		height: 25px;
+		line-height: 10px;
 		vertical-align: middle;
 	}
 

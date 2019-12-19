@@ -12,17 +12,17 @@ export let params;
 export let url;
 
 let initialPropertyClassList = 'none';
-$: initialPropertyClassList = params.propertyClassList ? params.propertyClassList : false;
+$: initialPropertyClassList = typeof (params) === 'undefined' ? false : params.propertyClassList;
 
 let initalAreaType = 'none';
-$: initialAreaType = params.areaType ? params.areaType : false;
+$: initialAreaType = params ? params.areaType : false;
 
 //&set=MTAvNTk=
 
 let pathname = window.location.pathname;
 let isLoading = true;
 
-let mlsId;
+export let mlsId;
 let data;
 let searchMenuData = false;
 $: searchMenuData =  data;
@@ -30,7 +30,6 @@ let searchURL;
 
 const propertyTypesURL = '/demo/data/get-property-types';
 
-$: mlsId = params.mlsId;
 $: searchURL = url + propertyTypesURL + '/' + mlsId;
 $: searchParamsURL = url;
 
@@ -195,21 +194,22 @@ function closeTimeMenu() {
 let propertySelectedArr = [];
 let propertyDisplayValueArr = [];
 let propertySelected = '';
-let areaType;
-$: areaType = params.areaType;
+let areaType = '';
+$: areaType = params ? params.areaType : ''; 
 let areaValueSelectedArr = [];
 let areaValueSelected = '';
 let timePeriod;
-$: timePeriod = params.timePeriod;
+$: timePeriod = params ? params.timePeriod : '';
 let timePeriodValue;
-$: timePeriodValue = params.timePeriodValue;
-let search = params.search;
+$: timePeriodValue = params ? params.timePeriodValue : '';
+let search = '' 
+$: search = params ? params.search : '';
 let timeEls = [];
 let areaValuesDisplayText;
 let areaValuesDisplayTextArr = [];
-$: areaValuesDisplayText = params.areaValuesDisplayText;
+$: areaValuesDisplayText = params ? params.areaValuesDisplayText : '';
 let propertyTypeDisplayText;
-$: propertyTypeDisplayText = params.propertyTypeDisplayText;
+$: propertyTypeDisplayText = params ? params.propertyTypeDisplayText : '';
 let areaValue;
 
 function setAvType(e) {
@@ -298,8 +298,8 @@ function buildSearchParams() {
         }
 
         let querySrting = 'mlsId=' + mlsId + '&search=' + search + '&timePeriod=' + timePeriod + '&timePeriodValue=' + timePeriodValue + '&areaType=' + areaType + '&areaValueList=' + areaValueSelected + '&propertyTypeList=' + propertySelected + '&areaValuesDisplayText=' + areaValuesDisplayText +'&propertyTypeDisplayText=' + propertyTypeDisplayText;
-        let newUrl = url + pathname + '?' + encodeURI(querySrting);
-        newUrl = newUrl.replace('http://localhost:5000', 'http://staging.jw');
+        // let newUrl = url + pathname + '?' + encodeURI(querySrting);
+        // newUrl = newUrl.replace('http://localhost:5000', 'http://staging.jw');
 
         location.replace(newUrl);
 

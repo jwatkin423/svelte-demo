@@ -7,10 +7,9 @@ export function tickMarks(maxValue) {
 
     if (maxValue > 10) {
     
-        let max = maxValue;
         let tickCount = 8;
 
-        let uTsize = max/(tickCount -1);
+        let uTsize = maxValue/(tickCount -1);
         let x = Math.ceil(Math.log10(uTsize) -1 );
         let pow10x = Math.pow(10, x);
         let roundedTickRange = Math.ceil(uTsize / pow10x) * pow10x;
@@ -27,7 +26,6 @@ export function tickMarks(maxValue) {
 
         let tempTotal = 0;
         for (var i = 0; tempTotal < tickCeiling; i++) {
-            console.log(i);
             tempTotal = i;
             yTickArrayTemp.push(tempTotal);
         }

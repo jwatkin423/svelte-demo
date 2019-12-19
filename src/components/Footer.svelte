@@ -19,6 +19,7 @@ let n = d.getFullYear();
     .footer-area {
 		display: flex;
         color: #666666;
+        margin-right: 10px;
     }
 
     .sponsorship-text-wrapper {

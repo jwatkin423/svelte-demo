@@ -12,8 +12,10 @@ export let p_color;
 export let s_color;
 
 export let showDollar;
-
 $: dollar = showDollar ? '$' : '';
+
+export let chartType = '';
+
 
 let icon = [faCaretUp, faCaretDown, faCircle];
 
@@ -21,28 +23,35 @@ let count = [];
 
 $: initialMonth = data[0];
 $: lastMonth = data[data.length - 1];
-$: change = (lastMonth - initialMonth).toFixed(2);
+$: change = (lastMonth - initialMonth).toFixed(1);
 $: monthTwo = data[2];
-$: mthChange = (monthTwo - initialMonth).toFixed(2);
-$: ytdChange = (data[3] - data[1]).toFixed(2);
-$: percentMnthChange = Math.ceil(((mthChange / monthTwo) * 100)).toFixed(2);
-$: percentYtdChange = Math.ceil(((ytdChange / data[3]) * 100)).toFixed(2);
+$: mthChange = (monthTwo - initialMonth).toFixed(1);
 
+$: ytdChange = (data[3] - data[1]).toFixed(1);
+$: percentMnthChange = Math.ceil(((mthChange / initialMonth) * 100)).toFixed(1);
+$: percentYtdChange = Math.ceil(((ytdChange / data[3]) * 100)).toFixed(1);
 
 let periodSplits;
 
 function formatNumber(num) {
+
     if (num) {
+
+        if (chartType !== 'fsldMsi') {
+            num = num.replace(/\.[0-9]{1}$/, '');
+        }
+
         if (num < 0 ) {
-            // num = num.toString().replace(/\-/, '');
-            num = num.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            num = num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
             num = num.replace(/\-/, '');
-            num = "(-" + dollar + num + ")";
+            num =  dollar + num;
         } else {
             num = num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
             num = dollar + num;
         }
     }
+
+    
 
     return num;
 }
@@ -106,9 +115,9 @@ function formatYear(period) {
     }
 
     th {
-        height: 10pt;
+        height: 10px;
         line-height: 10px;
-        font-size: 10pt;
+        font-size: 10px;
         font-weight: 600;
         width: 150px;
     }
@@ -189,12 +198,11 @@ function formatYear(period) {
                     <td>
                         {#if change >= 0}
                             <i class="chng chng-up"><Icon class="chng-up" tempId="change-pcrt-up" icon={icon[0]} /></i>
-                            {(lastMonth/initialMonth).toFixed(2)}
+                            {((change/initialMonth) * 100).toFixed(2)}
                         {:else}
                             <i class="chng chng-dn"><Icon class="chng-dn" tempId="change-prct-dn" icon={icon[1]} /></i>
-                            (-{(lastMonth/initialMonth).toFixed(2)})
+                            ({((change/initialMonth * 100)).toFixed(2).toString().replace(/\-/, '')})
                         {/if}
-                        %
                      </td>
                 </tr>
             </tbody>
@@ -222,7 +230,7 @@ function formatYear(period) {
                         {#if mthChange >= 0}
                             {percentMnthChange}
                         {:else}
-                            (-{percentMnthChange})
+                            ({percentMnthChange})
                         {/if}
                         %
                     </td>
@@ -237,7 +245,7 @@ function formatYear(period) {
                             {percentYtdChange}
                             <i class="chng chng-up"><Icon class="chng-up-ytd" tempId="change-up" icon={icon[0]} /></i>
                         {:else}
-                            (-{percentYtdChange})
+                            ({percentYtdChange})
                             <i class="chng chng-dn"><Icon class="chng-dn-ytd" tempId="change-prct-dn" icon={icon[1]} /></i>
                         {/if}
                         %

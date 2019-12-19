@@ -6,8 +6,6 @@ export let searchType;
 // imports
 import ChartTitleBar from '../components/ChartTitleBar.svelte';
 import Link from '../components/Link.svelte';
-// import NewChart from '../charts/newChart.svelte';
-// import LineChart from '../charts/lineChart.svelte';
 import MnthYtd from '../charts/newChart.svelte';
 import { tickMarks } from '../utils/_utils';
 import { onMount } from 'svelte';
@@ -130,8 +128,6 @@ function processPoints (data) {
 		margin-bottom: 10px;
 		display: flex;
 		flex-direction: column;
-		/* flex-basis: 100%;
-		flex: 1 1 auto; */
 	}
 
 	.chart-wrapper {
@@ -162,7 +158,6 @@ function processPoints (data) {
      .td-sidebar {
          width: 202px;
 		 float: left;
-         margin-right: 0;
 		 margin-top: 0px;
  	}
 	
@@ -231,17 +226,9 @@ function processPoints (data) {
  		}
  	}
 
-	@media only screen and (min-height: 801px) {
-		 .chart-wrapper {
-			 /* height: 50%; */
-		 } 
-	}
-
  	@media only screen and (max-height: 800px) {
  		.content-area {
 			 height: 75%;
-			 margin-left: 0 !important;
-			 margin-right: 0 !important;
 		 } 
 
 		 .chart-wrapper {
@@ -295,7 +282,8 @@ function processPoints (data) {
 					searchType={searchType} 
 					p_color={p_color} 
 					s_color={s_color}
-					showDollar={dollar}/>
+					showDollar={dollar}
+					chartType={barData.key}/>
 			</div>
 			
 			{#if searchType !== 'mnth-ytd'}
@@ -306,6 +294,7 @@ function processPoints (data) {
 					s_color={s_color} 
 					yPoints={yT} 
 					mappedPoints={mappedPoints} 
+					showDollar={dollar}
 					reportYear={year}/>
 			{:else}	
 			<div class="chart-wrapper"> -->

@@ -21,6 +21,7 @@ export let logo = false;
 export let tempData = {};
 export let searchParams;
 export let baseSearchUrl;
+export let mlsId = '';
 
 let data;
 
@@ -87,8 +88,16 @@ function setKey(e) {
     });
 }
 
+function closeOpenHovers() {
+    desc = document.querySelector('.description');
+	desc.classList.remove("enabled");
+	desc.classList.remove("heyo");
+	desc.classList.remove("active");
+}
+
 // toggle the menu on or off
 window.onclick = function(e) {
+    console.log(e.target);
     // console.log(e.target);
     if(!e.target.matches('.dropbtn') 
         && !e.target.matches('svg.fa-svelte') 
@@ -127,9 +136,14 @@ window.onclick = function(e) {
         if (showHamburger) {
             toggleShowHamMenu();
         }
-    }  
+    }
 }
 
+window.ontouchend = function(e) {
+    if (!e.target.matches('circle.enabled')) {
+        closeOpenHovers();
+    }
+}
 </script>
 
 <style>
@@ -160,8 +174,8 @@ window.onclick = function(e) {
 
     img {
         width: 100%;
-        max-height: 65px;
-        max-width: 202px;
+        height: 65px;
+        width: 202px;
         margin-left: 10px;
         margin-top: 5px;
         margin-bottom: 5px;
@@ -311,7 +325,7 @@ window.onclick = function(e) {
 	</div>
 </div>
 <div class:show="{showClass === true}" class="dropdown-content" id="search-menu-content">
-    <Menu params={searchParams} url={baseSearchUrl}/>
+    <Menu params={searchParams} url={baseSearchUrl} mlsId={mlsId}/>
 </div>
 <div class="ham-menu">
     <a 

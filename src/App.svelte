@@ -93,7 +93,7 @@ onMount(() => {
 
 	@media only screen and (min-height: 1024px) {
 		main {
-			height: 880px;
+			height: 850px;
 		}
 	}
 
@@ -126,7 +126,13 @@ onMount(() => {
 {:else}	
 	<main>
 		{#if !errorStatus}
-			<Nav background_color={pageData.p_color} logo={logo_url} on:passKey={getKey} searchParams={urlParams} baseSearchUrl={baseUrl}/>
+			<Nav 
+				background_color={pageData.p_color} 
+				logo={logo_url} 
+				on:passKey={getKey} 
+				searchParams={urlParams} 
+				baseSearchUrl={baseUrl}
+				mlsId={pageData.mlsId}/>
 			
 			<Index ddsData={pageData} mobileKey={key} searchType={urlParams.search}/>
 			

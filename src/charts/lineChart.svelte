@@ -2,7 +2,7 @@
 import chartStore from '../utils/chart-store';
 import Tspan from '../charts/tspan.svelte';
 import { scaleLinear } from 'd3-scale';
-
+import { onMount } from 'svelte';
 // report period props
 export let reportPeriod;
 export let reportYear;
@@ -20,12 +20,16 @@ export let s_color;
 // mapped points
 export let mappedPoints = [];
 
+// show dollar in tool tip
+export let showDollar;
+$: dollar = showDollar ? '$' : '';
+
 // tooltips
 let heyo = false;
 
 // chart and misc dimensions
 // let padding = { top: 45, right: 35, bottom: 60, left: 75 };
-let padding = { top: 45, right: 5, bottom: 15, left: 50 };
+let padding = { top: 35, right: 20, bottom: 40, left: 30 };
 let width = 1048;
 let height = 575;
 let textWidth = 600;
@@ -51,13 +55,15 @@ $: xTicks = reportPeriod;
 // initializing x scale
 $: xScale = scaleLinear()
 	.domain([0, xTicks.length])
-	.range([padding.left, width + 5]);
+	// .range([padding.left, width + (width > 1048  ? 20 : - 10)]);
+	.range([padding.left, width]);
+	// .range([padding.left, width]);
 
 // initializing y scale
 $: yScale = scaleLinear()
-	.domain([0, Math.max.apply(null, yTicks)])
+	.domain([Math.min.apply(null, yTicks), Math.max.apply(null, yTicks)])
 	// .range([height - padding.bottom, padding.top]);
-	.range([height - 60, padding.top]);
+	.range([height - 55, padding.top]);
 
 // chart data mapped
 $: chartData = mappedPoints.map((mp, i) => {
@@ -69,12 +75,16 @@ $: chartData = mappedPoints.map((mp, i) => {
 
 // chart line
 $: path = `M${chartData.map(mp => `${xScale(mp.x)},${yScale(mp.y)}`).join('L')}`;
-$: path2 = `M${chartData.map(mp => `${xScale(mp.x)},${yScale(mp.y)}`).join('L')}`;
+// $: path2 = `M${chartData.map(mp => `${xScale(mp.x)},${yScale(mp.y)}`).join('L')}`;
 
 // set the inner width of the chart
-$: innerWidth = width - (padding.left + padding.right);
+$: innerWidth = width;
 // set the text width
 $: textWidth = innerWidth / xTicks.length;
+
+let lineHeight = -height;
+let line = width;
+$: line = width - (width > 1040 ? 40 : 10);
 
 // format ticks
 function formatTick(tick) {
@@ -117,13 +127,35 @@ $:month = monthYear.month;
 let year;
 $:year = monthYear.year;
 
+const months = {
+	'Jan': "January",
+	'Feb': 'February',
+	'Mar': 'March',
+	'Apr': 'April',
+	'May': 'May',
+	'Jun': 'June',
+	'Jul': 'July',
+	'Aug': 'August',
+	'Sep': 'September',
+	'Oct': 'October',
+	'Nov': 'November',
+	'Dec': 'December'
+};
 
+let currentYear;
+let ttReportPeriodData = [];
+let fullMonth;
+$: ttReportPeriodData = reportPeriod.map((rp) => {
+	if (rp.includes('<br>')) {
+		let chunks = rp.split('<br>');
+		currentYear = chunks[1];
+		fullMonth = months[chunks[0]];
+	} else {
+		fullMonth = months[rp];
+	}
 
-let test;
-
-let lineHeight = -height + 58;
-let line = width;
-$: line = width - 20;
+	return fullMonth + ' ' + currentYear;
+});
 
 function showToolTip(i, leftX, topY, point) {
 	desc = document.getElementById('desc');
@@ -133,15 +165,21 @@ function showToolTip(i, leftX, topY, point) {
 	topY = (topY - 70) + 'px';
 	desc.style.left = leftX;
 	desc.style.top = topY;
-	desc.style.color = primary_fill_color;
-	let date = reportPeriod[i];
-	
-	if (date.includes('<br>')) {
-		date = date.replace('<br>', '');
-	}
+	let date = ttReportPeriodData[i];
+
 	let py = point.y.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-	let p = py + " (" + date + ")";
-	desc.innerHTML = p;
+	let hoverDate = date ;
+	let units = py;
+
+	units = py + ' units';
+	if (showDollar) {
+		units = dollar + py;
+	}
+
+	let pDateHover = document.getElementById('date-hover');
+	let pUnitHover = document.getElementById('unit-hover');
+	pDateHover.innerHTML = date;
+	pUnitHover.innerHTML = units;
 }
 
 function formatText(tick) {
@@ -198,24 +236,32 @@ function hideToolTip() {
 		display: block;
     }
 
+	g.axis {
+		width: 100%;
+	}
+
 	.tick {
 		font-family: Helvetica, Arial;
-		font-size: 14px;
+		font-size: 10px;
 	}
 
 	.tick line {
-		stroke: #737373;
+		stroke: #666666;
 		stroke-opacity: .25;
 	}
 
+	.y-axis.tick-0 {
+		color: #000000;
+	}
+
 	.tick text {
-		fill: #737373;
+		fill: #666666;
 		text-anchor: start;
 		white-space: normal !important;
 	}
 
 	.tick.tick-0 line {
-		color: black;
+		stroke: black;
 	}
 
 	.x-axis .tick text {
@@ -226,7 +272,7 @@ function hideToolTip() {
 		fill: none;
 		stroke-linejoin: round;
 		stroke-linecap: round;
-		stroke-width: 4;
+		stroke-width: 1;
 	}
 
 	.heyo:hover {
@@ -244,22 +290,31 @@ function hideToolTip() {
 	.description {
 		pointer-events: none;
 		position: fixed;
-		font-size: 12px;
+		font-size: 10px;
 		text-align: center;
-		background: #FFF;
-		padding: 5px 10px;
+		background: #F2F2F2;
 		z-index: 9999;
-		height: 20px;
-		line-height: 20px;
-		margin: 0 auto;
-		color: #21669e;
+		height: 45px;
+		line-height: 15px;
+		width: 90px;
+		color: #000000;
 		border-radius: 5px;
-		box-shadow: 0 0 0 1px #eee;
 		-moz-transform: translateX(-50%);
 		-ms-transform: translateX(-50%);
 		-webkit-transform: translateX(-50%);
 		transform: translateX(-50%);
 		display: none;
+		vertical-align: middle;
+	}
+
+	 p#date-hover {
+		margin-top: 8px;
+		margin-bottom: 0 !important;
+	}
+
+	p#unit-hover {
+		margin-top: 0;
+		margin-bottom: auto;
 	}
 	
 	.description.active {
@@ -279,6 +334,10 @@ function hideToolTip() {
 		border-top: 10px solid rgb(179, 179, 179);
 	}
 
+	.x-axis .tick text {
+ 		font-size: 10px;
+	}		
+
  	@media only screen and (max-width: 450px) {
 		.description.active {
 			font-size: 10px;
@@ -288,21 +347,10 @@ function hideToolTip() {
 		}
  	} 
 
- 	@media only screen and (min-height: 400px) and (max-height: 799px) {
- 		.x-axis .tick text {
- 			font-size: 10px;
-		}		
- 	}
-
- 	@media only screen and (min-height: 800px) {
- 		.x-axis .tick text {
-			 font-size: 12px;
-		}		
-	 }
-
 	 @media only screen and (max-width: 768px) {
 		 .chart {
 			 margin-left: 0px !important;
+			 height: calc(100% - 60px);
 		 }
 	 }
 	
@@ -314,58 +362,55 @@ function hideToolTip() {
 	<svg>
 
 		<!-- y axis -->
-		<!-- <g class="axis y-axis" transform="translate(0,{padding.top})"> -->
-			{#each yTicks as tick, i}
-				<!-- <g class="tick tick-{tick}" transform="translate(5, {yScale(tick) - padding.bottom})"> -->
-				<g class="tick tick-{tick}" transform="translate(5, {yScale(tick)})">
-					<line x1="40px" x2="{line - (width < 1200 ? 10 : 60)}"></line>
-					<text y="0">{tick > 10 ? formatTick(tick) : tick}</text>
-				</g>
-			{/each}
+		{#each yTicks as tick, i}
+			<g class="tick y-axis tick-{tick}" transform="translate(20, {yScale(tick)})">
+				<line x1="0" x2="94%"></line>
+				<text dx="0" y="0">{tick >= 100 ? formatTick(tick) : tick}</text>
+			</g>
+		{/each}
 		<!-- </g> -->
 
 		<!-- x axis -->
 		<g class="axis x-axis">
 			{#each xTicks as tick, i}
-				<g class="tick tick-{ tick }" transform="translate({xScale(i)},{height - 35})">
+				<g class="tick tick-{ tick }" transform="translate({xScale(i) + 10},{height - 40})" >
 					
-                    {#if !tick.includes('<br>') }
-						<line class="small-tick" y1="-25" y2="3" x1="0" x2="0"></line>
+                    {#if !tick.includes('<br>') && i !== (xTicks.length - 1) }
+						<line class="small-tick" y1="-15" y2="0" x1="0" x2="0"></line>
 					{:else if (tick.includes('<br>') && i !== (xTicks.length - 1))}
-						<line y1="{lineHeight}" y2="-15" x1="0" x2="0"></line>
-						<text dx=0>{formatText(tick)}</text>
+						<line y1="{lineHeight + 65}" y2="-10" x1="0" x2="0"></line>
+						<text dx=0 y="8">{formatText(tick)}</text>
 					{/if}
 					{#if i === (xTicks.length - 1) }
-						<line y1="{lineHeight}" y2="-15" x="0" x2="0"></line>
-						<text dx=0>{formatLastTick(tick)}</text>
+						<line y1="{lineHeight + 65}" y2="-10" x1="0" x2="0"></line>
+						<text dx=0 y="8">{formatLastTick(tick)}</text>
 					{/if}	
 				</g>
 			{/each}
-		</g>
+		<!-- </g>
 
-		<g class="axis x-axis">
+		<g class="axis x-axis"> -->
 			{#each xTicks as tick, i}
-				<g class="tick tick-{ tick }" transform="translate({xScale(i)},{height - 25})">
+				<g class="tick tick-{ tick }" transform="translate({xScale(i) + 10},{height - 30})">
                     {#if (tick.includes('<br>') && i !== (xTicks.length - 1))}
-						<text dx=0>{formatYear(tick)}</text>
+						<text dx=0 y="8">{formatYear(tick)}</text>
 					{/if}
 					{#if i === (xTicks.length - 1) }
-						<text dx=0>{formatLastTickYear(tick)}</text>
+						<text dx=0 y="8">{formatLastTickYear(tick)}</text>
 					{/if}	
 				</g>
 			{/each}
+			<g transform="translate(10, 0)">
+				<!-- data -->
+				<path class="path-line" d={path} stroke={primary_fill_color}></path>
+
+				<!-- set the circles for the data points -->
+				{#each chartData as point, i}
+					<circle class="enabled" class:heyo cx='{xScale(point.x)}' cy='{yScale(point.y)}' r='5' fill={primary_fill_color}
+					on:mouseover={(e) => {showToolTip(i, e.pageX, e.clientY, point) }} 
+					on:mouseleave={hideToolTip}/>
+				{/each}
 		</g>
-
-		<!-- data -->
-		<path class="path-line" d={path} stroke={primary_fill_color}></path>
-
-		<!-- set the circles for the data points -->
-		<g>
-			{#each chartData as point, i}
-				<circle class="enabled" class:heyo cx='{xScale(point.x)}' cy='{yScale(point.y)}' r='5' fill={primary_fill_color}
-				on:mouseover={(e) => {showToolTip(i, e.pageX, e.clientY, point) }}
-				on:mouseout={hideToolTip} />
-			{/each}
 		</g>
         
 	</svg>
@@ -377,4 +422,4 @@ function hideToolTip() {
 	<h3>Still processing the data ... </h3>
 {/if}
 
-<div class="description" id='desc'></div>
+<div class="description" id='desc'><p id='date-hover'></p><p id='unit-hover'></p></div>
