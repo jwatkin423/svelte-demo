@@ -14,7 +14,7 @@ export let yPoints;
 $: yTicks = yPoints;
 
 // primary color prop
-export let p_color;
+export let p_color = false;
 export let s_color;
 
 // mapped points
@@ -22,14 +22,21 @@ export let mappedPoints = [];
 
 // show dollar in tool tip
 export let showDollar;
+$: console.log(dollar);
 $: dollar = showDollar ? '$' : '';
 
 // tooltips
 let heyo = false;
+export let rightPadding;
 
 // chart and misc dimensions
-// let padding = { top: 45, right: 35, bottom: 60, left: 75 };
-let padding = { top: 35, right: 20, bottom: 40, left: 30 };
+let padding = { 
+	top: 35, 
+	right: 50, 
+	bottom: 40, 
+	left: 30 
+};
+
 let width = 1048;
 let height = 575;
 let textWidth = 600;
@@ -41,29 +48,40 @@ let desc;
 let xScale = scaleLinear();
 let yScale = scaleLinear();
 
+// initializing x scale
+$: xScale = scaleLinear()
+	.domain([0, xTicks.length])
+	.range([padding.left, width  - rightPadding]);
+
+// initializing y scale
+$: yScale = scaleLinear()
+	.domain([Math.min.apply(null, yTicks), Math.max.apply(null, yTicks)])
+	.range([height - padding.bottom, padding.top]);
+
 // chart data key/value pair
 let chartData;
 let path;
 
 // primary color
-$: primary_fill_color = p_color;
+$: primary_fill_color = p_color ? p_color : '#019184';
 
 // report period for the x axis
 $: xTicks = reportPeriod;
 
+let r = 4;
 
-// initializing x scale
-$: xScale = scaleLinear()
-	.domain([0, xTicks.length])
-	// .range([padding.left, width + (width > 1048  ? 20 : - 10)]);
-	.range([padding.left, width]);
-	// .range([padding.left, width]);
+$: setR(width);
 
-// initializing y scale
-$: yScale = scaleLinear()
-	.domain([Math.min.apply(null, yTicks), Math.max.apply(null, yTicks)])
-	// .range([height - padding.bottom, padding.top]);
-	.range([height - 55, padding.top]);
+function setR() {
+
+	if (window.innerWidth >= 1024) {
+		r = 4;
+	} else if (window.innerWidth < 1024 && window.innerWidth >= 768) {
+		r = 3;
+	} else {
+		r = 2;
+	}
+}
 
 // chart data mapped
 $: chartData = mappedPoints.map((mp, i) => {
@@ -83,8 +101,9 @@ $: innerWidth = width;
 $: textWidth = innerWidth / xTicks.length;
 
 let lineHeight = -height;
-let line = width;
-$: line = width - (width > 1040 ? 40 : 10);
+let line = width - padding.right;
+$: line = width * .95;
+
 
 // format ticks
 function formatTick(tick) {
@@ -96,7 +115,7 @@ function formatTick(tick) {
 		}
 	}	
 
-	if (tick >= 1000)  {
+	if (tick >= 1000 && tick < 1000000)  {
 		tick = (tick / 1000);
 		tick = Math.ceil(tick);
 		tick += 'K';
@@ -106,6 +125,10 @@ function formatTick(tick) {
 		tick = (tick / 1000000);
 		tick = Math.ceil(tick);
 		tick += 'M';
+	}
+
+	if (showDollar) {
+		tick = dollar + tick;
 	}
 
 	return tick;
@@ -225,8 +248,9 @@ function hideToolTip() {
 		margin-top: 0px;
 		background-color: #ffffff;
 		display: block;
-		height: 100%;
+		height: 576px;
 		margin-left: 10px;
+		max-width: 1048px;
 	}
 
 	svg {
@@ -359,58 +383,56 @@ function hideToolTip() {
 {#if path.length > 1}
 
 <div class="chart" bind:clientWidth={width} bind:clientHeight={height}>
-	<svg>
+	<svg xmlns="http://www.w3.org/2000/svg">
 
 		<!-- y axis -->
 		{#each yTicks as tick, i}
 			<g class="tick y-axis tick-{tick}" transform="translate(20, {yScale(tick)})">
-				<line x1="0" x2="94%"></line>
-				<text dx="0" y="0">{tick >= 100 ? formatTick(tick) : tick}</text>
+				<line x1="25" x2="{line}"></line>
+				<text dx="0" y="3">{tick >= 100 ? formatTick(tick) : tick}</text>
 			</g>
 		{/each}
 		<!-- </g> -->
 
 		<!-- x axis -->
-		<g class="axis x-axis">
+		<g class="axis x-axis" transform="translate(0,0)">
 			{#each xTicks as tick, i}
-				<g class="tick tick-{ tick }" transform="translate({xScale(i) + 10},{height - 40})" >
+				<g class="tick tick-{ tick }" transform="translate({xScale(i) + 20},{height - 40})" >
 					
                     {#if !tick.includes('<br>') && i !== (xTicks.length - 1) }
-						<line class="small-tick" y1="-15" y2="0" x1="0" x2="0"></line>
+						<line class="small-tick" y1="0" y2="10" x1="0" x2="0"></line>
 					{:else if (tick.includes('<br>') && i !== (xTicks.length - 1))}
-						<line y1="{lineHeight + 65}" y2="-10" x1="0" x2="0"></line>
-						<text dx=0 y="8">{formatText(tick)}</text>
+						<line y1="0" y2="-88%" x1="0" x2="0"></line>
+						<text dx=0 y="16">{formatText(tick)}</text>
 					{/if}
 					{#if i === (xTicks.length - 1) }
-						<line y1="{lineHeight + 65}" y2="-10" x1="0" x2="0"></line>
-						<text dx=0 y="8">{formatLastTick(tick)}</text>
+						<line y1="0" y2="-88%" x1="0" x2="0"></line>
+						<text dx=0 y="16">{formatLastTick(tick)}</text>
 					{/if}	
 				</g>
 			{/each}
-		<!-- </g>
 
-		<g class="axis x-axis"> -->
 			{#each xTicks as tick, i}
-				<g class="tick tick-{ tick }" transform="translate({xScale(i) + 10},{height - 30})">
+				<g class="tick tick-{ tick }" transform="translate({xScale(i) + 20},{height - 30})">
                     {#if (tick.includes('<br>') && i !== (xTicks.length - 1))}
-						<text dx=0 y="8">{formatYear(tick)}</text>
+						<text dx=0 y="16">{formatYear(tick)}</text>
 					{/if}
 					{#if i === (xTicks.length - 1) }
-						<text dx=0 y="8">{formatLastTickYear(tick)}</text>
+						<text dx=0 y="16">{formatLastTickYear(tick)}</text>
 					{/if}	
 				</g>
 			{/each}
-			<g transform="translate(10, 0)">
+			<g transform="translate(20, 0)">
 				<!-- data -->
 				<path class="path-line" d={path} stroke={primary_fill_color}></path>
 
 				<!-- set the circles for the data points -->
 				{#each chartData as point, i}
-					<circle class="enabled" class:heyo cx='{xScale(point.x)}' cy='{yScale(point.y)}' r='5' fill={primary_fill_color}
+					<circle class="enabled" class:heyo cx='{xScale(point.x)}' cy='{yScale(point.y)}' r='{r}' fill={primary_fill_color}
 					on:mouseover={(e) => {showToolTip(i, e.pageX, e.clientY, point) }} 
 					on:mouseleave={hideToolTip}/>
 				{/each}
-		</g>
+			</g>
 		</g>
         
 	</svg>

@@ -53,7 +53,7 @@ let n = d.getFullYear();
 
     .copy-right {
         display: block;
-        color: #9b9b9b;
+        color: #666666;
         margin-left: 10px;
         font-size: 8px;
     }
@@ -73,18 +73,19 @@ let n = d.getFullYear();
     .copy-right > p {
         margin-bottom: 5px;
     }
-
-
+    
 </style>
 
 <footer>
-    <div class="sponsorship-text-wrapper">
-        <div class="sponsorship-text">
-            {#if (userType == 'broker_sponcer' && sponsorDetails.length > 0)}
-                Information presented by {@html sponsorList}
-            {/if}
+    {#if (userType == 'broker_sponcer' && sponsorDetails.length > 0)}
+        <div class="sponsorship-text-wrapper">
+            <div class="sponsorship-text">
+                
+                    Information presented by {@html sponsorList}
+                
+            </div>
         </div>
-    </div>
+    {/if}
     <div class="footer-area">
         <div class="footer-disclaimer">
             <p>{@html disclaimer}</p>

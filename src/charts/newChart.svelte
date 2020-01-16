@@ -63,7 +63,7 @@ let height = 474;
 let textWidth = 488;
 
 $: bdOne = width < 488 ? 70 : 80;
-$: bdTwo = width < 488 ? 20 : 10;
+$: bdTwo = width < 488 ? 30 : 10;
 
 // primary color
 $: primary_fill_color = p_color;
@@ -123,26 +123,27 @@ function formatLastTickYear(tick) {
 	return reportYear.replace('20', " '");
 }
 
+// format ticks
 function formatTick(tick) {
-
-	if (tick >= 1000)  {
-		tick /= 1000;
-		tick = parseInt(tick);
-		let tMod = tick % 5;
-		console.log(tMod);
-		if (tMod != 0) {
-			tick += tMod;
-		}
-
-		tick += 'K';
-	}
-
+	
 	if (tick >= 100 < 1000) {
 		let tMod = tick % 5;
 		if (tMod != 0) {
 			tick += tMod;
 		}
 	}	
+
+	if (tick >= 1000)  {
+		tick = (tick / 1000);
+		tick = Math.ceil(tick);
+		tick += 'K';
+	}
+
+	if (tick >= 1000000) {
+		tick = (tick / 1000000);
+		tick = Math.ceil(tick);
+		tick += 'M';
+	}
 
 	return tick;
 }
@@ -198,12 +199,13 @@ onMount(() => {
 <style>
 	
 	.chart {
-		width: 100%;
-		max-width: 488px;
-		margin: 0 auto;
-		max-height: 484px;
+		margin-top: 0px;
 		background-color: #ffffff;
+		display: block;
+		height: 100%;
 		/* margin-left: 10px; */
+		width: 488px;
+		margin: auto;
 	}
 
 	svg {
@@ -246,7 +248,6 @@ onMount(() => {
 	}
 
 	.bars rect {
-		/* fill:blue; */
 		stroke: none;
 	}
 	.test {
@@ -257,20 +258,23 @@ onMount(() => {
 	}
 
 	@media only screen and (max-width: 768px) {
+		.chart {
+			width: 100% !important;
+		}
+	}		
+
+	@media only screen and (max-width: 768px) {
 		 .test {
 			 margin-left: 0px !important;
 		 }
 	 }
 
-	@media only screen and (max-width: 488px) {
+	@media only screen and (max-width: 845px) {
 		svg {
 			width: 100% !important;
 		}
 	}
 </style>
-
-<div class="test">
-
 
 {#if yTicks.length > 0}
 
@@ -281,15 +285,17 @@ onMount(() => {
 		{#each yTicks as tick, i}
 			<g class="tick tick-{tick}" transform="translate(5, {yScale(tick) - padding.bottom + 10})">
 				<line x1="30" x2="100%"></line>
-				<text y="-4">{formatTick(tick)}</text>
+				<text dx="0" y="3">{tick >= 100 ? formatTick(tick) : tick}</text>
 			</g>
 		{/each}
 	</g>
-
+<!-- x="{xScale(i) + bdOne}" -->
+<!-- x="{xScale(i) + bdTwo}" -->
 	{#each points as point, i}
 		{#if i == 0}
 		<rect
-					x="{xScale(i) + bdOne}"
+					
+					x="{width * .2}"
 					y="{yScale(point)}"
 					width="{barWidth}"
 					height="{height - padding.bottom - yScale(point)}"
@@ -298,7 +304,8 @@ onMount(() => {
 		{/if}
 		{#if i == 1}
 		<rect
-					x="{xScale(i) + bdTwo}"
+					
+					x="{width * .2 + 45}"
 					y="{yScale(point)}"
 					width="{barWidth}"
 					height="{height - padding.bottom - yScale(point)}"
@@ -308,7 +315,7 @@ onMount(() => {
 		{#if i == 2}
 			
 		<rect
-					x="{xScale(i) + bdOne}"
+					x="{width * .60}"
 					y="{yScale(point)}"
 					width="{barWidth}"
 					height="{height - padding.bottom - yScale(point)}"
@@ -317,7 +324,7 @@ onMount(() => {
 		{/if}
 		{#if i == 3}
 		<rect
-					x="{xScale(i) + bdTwo}"
+					x="{width * .6 + 45}"
 					y="{yScale(point)}"
 					width="{barWidth}"
 					height="{height - padding.bottom  -  yScale(point)}"
@@ -329,41 +336,41 @@ onMount(() => {
 	{#each xTicks as tick, i}
 		<g class="tick" transform="translate({xScale(i)},{height - 10})">
 			{#if i == 0}
-				<text x="{xScale(i) + 110}">{formatText(tick)}</text>
+				<text x="{width * .25 + 5}">{formatText(tick)}</text>
 			{/if}	
 			{#if i == 2}
-				<text x="{xScale(i - 1) - 5}">{tick.toUpperCase()}</text>
+				<text x="{width * .65}">{tick.toUpperCase()}</text>
 			{/if}
 		</g>
 	{/each}
-
+<!-- x="{xScale(i) + bdOne + (10 - (point.length / 2))}" -->
 	{#each points as point, i}
 		<g class="tick">
 			{#if i == 0}
 				<text
 					class="point-text" 
-					x="{xScale(i) + bdOne + (10 - (point.length / 2))}"
+					x="{(width * .2) + (10 - (point.length / 2))}"			
 					y="{yScale(point) - 5}"
 					height="{height}"
 					>{formatPointText(point)}</text>
 			{/if}
 			{#if i == 1}
 				<text 
-					x="{xScale(i) + bdTwo + (10 - (point.length / 2))}"
+					x="{(width * .3) + (10 - (point.length / 2))}"
 					y="{yScale(point) - 5}"
 					height="{height - padding.bottom - yScale(point)}"
 					>{formatPointText(point)}</text>
 			{/if}
 			{#if i == 2}
 				<text 
-					x="{xScale(i) + bdOne + (10 - (point.length / 2))}"
+					x="{(width * .6) + (10 - (point.length / 2))}"
 					y="{yScale(point) - 5}"
 					height="{height - padding.bottom - yScale(point)}"
 					>{formatPointText(point)}</text>
 			{/if}	
 			{#if i == 3}
 				<text 
-					x="{xScale(i) + bdTwo + (10 - (point.length / 2))}"
+					x="{(width * .7) + (10 - (point.length / 2))}"
 					y="{yScale(point) -5}"
 					height="{height - padding.bottom - yScale(point)}"
 					>{formatPointText(point)}</text>
@@ -373,4 +380,3 @@ onMount(() => {
 	</svg>
 </div>
 {/if}
-</div>

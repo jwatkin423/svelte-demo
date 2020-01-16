@@ -27,18 +27,27 @@ $: areaValues = searchParams.areaValuesDisplayText ? decodeURI(searchParams.area
         width: 100%;
         display: inline-block;
         position: relative;
+        line-height: 10px;
+        height: 10px;
+        margin-top: 10px;
     }
 
     .bottom-search-params {
         width: 100%;
         display: inline-block;
         position: relative;
+        line-height: 10px;
+        height: 10px;
     }
 
     .search-param-key-value {
         display: inline-block;
         margin-left: 10px;
+        line-height: 10px;
+        height: 10px;
+        font-size: 10px;
     }
+
 </style>
 
 <div class="container-search-params">

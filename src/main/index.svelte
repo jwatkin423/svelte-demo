@@ -13,7 +13,10 @@ import Linechart from '../charts/lineChart.svelte';
 import chartStore from '../utils/chart-store';
 import Table  from '../components/Table.svelte';
 import KMI from '../components/KMI.svelte';
-import NewLineCharts from '../main/newLineChart.svelte';
+import KMISmall from '../components/KMISmall.svelte';
+import SmartPhoneChart from '../charts/smartphoneLineChart.svelte';
+import TabletPortraitChart from '../charts/tabletPortraitLineChart.svelte';
+import TabletLandScapeChart from '../charts/tabletLandscapeLineChart.svelte';
 
 /* 
 object from 
@@ -26,7 +29,7 @@ let yTicks = '';
 let keys = ddsData.keys;
 let reportPeriod = ddsData.reportPeriod;
 let rpTest = ddsData.reportPeriod;
-let p_color = ddsData.p_color;
+let p_color = typeof(ddsData.p_color) === undefined ? '#019184' : ddsData.p_color;
 let s_color = ddsData.s_color;
 let chartData = ddsData.chartData;
 let disclaimer = ddsData.strDisclaimer;
@@ -46,7 +49,33 @@ $: mappedPoints = mPoints;
 $: barData = barChartData;
 $: yT = [...yTicks];
 
-$: dollar = (barData.key === 'soldMedian' || barData.key === 'soldAvgPriceSquareFt') ? true : false;
+// right padding for chart
+let rpadL;
+let rpadM;
+let rpadS;
+
+let dollar = false;
+let key = '';
+$: key = barData.key;
+
+// show/hide the doolar symbol
+$: setDollarSymbol(key);
+function setDollarSymbol(key) {
+	if (key === 'soldMedian' || key === 'soldAvgPriceSquareFt') {
+		dollar = true;
+	} else {
+		dollar = false;
+	}
+	
+}
+
+let screenSize = window.innerWidth; 
+
+$: setChart(width);
+
+function setChart() {
+	screenSize = window.innerWidth;
+}
 
 onMount(() => {
 	// get keys of the different charts
@@ -80,6 +109,10 @@ function drawChart(event, initial = 0) {
 
 	const setData = ddsData.chartData[key].data;
 	let dt = setData.map((d) => {return d});
+	
+	rpadL = setData.length == 13 ? -20 : 20;
+	rpadM = setData.length == 13 ? 0 : 30;
+	rpadS = setData.length == 13 ? 0 : 20;
 
 	barChartData = {
 	 	data: dt,
@@ -96,12 +129,17 @@ function drawChart(event, initial = 0) {
 	});
 
 	yTicks = processPoints(setData);
+	
 }
 
 function processPoints (data) {
 	let maxValue = Math.max.apply(null, data);
 	return tickMarks(maxValue)
 }
+
+let width = 1280;
+let height = 675;
+
 
 </script>
 
@@ -113,28 +151,29 @@ function processPoints (data) {
 		display: block;
 		margin-left: 10px;
 		margin-right: 10px;
-		height: 675px;
+		max-height: 685px;
      }
 	
 	.content-inner-wrapper {
 		display: flex;
 		flex-direction: column;
-		height: 635px;
+		height: calc(100% - 50px);
+		margin-left: 10px;
 	}
 
 	.kmi-wrapper {
-		height: 60px;
-		line-height: 60px;
 		margin-bottom: 10px;
 		display: flex;
 		flex-direction: column;
+		height: 60px;
+		background-color: #ffffff;
 	}
 
 	.chart-wrapper {
 		display: flex;
 		margin-left: 10px;
 		flex-direction: column;
-		border: 1px solid green;
+		background-color: #ffffff;
 		height: 100%;
 		max-height: 560px;
 		flex: 1 1 auto;
@@ -143,16 +182,18 @@ function processPoints (data) {
 
 	/* chart title */
 	.chart-title {
+		text-align: center;
 		height: 40px;
 		max-width: 1280px;
 		position: relative;
-		line-height: 40px;
 	}
 
 	.chart-title-h3 {
-		text-align: center;
 		margin-top: 0;
 		margin-bottom: 0;
+		font-size: 14px;
+		line-height: 40px;
+		vertical-align: middle;
 	}
 
      .td-sidebar {
@@ -191,6 +232,9 @@ function processPoints (data) {
 		 margin: auto;
      }
 
+	.sidebar-buffer {
+		height: 40px;
+	}
 
 	@media only screen and (max-width: 1289px) {
 		.chart-title {
@@ -206,12 +250,6 @@ function processPoints (data) {
 		.chart-wrapper {
 			margin-left: 0 !important;
 		}
-
-		.content-area {
-			 margin-left: 0 !important;
-			 margin-right: 0 !important;
-		 } 
-		
  	}
 
  	@media only screen and (max-height: 399px) {
@@ -220,43 +258,34 @@ function processPoints (data) {
  		}
  	}
 
- 	@media only screen and (min-height: 400px) and (max-height: 799px) {
- 		.content-area {
-			 height: 100%;
- 		}
- 	}
-
  	@media only screen and (max-height: 800px) {
- 		.content-area {
-			 height: 75%;
-		 } 
 
 		 .chart-wrapper {
 			 height: 100%;
 		 }
 
 		 .content-inner-wrapper {
-			 height: calc(100% - 50px) !important;
+			 height: calc(100% - 40px) !important;
 		 }
 	}
 	 
 	@media only screen and (max-width: 768px) {
 		.kmi-wrapper {
-			display: inline-block !important;
 			width: 100%;
+		}
+
+		.content-inner-wrapper {
+			margin-left: 0 !important;
 		}
 	}
 
-	.sidebar-buffer {
-		height: 40px;
-	}
  </style>
 
 
 
 {#if ddsData}
 
-<div class="content-area">
+<div class="content-area" bind:clientHeight={height} bind:clientWidth={width}>
 
 	<div class="td-sidebar">
 		<div class="sidebar-buffer"></div>
@@ -275,6 +304,29 @@ function processPoints (data) {
 	</div>
 		<div class="content-inner-wrapper">
 			<div class="kmi-wrapper">
+				{#if screenSize > 1024}
+					<KMI 
+					data={barData.data} 
+					year={year} 
+					reportPeriod={reportPeriod}  
+					searchType={searchType} 
+					p_color={p_color} 
+					s_color={s_color}
+					showDollar={dollar}
+					chartType={barData.key}/>
+				{/if}
+				{#if screenSize <= 1024 && screenSize >768}
+					<KMI 
+					data={barData.data} 
+					year={year} 
+					reportPeriod={reportPeriod}  
+					searchType={searchType} 
+					p_color={p_color} 
+					s_color={s_color}
+					showDollar={dollar}
+					chartType={barData.key}/>
+				{/if}
+				{#if screenSize <= 768 && screenSize > 480}
 				<KMI 
 					data={barData.data} 
 					year={year} 
@@ -284,29 +336,81 @@ function processPoints (data) {
 					s_color={s_color}
 					showDollar={dollar}
 					chartType={barData.key}/>
+				{/if}
+				{#if screenSize <= 480}
+					<KMISmall 
+					data={barData.data} 
+					year={year} 
+					reportPeriod={reportPeriod}  
+					searchType={searchType} 
+					p_color={p_color} 
+					s_color={s_color}
+					showDollar={dollar}
+					chartType={barData.key}/>
+				{/if}
 			</div>
 			
 			{#if searchType !== 'mnth-ytd'}
-				<Linechart 
-					data={barData.data} 
-					reportPeriod={reportPeriod} 
-					p_color={p_color} 
-					s_color={s_color} 
-					yPoints={yT} 
-					mappedPoints={mappedPoints} 
-					showDollar={dollar}
-					reportYear={year}/>
+				{#if screenSize > 1024}
+					<Linechart 
+						data={barData.data} 
+						reportPeriod={reportPeriod} 
+						p_color={p_color} 
+						s_color={s_color} 
+						yPoints={yT} 
+						mappedPoints={mappedPoints} 
+						showDollar={dollar}
+						reportYear={year}
+						rightPadding={rpadL}/>
+				{/if}
+				{#if screenSize <= 1024 && screenSize >768}
+					<TabletLandScapeChart 
+						data={barData.data} 
+						reportPeriod={reportPeriod} 
+						p_color={p_color} 
+						s_color={s_color} 
+						yPoints={yT} 
+						mappedPoints={mappedPoints} 
+						showDollar={dollar}
+						reportYear={year}
+						rightPadding={rpadM}/>
+				{/if}
+				{#if screenSize <= 768 && screenSize > 480}
+					<TabletPortraitChart 
+						data={barData.data} 
+						reportPeriod={reportPeriod} 
+						p_color={p_color} 
+						s_color={s_color} 
+						yPoints={yT} 
+						mappedPoints={mappedPoints} 
+						showDollar={dollar}
+						reportYear={year}
+						rightPadding={rpadM}/>
+				{/if}
+				{#if screenSize <= 480}
+					<SmartPhoneChart 
+						data={barData.data} 
+						reportPeriod={reportPeriod} 
+						p_color={p_color} 
+						s_color={s_color} 
+						yPoints={yT} 
+						mappedPoints={mappedPoints} 
+						showDollar={dollar}
+						reportYear={year}
+						rightPadding={rpadS}/>
+				{/if}
+				
 			{:else}	
-			<div class="chart-wrapper"> -->
-				<MnthYtd 
-					data={barData.data} 
-					reportPeriod={reportPeriod} 
-					p_color={p_color} 
-					s_color={s_color} 
-					yPoints={yT} 
-					mappedPoints={mappedPoints} 
-					reportYear={year}/>
-			</div>
+				<div class="chart-wrapper">
+					<MnthYtd 
+						data={barData.data} 
+						reportPeriod={reportPeriod} 
+						p_color={p_color} 
+						s_color={s_color} 
+						yPoints={yT} 
+						mappedPoints={mappedPoints} 
+						reportYear={year}/>
+				</div>
 			{/if}	
 			
 		</div>

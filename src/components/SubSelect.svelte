@@ -62,7 +62,7 @@ onMount(() => {
         display: none;
     }
 
-    div.option-wrapper {
+    .option-wrapper {
         height: 20px;
         line-height: 10px;
     }
@@ -110,6 +110,10 @@ onMount(() => {
         .sub-menu-item {
             text-align: left;
             margin-left: 90px;
+        }
+
+        .option-wrapper {
+            height: 30px;
         }
     }
 </style>

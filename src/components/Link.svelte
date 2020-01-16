@@ -24,7 +24,7 @@ export function test(j) {
 <style>
 	.td-list-par {
 		height: 25px;
-		line-height: 10px;
+		line-height: 25px;
 		vertical-align: middle;
 	}
 
@@ -45,6 +45,14 @@ export function test(j) {
 		text-decoration: none;
 		color: #000000;
 		font-weight: bold;
+	}
+
+	@media only screen and (max-width: 768px) {
+		li.td-list-par {
+			height: 30px;
+			line-height: 30px;
+			margin-left: 150px;
+		}
 	}
 </style>
 

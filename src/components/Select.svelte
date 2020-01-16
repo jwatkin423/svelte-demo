@@ -272,6 +272,19 @@ onMount(() => {
         font-size: 12px;
     }
 
+    @media only screen and (max-width: 480px) {
+        .select-menu-block {
+            left: 0 !important;
+        }
+    }
+
+    @media only screen and (min-width: 412px) and (max-width: 768px) {
+        .select-menu-block {
+            width: 460px;
+            top: 35px;
+        }
+    }
+
     @media only screen and (max-width: 768px) {
         .all-property-items {
             margin-left: 30px;
@@ -281,20 +294,15 @@ onMount(() => {
             margin-left: 60px;
         }
 
-        #poperty-types-menu {
-            top: 0px;
-        }
-
-        #area-types-menu {
-            top: 25px;
+        .option-wrapper {
+            height: 30px;
         }
 
         #time-values-menu {
-            top: 41px;
+            top: 85px;
         }
 
 		.select-menu-block {
-            width: 400px;
             position: absolute;
             margin-top: 5px;
         }

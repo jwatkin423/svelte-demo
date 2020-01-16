@@ -7,6 +7,7 @@ import Elipsis from './Elipsis.svelte';
 import SubSelect from './SubSelect.svelte';
 import AreaValueSelect from './AreaValuesSelect.svelte';
 import TimeSelect from './TimeSelect.svelte';
+import searchData from '../helpers/searchdata';
 
 export let params;
 export let url;
@@ -93,6 +94,28 @@ function toggleShowPopertyMenu() {
     }
 }
 
+function setLeft(id)  {
+
+    let el = document.getElementById(id);
+    let menu = document.getElementById(id + '-menu');
+    menu.style.removeProperty('left');
+    menu.style.removeProperty('top');
+    leftEl = el.offsetLeft + 'px';
+    menu.style.left = leftEl;
+
+    if (window.innerWidth <= 768) {
+        menu.style.top = '-10px';
+    }
+
+    let els = document.querySelectorAll('.sub-menu-property');
+    els.forEach((el) => {
+        let lEl = parseInt(leftEl);
+        el.style.left = '10px';
+        el.style.zIndex = 1;
+    });
+    
+}
+
 let showAreaTypesMenu = false;
 
 function toggleShowAreaTypesMenu() {
@@ -112,8 +135,11 @@ function setAreaLeft(id)  {
 
     let el = document.getElementById(id);
     let menu = document.getElementById(id + '-menu');
+    menu.style.removeProperty('left');
+    menu.style.removeProperty('top');
     leftEl = el.offsetLeft + 'px';
     menu.style.left = leftEl;
+    // menu.style.top = '35px';
 
     let els = document.querySelectorAll('.sub-menu-area');
     els.forEach((el) => {
@@ -146,33 +172,24 @@ function toggleShowTimeMenu() {
     }
 }
 
-function setLeft(id)  {
-
-    let el = document.getElementById(id);
-    let menu = document.getElementById(id + '-menu');
-    leftEl = el.offsetLeft + 'px';
-    menu.style.left = leftEl;
-
-    let els = document.querySelectorAll('.sub-menu-property');
-    els.forEach((el) => {
-        let lEl = parseInt(leftEl);
-        el.style.left = '10px';
-        el.style.zIndex = 1;
-    });
-    
-}
-
 function setTimeMenuleft(id) {
 
     let el = document.getElementById(id);
     let menu = document.getElementById(id + '-menu');
-
+    menu.style.removeProperty('left');
+    menu.style.removeProperty('top');
     leftEl = el.offsetLeft + 'px';
     menu.style.left = leftEl;
 
-    if (window.innerWidth <= 768) {
+    if (window.innerWidth > 411 && window.innerWidth <= 768) {
         let menuTop = el.style.top;
-        menu.style.top = menuTop + 35 + 'px';
+        menu.style.top = menuTop + 80 + 'px';
+    }
+
+    if (window.innerWidth <= 411) {
+        let menuTop = el.style.top;
+        menu.style.top = menuTop + 80 + 'px';
+        menu.style.width = el.style.width + 'px';
     }
 
     let els = document.querySelectorAll('.sub-menu-time');
@@ -298,8 +315,8 @@ function buildSearchParams() {
         }
 
         let querySrting = 'mlsId=' + mlsId + '&search=' + search + '&timePeriod=' + timePeriod + '&timePeriodValue=' + timePeriodValue + '&areaType=' + areaType + '&areaValueList=' + areaValueSelected + '&propertyTypeList=' + propertySelected + '&areaValuesDisplayText=' + areaValuesDisplayText +'&propertyTypeDisplayText=' + propertyTypeDisplayText;
-        // let newUrl = url + pathname + '?' + encodeURI(querySrting);
-        // newUrl = newUrl.replace('http://localhost:5000', 'http://staging.jw');
+        let newUrl = url + pathname + '?' + encodeURI(querySrting);
+        newUrl = newUrl.replace('http://localhost:5000', 'http://staging.jw');
 
         location.replace(newUrl);
 
@@ -307,23 +324,35 @@ function buildSearchParams() {
         alert("Please select at least one area type and one property type");
     }
 }
-
+let e = false;
 onMount(() => {
-    fetch(searchURL)
-    .then(res => {
-        if(!res.ok){
-            throw new Error("Failed to fetch");
-        }
-        
-        return res.json();
-    })
-    .then(d => {
-        isLoading = false;
-        createSearchMenus(d);
-    })
-    .catch(err => {
-        console.log(err);
+
+    searchData.subscribe(value => {
+        e = value;
     });
+
+    if (!e) {
+        fetch(searchURL)
+        .then(res => {
+            if(!res.ok){
+                throw new Error("Failed to fetch");
+            }
+            
+            return res.json();
+        })
+        .then(d => {
+            isLoading = false;
+            searchData.set(d);
+            createSearchMenus(d);
+        })
+        .catch(err => {
+            console.log(err);
+        });
+
+    } else {
+        isLoading = false;
+        createSearchMenus(e);
+    }
 
 });
 
@@ -350,12 +379,12 @@ onMount(() => {
         line-height: 30px;
         font-size: 10px;
         float: left;
-        margin-left: 10px;
         text-decoration: none;
         color: #666666;
         width: 100%;
-        background-color: white;
+        background-color: transparent;
         border: none;
+        padding: 0;
         margin-left: 0 !important;
     }
 
@@ -383,9 +412,10 @@ onMount(() => {
     }
 
     .label {
-        display: block;   
+        display: block;
+        padding: 0;
     }
-    
+
     i {
         line-height: 30px;
         height: 30px;
@@ -410,13 +440,6 @@ onMount(() => {
         top: 45px;
     }
 
-    .select-menu-block-outter {
-        display: block;
-        width: 230px;
-        background-color: white;
-        position: absolute;
-    }
-
     .search-menu-wrapper {
         display: block;
     }
@@ -424,8 +447,6 @@ onMount(() => {
     .search-menu-wrapper > .themed {
         display: inline-block;
     }
-
-    
 
     .elipsis-container {
         width: 100%;
@@ -440,57 +461,6 @@ onMount(() => {
         color: black;
     }
 
-    @media only screen and (max-width: 1024px) {
-		.type-menu {
-			width: 100%;
-		}
-    }
-    
-    @media only screen and (max-width: 768px) {
-		.select-menu-block-outter {
-            width: 100%;
-            /* left: 0px !important; */
-            position: absolute;
-        }
-
-        .search-menu-wrapper {
-            text-align: center;
-        }
-
-        .type-menu {
-            margin-right: 10px;
-        }
-
-        .themed {
-            width: 460px;
-            margin-bottom: 10px;
-        }
-
-        .select-menu-block-outter {
-            top: 10px;
-        }
-
-        .search-button-wrapper {
-            width: 100%;
-            text-align: center;
-        }
-
-         .search-button-themed {
-            margin-left: 10px;
-            display: inline-block;
-        }
-
-        .search-button-themed {
-            margin-left: 0 !important;
-        }
-
-        form {
-            position: absolute;
-            height: 200px;
-            width: 100%;
-            background-color: white;
-        }
-	}
 </style>
 <form>
     {#if !isLoading}
@@ -515,7 +485,7 @@ onMount(() => {
                     parentId={'property-types'} 
                     initialPropertyClassList={initialPropertyClassList}
                     initialAreaType={initialAreaType}
-                    on:close={closePropertyMenu} 
+                    on:close={closePropertyMenu}
                     searchParam={params.propertyTypeList} />
             </div>
         {/if}
@@ -561,9 +531,13 @@ onMount(() => {
                 </div>
             </div>
             <div class:showTimeMenu class="type-menu">
-                <div class='select-menu-block-outter' id='time-values-menu'>
-                    <Select items={[]} menuTitle='Time Frame' itemType="time-values" parentId='time-values' on:close={closeTimeMenu} searchParam={params.timePeriodValue}/>
-                </div>    
+                    <Select 
+                        items={[]} 
+                        menuTitle='Time Frame' 
+                        itemType="time-values" 
+                        parentId='time-values' 
+                        on:close={closeTimeMenu} 
+                        searchParam={params.timePeriodValue}/>
             </div>
         <div class="search-button-wrapper">
             <div class="search-button-themed first-search-button-themed">

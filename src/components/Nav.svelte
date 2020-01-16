@@ -1,6 +1,6 @@
 <script>
 import Icon from "./Icon.svelte";
-import {faBars, faDownload, faSearch, faBookmark, faCloudDownloadAlt, faFilter, faPlus} from '@fortawesome/free-solid-svg-icons'
+import {faBars, faDownload, faSearch, faBookmark, faCloudDownloadAlt, faFilter, faPlus, faMinus} from '@fortawesome/free-solid-svg-icons'
 import Search from './Search.svelte';
 import { onMount } from 'svelte';
 import MobileLink from '../components/MobileLink.svelte';
@@ -9,14 +9,25 @@ import chartData from '../helpers/chart';
 import { drawChart } from '../helpers/draw';
 import { createEventDispatcher } from 'svelte';
 import Menu from './Menu.svelte';
+import TabletMenu from './TabletMenu.svelte';
+import SmartPhoneMenu from './SmartPhoneMenu.svelte';
+import { PixService } from '../pix/pix.service.ts';
 
 const dispatch = createEventDispatcher();
 
 // icons for nav bar
-let icon = [faFilter, faDownload, faBars, faCloudDownloadAlt, faPlus];
+let icon = [
+    faFilter, 
+    faDownload, 
+    faBars, 
+    faCloudDownloadAlt, 
+    faPlus, 
+    faMinus
+];
 
 // props
-export let background_color;
+export let background_color = false;
+$: theme_color = background_color ? background_color : '#019184';
 export let logo = false;
 export let tempData = {};
 export let searchParams;
@@ -68,6 +79,7 @@ function setPlusColor() {
     if(background_color) {
         document.getElementById('hamburger').style.color = background_color;
         document.getElementById('hamburger').style.fontSize = '12px';
+        document.querySelector('.res-menu-link').style.color = background_color;
     }
 }
 
@@ -77,6 +89,7 @@ onMount(() => {
 
 function toggleShowHamMenu() {
     showHamburger = showHamburger === true ? false : true;
+    console.log("show ham menu");
 }
 
 function setKey(e) {
@@ -89,15 +102,17 @@ function setKey(e) {
 }
 
 function closeOpenHovers() {
-    desc = document.querySelector('.description');
-	desc.classList.remove("enabled");
-	desc.classList.remove("heyo");
-	desc.classList.remove("active");
+    let desc = document.querySelector('.description');
+    if (desc) {
+        desc.classList.remove("enabled");
+        desc.classList.remove("heyo");
+        desc.classList.remove("active");
+    }
+	
 }
 
 // toggle the menu on or off
 window.onclick = function(e) {
-    console.log(e.target);
     // console.log(e.target);
     if(!e.target.matches('.dropbtn') 
         && !e.target.matches('svg.fa-svelte') 
@@ -127,6 +142,7 @@ window.onclick = function(e) {
         && !e.target.matches('.sub-menu-area')
         && !e.target.matches('a.sorted-group-item')
         && !e.target.matches('.select-menu-block > h3')
+        && !e.target.matches('a.res-menu-link')
         ) {
 
         if (showClass) {
@@ -144,6 +160,47 @@ window.ontouchend = function(e) {
         closeOpenHovers();
     }
 }
+
+let width = 1280;
+let screenSize = window.innerWidth; 
+
+$: setChart(width);
+
+function setChart() {
+	screenSize = window.innerWidth;
+}
+
+let dataUrl = '';
+
+let tempImg;
+let resizeImg;
+
+$: url2pix(logo);
+
+function url2pix(logo) {
+    const img = new Image();
+
+    fetch(logo)
+    .then((res) => {
+        return res.data();
+    })
+    .then((i) => {
+        resizeImg = resizeStep(i, 202, 65);
+        return resizeImg;
+    })
+    .then((resizeImg) => {
+        dataUrl = resizeImg.src;
+    });
+
+}
+
+// function setLogoSize(logo) {
+//     console.log(logo);
+//     let pix = new PixService;
+//     dataUrl = pix.url2pix(logo);
+//     console.log(dataUrl);
+// }
+
 </script>
 
 <style>
@@ -190,6 +247,10 @@ window.ontouchend = function(e) {
     i {
         line-height: 30px;
         height: 30px;
+    }
+
+    a {
+        font-size: 18px;
     }
 
     .dropbtn {
@@ -244,11 +305,63 @@ window.ontouchend = function(e) {
         text-align: left;
     }
 
+    .show {
+        display: block;
+    }
+
+    .showHamburger {
+        display: block;
+    }
+
+    .download-menu{
+        display: none;
+    }
+
+    .showDownload {
+        display: block;
+    }
+
+    .logo {
+        height: 75px;
+    }
+
+    @media only screen and (max-width: 480px) {
+        .navbar-td, .menu-wrapper, .menu {
+            height: 55px;
+        }
+
+        .nav-icons {
+            height: 55px;
+            line-height: 55px;
+        }
+
+        .nav-item {
+            height: 55px;
+            line-height: 55px;
+        }
+
+        .nav-item > a {
+            line-height: 55px;
+            height: 55px;
+            vertical-align: middle;
+            font-size: 18px;
+        }
+
+        img {
+            height: 45px;
+            width: 145px;
+        }
+        
+        .logo {
+            height: 55px;
+        }
+    }
+
     @media only screen and (min-width: 769px) {
         .ham-menu {
             display:none;
         }
-    }    
+    }
 
     @media only screen and (max-width: 1279px) {
         .navbar-wrapper{
@@ -269,35 +382,16 @@ window.ontouchend = function(e) {
         }
     }
 
-    .show {
-        display: block;
-    }
-
-    .showHamburger {
-        display: block;
-    }
-
-    .download-menu{
-        display: none;
-    }
-
-    .showDownload {
-        display: block;
-    }
-
-    .logo {
-        height: 75px;
-    }
 </style>
 
-<div class="navbar-wrapper">
+<div class="navbar-wrapper" bind:clientWidth={width}>
     <div class="logo">
         {#if logo}
-        
+            <!-- {setLogoSize(logo)} -->
             <img src={logo} alt={'brand image'}/>
         {/if}
     </div>    
-	<div class="navbar-td" id="navbar-td" style="background-color: {background_color};">
+	<div class="navbar-td" id="navbar-td" style="background-color: {theme_color};">
 		<div class="menu-wrapper">
             <div class="menu">
                 <div class="dropdown nav-item center-item">
@@ -305,7 +399,8 @@ window.ontouchend = function(e) {
                         on:click|preventDefault
                         on:click={toggleShowMenu}
                         href="."
-                        class="dropbtn"><i><Icon class="search-menu-button" tempId="search-menu" icon={icon[0]} /></i>
+                        class="dropbtn">
+                        <i class="nav-icons"><Icon class="search-menu-button" tempId="search-menu" icon={icon[0]} /></i>
                     </a>
                         
                 </div> <!-- end dropdown -->
@@ -313,19 +408,26 @@ window.ontouchend = function(e) {
                     <a 
                         on:click|preventDefault 
                         on:click={toggleShowDownload}
-                        href=".">
-                        <i><Icon class="dropdown-menu-button" tempId='download-menu' icon={icon[3]} /></i>
+                        href="."
+                        class="dropbtn">
+                        <i class="nav-icons"><Icon class="dropdown-menu-button dd-dl" tempId='download-menu' icon={icon[3]} /></i>
                     </a>
                 </div>
                 <div class:showDownload="{showDownload === true}" class="download-menu">
-                    <DownloadMenu options={options} btnColor={background_color} on:closeDlMenu={toggleShowDownload}/>
+                    <DownloadMenu options={options} btnColor={theme_color} on:closeDlMenu={toggleShowDownload}/>
                 </div>
 			</div>
 		</div>
 	</div>
 </div>
 <div class:show="{showClass === true}" class="dropdown-content" id="search-menu-content">
-    <Menu params={searchParams} url={baseSearchUrl} mlsId={mlsId}/>
+    {#if screenSize > 768}
+        <Menu params={searchParams} url={baseSearchUrl} mlsId={mlsId}/>
+    {:else if (screenSize <= 768 && screenSize > 480)}
+        <TabletMenu params={searchParams} url={baseSearchUrl} mlsId={mlsId}/>
+     {:else}   
+        <SmartPhoneMenu params={searchParams} url={baseSearchUrl} mlsId={mlsId}/>
+    {/if}
 </div>
 <div class="ham-menu">
     <a 
@@ -334,7 +436,11 @@ window.ontouchend = function(e) {
         on:click={toggleShowHamMenu}
         href=".">
         Market Area Trends
-        <i><Icon tempId='hamburger' icon={icon[4]} /></i>
+        {#if !showHamburger}
+            <i class="nav-chart-menu-icons"><Icon tempId='hamburger' icon={icon[4]} /></i>
+        {:else}
+            <i class="nav-chart-menu-icons"><Icon tempId='hamburger' icon={icon[5]} /></i>
+        {/if}
     </a>
 </div>
 <div class="hamburger" class:showHamburger="{showHamburger === true}" id="hamburger-menu-content">

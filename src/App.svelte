@@ -12,8 +12,8 @@ import chartData from './helpers/chart';
 import { getAllUrlParams } from './helpers/parse-search-query';
 import SearchParams from './components/SearchParameters.svelte';
 
-let baseUrl = '';
-// let baseUrl = 'http://staging.jw';
+// let baseUrl = '';
+let baseUrl = 'http://staging.jw';
 
 let queryParams = window.location.search;
 let rawLocation = window.location.pathname;
@@ -79,7 +79,7 @@ onMount(() => {
 <style>
 
 	main {
-        width: 1290px;
+        width: 1280px;
         height: 1024px;
 		margin: auto;
         background-color: #F2F2F2;
@@ -88,7 +88,6 @@ onMount(() => {
 	.search-params {
 		background-color: #F2F2F2;
 		height: 40px;
-		margin-top: 10px;
 	}
 
 	@media only screen and (min-height: 1024px) {

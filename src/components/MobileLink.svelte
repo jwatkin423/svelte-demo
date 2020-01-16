@@ -38,7 +38,7 @@ export function setChart(k) {
 	.td-list-item-link {
 		background-color: #ffffff;
 		color: #666666;
-		font-size: 16px !important;
+		font-size: 13px !important;
 		margin-left: 10px;
 		text-decoration: none;
 	}
@@ -47,6 +47,29 @@ export function setChart(k) {
 		text-decoration: none;
 		color: #000000;
 		font-weight: bold;
+	}
+
+	.mobile-right-arrow {
+		float: right;
+		font-size: 12px;
+	}
+
+	@media only screen and (max-width: 768px) {
+		li.td-list-par {
+			height: 30px;
+			line-height: 30px;
+			margin-left: 150px;
+			margin-right: 150px;
+		}
+	}
+
+	@media only screen and (max-width: 480px) {
+		li.td-list-par {
+			height: 30px;
+			line-height: 30px;
+			margin-left: 30px;
+			margin-right: 30px;
+		}
 	}
 </style>
 
@@ -60,5 +83,6 @@ export function setChart(k) {
             id={'m-' + key}>
             {data[key].label}
         </a>
+		<span class="mobile-right-arrow"> > </span>
     </li>
 {/each}

@@ -47,7 +47,6 @@ function setCustomColor(customColor, svgId) {
     height: 1em;
     overflow: visible;
     display: inline-block;
-    color: #ffffff;
     margin-left: 10px;
     font-size: 20px;
     vertical-align: middle;
@@ -81,6 +80,16 @@ function setCustomColor(customColor, svgId) {
     width: 16px !important;
   }
 
+  .chng-dn-small {
+    color: red !important;
+    font-size: .375em;
+    height: 10px;
+    line-height: 10px;
+    margin-left: 0 !important;
+    margin-bottom: 0px !important;
+    width: 10px !important;
+  }
+
   .chng-up {
     color: green !important;
     font-size: 20px;
@@ -89,6 +98,16 @@ function setCustomColor(customColor, svgId) {
     margin-left: 0 !important;
     margin-bottom: 0px !important;
     width: 16px !important;
+  }
+
+  .chng-up-small {
+    color: green !important;
+    font-size: .375em;
+    height: 10px;
+    line-height: 10px;
+    margin-left: 0 !important;
+    margin-bottom: 0px !important;
+    width: 10px !important;
   }
 
   .chng-up-ytd {
@@ -117,6 +136,16 @@ function setCustomColor(customColor, svgId) {
   }
 
   .search-menu-button, .dropdown-menu-button {
-        font-size: 18px !important;
+        font-size: 1.15em !important;
+  }
+
+  .dd-dl {
+    font-size: 1.15em !important;
+    margin-left: 7px;
+    height: 1.15em ! important;
+  }
+
+  #hamburger {
+      font-size: 12px !important;
   }
 </style>
