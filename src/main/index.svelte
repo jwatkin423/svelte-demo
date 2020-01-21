@@ -167,6 +167,7 @@ let height = 675;
 		flex-direction: column;
 		height: 60px;
 		background-color: #ffffff;
+		margin-left: 10px;
 	}
 
 	.chart-wrapper {
