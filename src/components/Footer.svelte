@@ -8,6 +8,15 @@ export let sponsorDetails;
 export let sponsorList;
 let d = new Date();
 let n = d.getFullYear();
+
+let discChunks;
+
+$: splitDisclaimer(disclaimer);
+
+function splitDisclaimer(disc) {
+    discChunks = disc.split('<br/>');
+}
+
 </script>
 
 <style>
@@ -74,21 +83,24 @@ let n = d.getFullYear();
         margin-bottom: 5px;
     }
     
+    .footer-disc-top {
+        margin-top: 5px;
+    }
+
 </style>
 
 <footer>
     {#if (userType == 'broker_sponcer' && sponsorDetails.length > 0)}
         <div class="sponsorship-text-wrapper">
             <div class="sponsorship-text">
-                
-                    Information presented by {@html sponsorList}
-                
+                       Information presented by {@html sponsorList}
             </div>
         </div>
     {/if}
     <div class="footer-area">
         <div class="footer-disclaimer">
-            <p>{@html disclaimer}</p>
+            <p class="footer-disc-top">{discChunks[0]}</p>
+            <p class="footer-disc-bottom">{discChunks[1]}</p>
         </div>
     </div>
     <div class="copy-right-wrapper">
