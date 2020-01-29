@@ -99,7 +99,6 @@ function formatYear(period) {
     }
 
     table {
-        /* margin-top: 10px; */
         margin-left: auto;
         margin-right: auto;
         width: 300px;
