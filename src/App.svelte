@@ -87,7 +87,10 @@ onMount(() => {
 
 	.search-params {
 		background-color: #F2F2F2;
-		height: 40px;
+		min-height: 40px;
+		padding-left: 10px;
+		padding-right: 10px;
+		margin-bottom: 10px;
 	}
 
 	@media only screen and (min-height: 1024px) {
