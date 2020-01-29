@@ -148,4 +148,14 @@ function setCustomColor(customColor, svgId) {
   #hamburger {
       font-size: 12px !important;
   }
+
+  .param-points-b {
+    font-size: 5px;
+    vertical-align: middle;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    width: 5px;
+    height: 3px;
+    line-height: 10px;
+  }
 </style>
