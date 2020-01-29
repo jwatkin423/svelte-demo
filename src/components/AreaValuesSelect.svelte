@@ -93,6 +93,7 @@ let aVsSelected;
 let aVEls;
 let areaTypeSelected;
 $: areaTypeSelected = typeSelected;
+let uncheckedCount = 0;
 function areaValueSelected() {
     
     if (params) {
@@ -107,12 +108,20 @@ function areaValueSelected() {
             if (aVsSelected.find(d => d == value)) {
                 if(currentType === areaTypeSelected) {
                     element.checked =  true;
+                } else {
+                    uncheckedCount++;
                 }
                 
             }
             
         });
     }
+
+    if(!uncheckedCount == 0) {
+        let allAVcb = document.querySelector('.all-' + idClass);
+        allAVcb.checked = true;
+    }
+
 }
 
 onMount(() => {
