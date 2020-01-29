@@ -103,9 +103,7 @@ function setLeft(id)  {
     leftEl = el.offsetLeft + 'px';
     // menu.style.left = leftEl;
 
-    if (window.innerWidth <= 768) {
-        menu.style.top = '-10px';
-    }
+    menu.style.top = '-10px';
 
     let themeMenu = document.getElementById('property-types');
     menu.style.width = themeMenu.offsetWidth + 'px';
@@ -314,7 +312,7 @@ function buildSearchParams() {
 
         let querySrting = 'mlsId=' + mlsId + '&search=' + search + '&timePeriod=' + timePeriod + '&timePeriodValue=' + timePeriodValue + '&areaType=' + areaType + '&areaValueList=' + areaValueSelected + '&propertyTypeList=' + propertySelected + '&areaValuesDisplayText=' + areaValuesDisplayText +'&propertyTypeDisplayText=' + propertyTypeDisplayText;
         let newUrl = url + pathname + '?' + encodeURI(querySrting);
-        newUrl = newUrl.replace('http://localhost:5000', 'http://staging.jw');
+        // newUrl = newUrl.replace('http://localhost:5000', 'http://staging.jw');
 
         location.replace(newUrl);
 
@@ -474,6 +472,7 @@ onMount(() => {
     }
 
 </style>
+
 <form>
     {#if !isLoading}
     <div class="search-menu-wrapper" >
