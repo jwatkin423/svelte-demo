@@ -53,7 +53,7 @@ onMount(() => {
 
     .sub-menu-property {
         display: block;
-        width: 220px;
+        width: 200px;
         background-color: white;
         position: relative;
     }
