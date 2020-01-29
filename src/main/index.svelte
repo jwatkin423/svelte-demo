@@ -13,6 +13,7 @@ import Linechart from '../charts/lineChart.svelte';
 import chartStore from '../utils/chart-store';
 import Table  from '../components/Table.svelte';
 import KMI from '../components/KMI.svelte';
+import KMIMedium from '../components/KMIMedium.svelte';
 import KMISmall from '../components/KMISmall.svelte';
 import SmartPhoneChart from '../charts/smartphoneLineChart.svelte';
 import TabletPortraitChart from '../charts/tabletPortraitLineChart.svelte';
@@ -195,6 +196,7 @@ let height = 675;
 		font-size: 14px;
 		line-height: 40px;
 		vertical-align: middle;
+		color: #666666;
 	}
 
      .td-sidebar {
@@ -251,30 +253,13 @@ let height = 675;
 		.chart-wrapper {
 			margin-left: 0 !important;
 		}
- 	}
 
- 	@media only screen and (max-height: 399px) {
-		.content-area {
-			 height: 50%;
- 		}
- 	}
-
- 	@media only screen and (max-height: 800px) {
-
-		 .chart-wrapper {
-			 height: 100%;
-		 }
-
-		 .content-inner-wrapper {
-			 height: calc(100% - 40px) !important;
-		 }
-	}
-	 
-	@media only screen and (max-width: 768px) {
 		.kmi-wrapper {
-			width: 100%;
+			margin-left: 0px;
 		}
+ 	}
 
+    @media only screen and (max-width: 768px) {
 		.content-inner-wrapper {
 			margin-left: 0 !important;
 		}
@@ -317,7 +302,7 @@ let height = 675;
 					chartType={barData.key}/>
 				{/if}
 				{#if screenSize <= 1024 && screenSize >768}
-					<KMI 
+					<KMIMedium 
 					data={barData.data} 
 					year={year} 
 					reportPeriod={reportPeriod}  
