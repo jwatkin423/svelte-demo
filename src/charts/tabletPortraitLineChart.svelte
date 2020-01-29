@@ -66,20 +66,6 @@ $: xTicks = reportPeriod;
 
 let r = 3;
 
-$: setR(width);
-
-function setR() {
-	if (window.innerWidth >= 1024) {
-		r = 3;
-	} else if (window.innerWidth < 1024 && window.innerWidth >= 768) {
-		r = 2;
-	} else {
-		r = 1;
-	}
-}
-
-
-
 // chart data mapped
 $: chartData = mappedPoints.map((mp, i) => {
 	let t = mp.x;
@@ -382,7 +368,7 @@ function hideToolTip() {
 		<!-- y axis -->
 		{#each yTicks as tick, i}
 			<g class="tick y-axis tick-{tick}" transform="translate(20, {yScale(tick)})">
-				<line x1="25" x2="{line}"></line>
+				<line x1="25" x2="{line - 6}"></line>
 				<text dx="0" y="3">{tick >= 100 ? formatTick(tick) : tick}</text>
 			</g>
 		{/each}

@@ -22,7 +22,6 @@ export let mappedPoints = [];
 
 // show dollar in tool tip
 export let showDollar;
-$: console.log(dollar);
 $: dollar = showDollar ? '$' : '';
 
 // tooltips
@@ -102,7 +101,7 @@ $: textWidth = innerWidth / xTicks.length;
 
 let lineHeight = -height;
 let line = width - padding.right;
-$: line = width * .95;
+$: line = (width * .95) + 3;
 
 
 // format ticks

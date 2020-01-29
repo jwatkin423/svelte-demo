@@ -64,7 +64,7 @@ $: primary_fill_color = p_color ? p_color : '#019184';
 // report period for the x axis
 $: xTicks = reportPeriod;
 
-let r = 2;
+let r = 3;
 
 // chart data mapped
 $: chartData = mappedPoints.map((mp, i) => {
@@ -369,7 +369,7 @@ function hideToolTip() {
 		<!-- y axis -->
 		{#each yTicks as tick, i}
 			<g class="tick y-axis tick-{tick}" transform="translate(20, {yScale(tick)})">
-				<line x1="25" x2="{line}"></line>
+				<line x1="25" x2="{line - 6}"></line>
 				<text dx="0" y="3">{tick >= 100 ? formatTick(tick) : tick}</text>
 			</g>
 		{/each}
