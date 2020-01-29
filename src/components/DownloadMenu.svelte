@@ -85,6 +85,8 @@ function validateForm() {
         top: 30px;
         right: 10px;
         border-bottom: 3px solid black;
+        border-right: 1px solid black;
+        border-left: 1px solid black;
     }
 
     .option-wrapper > input {
@@ -155,6 +157,24 @@ function validateForm() {
         width: 100% !important;
     }
 
+    .sub-menu-btn {
+        height: 20px;
+        line-height: 20px;
+        font-size: 10px;
+        padding: 0;
+        width: 60px;
+        border-radius: 5px;
+    }
+
+    #submit-button {
+        margin-left: 10px;
+    }
+
+    @media only screen and (max-width: 480px) {
+        .menu-wrapper {
+            top: 55px;
+        }
+    }
 
 </style>
 
