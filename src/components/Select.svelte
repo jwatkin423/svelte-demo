@@ -29,6 +29,50 @@ let currentAreaSubMenuType = '';
 
 let allAreaChecked;
 
+$: checkAllOption(itemType, items, searchParam);
+let options = [];
+let tempType = '';
+let notAllSelected = [];
+let allSelected = [];
+
+function checkAllOption(itemType, items, searchParam) {
+
+    if(itemType === 'property-types') {
+        let paramsSelected = param.split(',');
+        let ps = paramsSelected.map((t) => {
+            return parseInt(t);
+        });
+
+        items.map((item) => {
+            tempType = item.value;
+            options[tempType] = item.children.map((opt) => {
+                return opt.value;
+            });
+        });
+        
+        let keys = Object.keys(options);
+        keys.forEach((o) => {
+            let opts = options[o];
+            let optsCount = opts.length;
+            let notSelectedCount = 0;
+            let itemCount = 1;
+            opts.forEach((i) => {
+                
+                if (ps.indexOf(i) === -1) {
+                    notSelectedCount++;
+                }
+
+                itemCount++;
+
+                if (itemCount === optsCount && notSelectedCount == 0) {
+                    allSelected.push(o.replace(/[^a-zA-Z0-9]+/g, '').toLowerCase());
+                }
+            });
+        });
+    }
+
+}
+
 /**
  * show property menus
  * */
@@ -157,6 +201,13 @@ onMount(() => {
             allPropertyChecked = true;
         }
     }
+
+    allSelected.forEach((el) => {
+        let allEl = document.querySelector('input.all-' + el);
+        allEl.checked = true;
+    });
+
+
     // closes all opened menus on mount
     closeOpenedAreaMenus();
 });
@@ -276,6 +327,9 @@ onMount(() => {
         .select-menu-block {
             left: 0 !important;
         }
+        #area-types-menu {
+            top: 40px;
+        }
     }
 
     @media only screen and (min-width: 412px) and (max-width: 768px) {
@@ -344,6 +398,7 @@ onMount(() => {
             </a>
         </div>
             {#each items as item}
+            
                 <div class='option-wrapper poperty-item' id='{item.group + '-menu'}'>
                         <input class='property-input-select {item.group}' type='checkbox' data-type='{item.group}' name='{item.group}' value='{item.group}' on:click={() => {groupCheckedItems(item.group)}}>
                         <a href='.' on:click|preventDefault on:click={() => showOptions(item.group)}>
