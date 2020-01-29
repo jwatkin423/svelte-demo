@@ -100,10 +100,11 @@ function formatYear(period) {
     }
 
     table {
-        margin-top: 10px;
+        /* margin-top: 10px; */
         margin-left: auto;
         margin-right: auto;
         height: 50px;
+        border-collapse: collapse;
     }
 
     .table-mnth-ytd {
@@ -119,21 +120,26 @@ function formatYear(period) {
         font-size: 10px;
         font-weight: 600;
         width: 150px;
-        color: #333333;
+        color: #666666;
         text-align: center;
+        padding-bottom: 3px;
+        padding-top: 12px;
     }
 
     td {
+        padding-top: 3px;
+        padding-bottom: 0px;
         height: 16px;
         line-height: 16px;
         font-size: 16px;
         font-weight: 600;
         width: 150px;
-        color: #333333;
+        color: #666666;
+        vertical-align: unset;
     }
 
     .chng {
-        font-size: 16pt;
+        font-size: 16px;
     }
 
     .td-mnth-ytd {
@@ -145,35 +151,6 @@ function formatYear(period) {
     .percent-change {
         text-align: right;
     }
-
-    @media only screen and (max-width: 768px) {
-        div {
-             margin-left: 0 !important;
-         }
-    }
-
-    @media only screen and (min-width: 547px) and (max-width: 768px) {
- 		table {
-            margin-left: 124px;
-            margin-right: 124px;
-         }
-
-         
-     }
-     
-     @media only screen and (max-width: 546px) {
- 		table {
-            margin-left: 80px;
-            margin-right: 80px;
-         }
-     }
-     
-     @media only screen and (max-width: 501px) {
- 		table {
-            margin-left: 10px;
-            margin-right: 10px;
-         }
- 	}
 
 </style>
 
@@ -196,10 +173,10 @@ function formatYear(period) {
                     <td id="change">{ formatNumber(change) }</td>
                     <td>
                         {#if change >= 0}
-                            {((change/initialMonth) * 100).toFixed(2)}%
+                            {((change/initialMonth) * 100).toFixed(1)}%
                             <i class="chng chng-up"><Icon class="chng-up" tempId="change-pcrt-up" icon={icon[0]} /></i>
                         {:else}
-                            ({((change/initialMonth * 100)).toFixed(2).toString().replace(/\-/, '')}%)
+                            ({((change/initialMonth * 100)).toFixed(1).toString().replace(/\-/, '')}%)
                             <i class="chng chng-dn"><Icon class="chng-dn" tempId="change-prct-dn" icon={icon[1]} /></i>
                         {/if}
                         
