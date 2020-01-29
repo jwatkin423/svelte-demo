@@ -1,11 +1,27 @@
 <script>
+import { onMount } from 'svelte';
+import {faCircle} from '@fortawesome/free-solid-svg-icons';
+import Icon from "./Icon.svelte";
+
 export let searchParams;
+let areaValues = '';
+let areaValueCf = '';
+let propertyTypesCf = '';
 
 $: timePeriodValue = searchParams.timePeriodValue;
 $: propertyTypes = searchParams.propertyTypeDisplayText ? decodeURI(searchParams.propertyTypeDisplayText) : 'ALL';
+$: propertyTypesCf = propertyTypes.replace(/\,/g, ', ');
+
 $: status = 'Sold';
 $: areaType = searchParams.areaType;
-$: areaValues = searchParams.areaValuesDisplayText ? decodeURI(searchParams.areaValuesDisplayText) : 'ALL';
+$: areaValues = searchParams.areaValuesDisplayText.replace() ? decodeURI(searchParams.areaValuesDisplayText) : 'ALL';
+$: areaValueCf = areaValues.replace(/\,/g, ', ');
+$: areaVformatted = areaValueCf.length > 22 ? areaValueCf.substr(0, 22) + '...' : areaValueCf;
+
+// icons for nav bar
+let icon = [faCircle];
+
+let width = 1280;
 
 </script>
 
@@ -28,7 +44,7 @@ $: areaValues = searchParams.areaValuesDisplayText ? decodeURI(searchParams.area
         display: inline-block;
         position: relative;
         line-height: 10px;
-        height: 10px;
+        min-height: 10px;
         margin-top: 10px;
     }
 
@@ -37,26 +53,35 @@ $: areaValues = searchParams.areaValuesDisplayText ? decodeURI(searchParams.area
         display: inline-block;
         position: relative;
         line-height: 10px;
-        height: 10px;
+        min-height: 10px;
     }
 
     .search-param-key-value {
         display: inline-block;
-        margin-left: 10px;
         line-height: 10px;
-        height: 10px;
+        min-height: 10px;
         font-size: 10px;
+        vertical-align: middle;
     }
 
+    .param-points{
+        width: 2px;
+        height: 10px;
+        line-height: 5px;
+        vertical-align: middle;
+        margin-left: 0 !important;
+    }
+    
 </style>
 
-<div class="container-search-params">
+<div class="container-search-params" bind:clientWidth={width}>
     {#if searchParams}
         <div class="top-search-params">
             <div class="search-param-key-value">
-                <span>Property Type:</span> {propertyTypes}
+                <span>Property Type:</span> {propertyTypesCf}
             </div>
             <div class="search-param-key-value">
+                <i class="param-points"><Icon class="param-points-b" tempId='download-menu' icon={icon[0]} /></i>
                 <span>Time Period:</span> 
                 {#if timePeriodValue == 13} 
                     1 Year
@@ -65,6 +90,7 @@ $: areaValues = searchParams.areaValuesDisplayText ? decodeURI(searchParams.area
                 {/if}
             </div>
             <div class="search-param-key-value">
+                <i class="param-points"><Icon class="param-points-b" tempId='download-menu' icon={icon[0]} /></i>
                 <span>Status:</span> {status}
             </div>
         </div>
@@ -73,7 +99,9 @@ $: areaValues = searchParams.areaValuesDisplayText ? decodeURI(searchParams.area
                 <span>Area Type:</span> {areaType}
             </div>
             <div class="search-param-key-value">
-                <span>Area Values:</span> {areaValues}
+                <i class="param-points"><Icon class="param-points-b" tempId='download-menu' icon={icon[0]} /></i>
+                <span id='area-values-disp'>Area Values:</span> {areaValueCf}
+                <!-- <span id='area-values-disp'>Area Values:</span> {areaVformatted} -->
             </div>
         </div>
     {/if}
