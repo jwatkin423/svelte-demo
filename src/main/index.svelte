@@ -6,7 +6,10 @@ export let searchType;
 // imports
 import ChartTitleBar from '../components/ChartTitleBar.svelte';
 import Link from '../components/Link.svelte';
-import MnthYtd from '../charts/newChart.svelte';
+import MnthYtd from '../charts/MnthYtd.svelte';
+import MnthYtdSmall from '../charts/MnthYtdSmall.svelte';
+import MnthYtdTabletPortrait from '../charts/MnthYtdTabletPortrait.svelte';
+import MnthYtdTabletLandscape from '../charts/MnthYtdTabletLandscape.svelte';
 import { tickMarks } from '../utils/_utils';
 import { onMount } from 'svelte';
 import Linechart from '../charts/lineChart.svelte';
@@ -141,6 +144,7 @@ function processPoints (data) {
 let width = 1280;
 let height = 675;
 
+// $: console.log('Screen size: ' + screenSize);
 
 </script>
 
@@ -158,7 +162,6 @@ let height = 675;
 	.content-inner-wrapper {
 		display: flex;
 		flex-direction: column;
-		height: calc(100% - 50px);
 		margin-left: 10px;
 	}
 
@@ -217,7 +220,7 @@ let height = 675;
      .sidebar-title-area {
          background-color: #ffffff;
          height: 25px;
-         margin-bottom: 1px;
+         border-bottom: 1px solid #CCCCCC;
 		 display: flex;
  	}
 	
@@ -228,7 +231,7 @@ let height = 675;
      }
 
      .sidebar-menu-title {
-         font-size: 16px;
+         font-size: 14px;
          text-transform: uppercase;
          width: 202px;
 		 text-align: center;
@@ -313,7 +316,7 @@ let height = 675;
 					chartType={barData.key}/>
 				{/if}
 				{#if screenSize <= 768 && screenSize > 480}
-				<KMI 
+					<KMIMedium
 					data={barData.data} 
 					year={year} 
 					reportPeriod={reportPeriod}  
@@ -387,7 +390,8 @@ let height = 675;
 				{/if}
 				
 			{:else}	
-				<div class="chart-wrapper">
+				{#if screenSize > 1024}
+					<div class="chart-wrapper">
 					<MnthYtd 
 						data={barData.data} 
 						reportPeriod={reportPeriod} 
@@ -397,6 +401,44 @@ let height = 675;
 						mappedPoints={mappedPoints} 
 						reportYear={year}/>
 				</div>
+				{/if}
+				{#if screenSize > 768 && screenSize <= 1024}
+					<div class="chart-wrapper">
+						<MnthYtdTabletLandscape
+							data={barData.data} 
+							reportPeriod={reportPeriod} 
+							p_color={p_color} 
+							s_color={s_color} 
+							yPoints={yT} 
+							mappedPoints={mappedPoints} 
+							reportYear={year}/>
+					</div>
+				{/if}
+				{#if screenSize > 480 && screenSize <= 768}
+					<div class="chart-wrapper">
+						<MnthYtdTabletPortrait 
+							data={barData.data} 
+							reportPeriod={reportPeriod} 
+							p_color={p_color} 
+							s_color={s_color} 
+							yPoints={yT} 
+							mappedPoints={mappedPoints} 
+							reportYear={year}/>
+					</div>
+				{/if}
+				{#if screenSize <= 480}
+					<div class="chart-wrapper">
+						<MnthYtdSmall 
+							data={barData.data} 
+							reportPeriod={reportPeriod} 
+							p_color={p_color} 
+							s_color={s_color} 
+							yPoints={yT} 
+							mappedPoints={mappedPoints} 
+							reportYear={year}/>
+					</div>
+				{/if}
+				
 			{/if}	
 			
 		</div>
