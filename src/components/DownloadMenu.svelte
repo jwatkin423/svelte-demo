@@ -84,9 +84,9 @@ function validateForm() {
         position: absolute;
         top: 30px;
         right: 10px;
-        border-bottom: 3px solid black;
-        border-right: 1px solid black;
-        border-left: 1px solid black;
+        border-bottom: 5px solid black;
+        -webkit-box-shadow: 2px 0px 0px 0px #ccc; 
+        box-shadow: 2px 0px 0px 0px #ccc;
     }
 
     .option-wrapper > input {
@@ -103,7 +103,7 @@ function validateForm() {
         font-size: 10px;
         position: relative;
         display: inline-block;
-        margin-left: 10px;
+        margin-left: 15px;
         margin-right: 5px;
         margin-top: 0px;
         margin-bottom: 0px;
@@ -112,12 +112,12 @@ function validateForm() {
     label {
         height: 20px;
         line-height: 20px;
-        font-size: 10px;
+        font-size: 12px;
         position: relative;
         display: inline-block;
         vertical-align: middle;
         margin-bottom: 5px;
-        color: black;
+        color: #666666;
     } 
 
    .pull-right {
@@ -132,11 +132,6 @@ function validateForm() {
         margin-right: 10px;
         margin-bottom: 5px;
         border-radius: 5px;
-    }
-
-    h3 {
-        padding-left: 10px;
-        font-size: 12px;
     }
 
     .option-wrapper:nth-child(even) {
@@ -166,8 +161,48 @@ function validateForm() {
         border-radius: 5px;
     }
 
+    .all-label {
+        font-weight: bold;
+    }
+
     #submit-button {
         margin-left: 10px;
+    }
+
+    h3 {
+        padding-top: 12px;
+        font-size: 13px;
+        font-weight: bolder;
+        line-height: 25px;
+        margin-bottom: 15px;
+        margin-top: 0;
+        background-color: #FFFFFF;
+        color: #666666;
+    }
+
+    .title-wrapper {
+        width: 100%;
+        display: block;
+    }
+
+    .title-div {
+        width: 50%;
+        float: left;
+        height: 40px;
+    }
+
+    .cls-btn-div {
+        width: 50%;
+        float: right;
+        height: 40px;
+    }
+
+    .close-btn {
+        padding-top: 12px;
+        font-size: 13px;
+        color: #666666;
+        line-height: 25px;
+        margin-right: 15px;
     }
 
     @media only screen and (max-width: 480px) {
@@ -181,10 +216,17 @@ function validateForm() {
 <div class="menu-wrapper">
 {#if !isLoading}
     {#if options}
-        <h3>DOWNLOAD</h3>
+        <div class="title-wrapper">
+            <div class="title-div">
+                <h3 class="pull-right">DOWNLOAD</h3>
+            </div>
+            <div class="cls-btn-div">
+                <label on:click|preventDefault on:click={closeMenu} class="pull-right close-btn">X</label>
+            </div>
+        </div>
                 <div class="option-wrapper pull-left all-option">
                     <input class="input-select" id='all-dl' type="checkbox" data-type="all" name="all" value="all" on:change={toggleAll}>
-                    <label>ALL</label>
+                    <label class='all-label'>MARKET AREA TRENDS</label>
                 </div>
             <form id="pdf-download" action='{url}' method="POST">
                 {#each options as option}
