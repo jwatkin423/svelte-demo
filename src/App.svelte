@@ -12,8 +12,7 @@ import chartData from './helpers/chart';
 import { getAllUrlParams } from './helpers/parse-search-query';
 import SearchParams from './components/SearchParameters.svelte';
 
-// let baseUrl = '';
-let baseUrl = 'http://staging.jw';
+let baseUrl = '';
 
 let queryParams = window.location.search;
 let rawLocation = window.location.pathname;
@@ -38,7 +37,9 @@ function getKey(event) {
 
 if (host !== 'localhost:5000') {
 	baseUrl = protocol + '//' + host;
-} 
+} else {
+	baseUrl = 'http://staging.jw';
+}
 
 let title = "Terradatum";
 
