@@ -205,13 +205,20 @@ function showToolTip(i, leftX, topY, point) {
 }
 
 function formatText(tick) {
-	let res = tick.split("<br>");
-	tickSplits = {
-		"month": res[0],
-		"year": res[1]
-	};
+	let res = tick;
+	let newDate = res;
+	if(tick.includes("<br>")) {
+		let res = tick.split("<br>");
+		tickSplits = {
+			"month": res[0],
+			"year": res[1]
+		};
 
-	return tickSplits.month;
+		newDate = tickSplits.month;
+	}
+	
+
+	return newDate;
 }
 
 function formatYear(tick) {
@@ -263,32 +270,34 @@ function hideToolTip() {
 		width: 100%;
 	}
 
-	.tick {
+		.tick text {
+		fill: #CCCCCC;
 		font-family: Helvetica, Arial;
-		font-size: 10px;
+		font-size: 9px;
 	}
 
 	.tick line {
-		stroke: #666666;
-		stroke-opacity: .25;
+		stroke: #CCCCCC;
 	}
 
-	.y-axis.tick-0 {
-		color: #000000;
-	}
-
-	.tick text {
+	.y-axis.tick-0 text {
 		fill: #666666;
+	}
+
+	.tick.tick-0 text {
+		fill: #000000 !important;
 		text-anchor: start;
 		white-space: normal !important;
 	}
 
 	.tick.tick-0 line {
-		stroke: black;
+		stroke: #000000 !important;
 	}
 
 	.x-axis .tick text {
+		fill: #666666;
 		text-anchor: middle;
+ 		font-size: 9px;
 	}
 
 	.path-line {
@@ -357,10 +366,6 @@ function hideToolTip() {
 		border-top: 10px solid rgb(179, 179, 179);
 	}
 
-	.x-axis .tick text {
- 		font-size: 10px;
-	}		
-
  	@media only screen and (max-width: 450px) {
 		.description.active {
 			font-size: 10px;
@@ -387,7 +392,7 @@ function hideToolTip() {
 		<!-- y axis -->
 		{#each yTicks as tick, i}
 			<g class="tick y-axis tick-{tick}" transform="translate(20, {yScale(tick)})">
-				<line x1="25" x2="{line}"></line>
+				<line x1="30" x2="{line}"></line>
 				<text dx="0" y="3">{tick >= 100 ? formatTick(tick) : tick}</text>
 			</g>
 		{/each}
@@ -406,7 +411,7 @@ function hideToolTip() {
 					{/if}
 					{#if i === (xTicks.length - 1) }
 						<line y1="0" y2="-88%" x1="0" x2="0"></line>
-						<text dx=0 y="16">{formatLastTick(tick)}</text>
+						<text dx=0 y="16">{formatText(tick)}</text>
 					{/if}	
 				</g>
 			{/each}
