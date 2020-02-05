@@ -189,11 +189,6 @@ function formatPointText(point) {
 	return point;
 }
 
-onMount(() => {
-	let contentArea = document.querySelector('.content-area');
-	contentArea.style.maxHeight = '500px';
-});
-
 </script>
 
 <style>
@@ -203,7 +198,7 @@ onMount(() => {
 		background-color: #ffffff;
 		display: block;
 		height: 100%;
-		/* margin-left: 10px; */
+		height: 474px;
 		width: 488px;
 		margin: auto;
 	}
@@ -259,19 +254,22 @@ onMount(() => {
 
 	@media only screen and (max-width: 768px) {
 		.chart {
-			width: 100% !important;
+			height: 376px;
+			width: 500px;
 		}
 	}		
 
-	@media only screen and (max-width: 768px) {
-		 .test {
-			 margin-left: 0px !important;
-		 }
+	@media only screen and (min-width: 769px) and (max-width: 1024px) {
+		.chart {
+			height: 376px;
+			width: 500px;
+		}
 	 }
 
-	@media only screen and (max-width: 845px) {
-		svg {
-			width: 100% !important;
+	@media only screen and (max-width: 480px) {
+		.chart {
+			height: 270px;
+			width: 420px;
 		}
 	}
 </style>
