@@ -7,14 +7,17 @@ export let searchParams;
 let areaValues = '';
 let areaValueCf = '';
 let propertyTypesCf = '';
-
 $: timePeriodValue = searchParams.timePeriodValue;
 $: propertyTypes = searchParams.propertyTypeDisplayText ? decodeURI(searchParams.propertyTypeDisplayText) : 'ALL';
 $: propertyTypesCf = propertyTypes.replace(/\,/g, ', ');
 
+let rawareaValues = 'ALL';
+let areaType = '';
+
 $: status = 'Sold';
-$: areaType = searchParams.areaType;
-$: areaValues = searchParams.areaValuesDisplayText.replace() ? decodeURI(searchParams.areaValuesDisplayText) : 'ALL';
+$: areaType = searchParams.areaType ? searchParams.areaType : '';
+$: rawareaValues = searchParams.areaValuesDisplayText ? searchParams.areaValuesDisplayText : '';
+$: areaValues = rawareaValues ? decodeURI(rawareaValues) : 'ALL';
 $: areaValueCf = areaValues.replace(/\,/g, ', ');
 $: areaVformatted = areaValueCf.length > 22 ? areaValueCf.substr(0, 22) + '...' : areaValueCf;
 
