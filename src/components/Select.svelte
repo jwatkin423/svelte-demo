@@ -29,7 +29,7 @@ let currentAreaSubMenuType = '';
 
 let allAreaChecked;
 
-$: checkAllOption(itemType, items, searchParam);
+// $: checkAllOption(itemType, items, searchParam);
 let options = [];
 let tempType = '';
 let notAllSelected = [];
@@ -55,7 +55,8 @@ function checkAllOption(itemType, items, searchParam) {
             let opts = options[o];
             let optsCount = opts.length;
             let notSelectedCount = 0;
-            let itemCount = 1;
+            let itemCount = 0;
+            
             opts.forEach((i) => {
                 
                 if (ps.indexOf(i) === -1) {
@@ -69,6 +70,11 @@ function checkAllOption(itemType, items, searchParam) {
                 }
             });
         });
+        
+        if (keys.length === allSelected.length) {
+            let allPropertyEl = document.querySelector('.all-property-input-select');
+            allPropertyEl.checked = true;
+        }
     }
 
 }
@@ -202,11 +208,12 @@ onMount(() => {
         }
     }
 
+    checkAllOption(itemType, items, searchParam);
+
     allSelected.forEach((el) => {
         let allEl = document.querySelector('input.all-' + el);
         allEl.checked = true;
     });
-
 
     // closes all opened menus on mount
     closeOpenedAreaMenus();
@@ -224,6 +231,7 @@ onMount(() => {
         width: 50px;
         height: 15px;
         line-height: 10px;
+        font-size: 10px;
     }
 
     .select-menu-block {
