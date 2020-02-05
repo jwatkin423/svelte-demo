@@ -189,36 +189,6 @@ function formatPointText(point) {
 	return point.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-$: console.log('MTH YTD tablet portrait');
-
-function pointLen(point) {
-	let len = point.length;
-
-	if (len == 1) {
-		return 1;
-	}
-
-	if (len == 2) {
-		return 2;
-	}
-
-	if (len == 3) {
-		return 3;
-	}
-
-	if (len == 4) {
-		return 4;
-	}
-
-	if (len == 5) {
-		return 5;
-	}
-
-	if (len >= 6) {
-		return (len * 2) + 2;
-	}
-}
-
 </script>
 
 <style>
