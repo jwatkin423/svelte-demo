@@ -1,6 +1,6 @@
 <script>
 import Icon from "./Icon.svelte";
-
+import ChangeArrows  from './ChangeArrows.svelte';
 import {faCaretUp, faCaretDown, faCircle} from '@fortawesome/free-solid-svg-icons';
 
 export let data = [];
@@ -89,6 +89,23 @@ function formatYear(period) {
     return periodSplits.year;
 }
 
+function formatLastPeriod(period) {
+    let newPeriod = period + year;
+
+    if (period.includes('<br>')) {
+        let res = period.split("<br>");
+
+        periodSplits = {
+            "month": res[0],
+            "year": res[1]
+        };
+
+        newPeriod = periodSplits.month + " " + periodSplits.year;
+    }
+  
+    return newPeriod;
+}
+
 </script>
 
 <style>
@@ -96,7 +113,6 @@ function formatYear(period) {
         display: block;
         text-align: center;
         background-color: #ffffff;
-        margin-left: 10px;
     }
 
     table {
@@ -111,19 +127,31 @@ function formatYear(period) {
         margin-top: 0;
         margin-left: auto;
         margin-right: auto;
-        width: 336px;
+        width: 360px;
     }
 
     th {
-        height: 10px;
-        line-height: 10px;
-        font-size: 10px;
+        height: 12px;
+        line-height: 12px;
+        font-size: 12px;
         font-weight: 600;
         width: 150px;
         color: #666666;
         text-align: center;
         padding-bottom: 3px;
         padding-top: 12px;
+    }
+
+    .th-mnth-ytd {
+        height: 12px;
+        line-height: 12px;
+        font-size: 12px;
+        font-weight: 800;
+        width: 50px;
+        color: #666666;
+        text-align: center;
+        padding-bottom: unset !important;
+        padding-top: 5px;
     }
 
     td {
@@ -146,10 +174,7 @@ function formatYear(period) {
         height: 14px !important;
         line-height: 14px !important;
         font-size: 14px !important;
-    }
-
-    .percent-change {
-        text-align: right;
+        width: 50px;
     }
 
 </style>
@@ -161,7 +186,7 @@ function formatYear(period) {
             <thead>
                 <tr>
                     <th>{formatMonth(reportPeriod[0])}</th>
-                    <th>{reportPeriod[reportPeriod.length - 1]} {year}</th>
+                    <th>{formatLastPeriod(reportPeriod[reportPeriod.length - 1])}</th>
                     <th>Change</th>
                     <th>% Change</th>
                 </tr>
@@ -169,15 +194,15 @@ function formatYear(period) {
             <tbody>
                 <tr>
                     <td id="inital-month">{ formatNumber(initialMonth) }</td>
-                    <td id="last-month">{ formatNumber(lastMonth) }</td>
-                    <td id="change">{ formatNumber(change) }</td>
+                    <td id="last-month">{ formatNumber(lastMonth) } </td>
+                    <td id="change">{ formatNumber(change) } <ChangeArrows change={change} /></td>
                     <td>
                         {#if change >= 0}
                             {((change/initialMonth) * 100).toFixed(1)}%
-                            <i class="chng chng-up"><Icon class="chng-up" tempId="change-pcrt-up" icon={icon[0]} /></i>
+                            <ChangeArrows change={change} />
                         {:else}
                             ({((change/initialMonth * 100)).toFixed(1).toString().replace(/\-/, '')}%)
-                            <i class="chng chng-dn"><Icon class="chng-dn" tempId="change-prct-dn" icon={icon[1]} /></i>
+                            <ChangeArrows change={change} />
                         {/if}
                         
                      </td>
@@ -189,11 +214,11 @@ function formatYear(period) {
         <table class="table-mnth-ytd">
             <thead>
                 <tr>
-                    <th></th>
-                    <th><i><Icon customColor={p_color} class="year" tempId="previous-year" icon={icon[2]} /></i>{formatYear(reportPeriod[0])}</th>
-                    <th><i><Icon customColor={s_color} class="year" tempId="current-year" icon={icon[2]} /></i>{formatYear(reportPeriod[2])}</th>
-                    <th>Change</th>
-                    <th>% Change</th>
+                    <th class="th-mnth-ytd"></th>
+                    <th class="th-mnth-ytd"><i><Icon customColor={p_color} class="year" tempId="previous-year" icon={icon[2]} /></i>{formatYear(reportPeriod[0])}</th>
+                    <th class="th-mnth-ytd"><i><Icon customColor={s_color} class="year" tempId="current-year" icon={icon[2]} /></i>{formatYear(reportPeriod[2])}</th>
+                    <th class="th-mnth-ytd">Change</th>
+                    <th class="th-mnth-ytd">% Change</th>
                 </tr>
             </thead>
             <tbody>
@@ -201,28 +226,29 @@ function formatYear(period) {
                     <td class='td-mnth-ytd'>{formatMonthOnly(reportPeriod[0])}</td>
                     <td class='td-mnth-ytd'>{formatNumber(data[0])}</td>
                     <td class='td-mnth-ytd'>{formatNumber(data[2])}</td>
-                    <td class='td-mnth-ytd'>{formatNumber(mthChange)}</td>
+                    <td class='td-mnth-ytd'>{formatNumber(mthChange)} <ChangeArrows change={mthChange} /></td>
                     <td class='td-mnth-ytd percent-change'>
                         {#if mthChange >= 0}
                             {percentMnthChange}%
+                            <ChangeArrows change={mthChange} />
                         {:else}
                             ({percentMnthChange}%)
+                            <ChangeArrows change={mthChange} />
                         {/if}
-                        
                     </td>
                 </tr>
                 <tr>
                     <td class='td-mnth-ytd'>YTD</td>
                     <td class='td-mnth-ytd'>{formatNumber(data[1])}</td>
                     <td class='td-mnth-ytd'>{formatNumber(data[3])}</td>
-                    <td class='td-mnth-ytd'>{formatNumber(ytdChange)}</td>
+                    <td class='td-mnth-ytd'>{formatNumber(ytdChange)} <ChangeArrows change={ytdChange} /></td>
                     <td class='td-mnth-ytd percent-change'>
                         {#if ytdChange >= 0}
                             {percentYtdChange}%
-                            <i class="chng chng-up"><Icon class="chng-up-ytd" tempId="change-up" icon={icon[0]} /></i>
+                            <ChangeArrows change={ytdChange} />
                         {:else}
                             ({percentYtdChange}%)
-                            <i class="chng chng-dn"><Icon class="chng-dn-ytd" tempId="change-prct-dn" icon={icon[1]} /></i>
+                            <ChangeArrows change={ytdChange} />
                         {/if}
                     </td>
                 </tr>
