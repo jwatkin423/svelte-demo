@@ -89,7 +89,6 @@ onMount(() => {
 
 function toggleShowHamMenu() {
     showHamburger = showHamburger === true ? false : true;
-    console.log("show ham menu");
 }
 
 function setKey(e) {
@@ -209,7 +208,7 @@ let resizeImg;
         margin-top: 0px;
         height: 30px;
         padding: 0 !important;
-        text-align: center;
+        text-align: right;
         position: relative;
     }
 
@@ -219,12 +218,14 @@ let resizeImg;
         display: inline-block;
     }
 
-
-
-    .pull-right {
-        float: right;
-        margin-right: 10px;
+    .center-item {
+        width: 33%;
+        text-align: center;
+    }
+    .right-item {
+        width: 33%;
         height: 30px;
+        padding-right: 10px;
     }
 
     svg {
@@ -319,11 +320,6 @@ let resizeImg;
             height: 55px;
         }
 
-        .nav-icons {
-            height: 55px;
-            line-height: 55px;
-        }
-
         .nav-item {
             height: 55px;
             line-height: 55px;
@@ -394,6 +390,7 @@ let resizeImg;
 	<div class="navbar-td" id="navbar-td" style="background-color: {theme_color};">
 		<div class="menu-wrapper">
             <div class="menu">
+                <!-- <div class="nav-item left-item"></div> -->
                 <div class="dropdown nav-item center-item">
                     <a 
                         on:click|preventDefault
@@ -412,7 +409,7 @@ let resizeImg;
                     </a>
                         
                 </div> <!-- end dropdown -->
-                <div class="nav-item pull-right">
+                <div class="nav-item pull-right right-item">
                     <a 
                         on:click|preventDefault 
                         on:click={toggleShowDownload}
