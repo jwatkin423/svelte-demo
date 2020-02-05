@@ -36,6 +36,7 @@ function splitDisclaimer(disc) {
     }
 
     .sponsorship-text {
+        margin-top: 5px;
         color: #666666;
         margin-left: 10px;
         font-size: 10px;
@@ -53,7 +54,7 @@ function splitDisclaimer(disc) {
         display: inline-block;
         width: 100%;
         font-size: 10px;
-        margin-bottom: 5px;
+        margin-bottom: 0;
     }
 
     .copy-right-wrapper {
