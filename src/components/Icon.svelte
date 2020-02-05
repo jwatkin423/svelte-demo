@@ -70,6 +70,16 @@ function setCustomColor(customColor, svgId) {
     width: 16px !important;
   }
 
+  .chng-up-small {
+    color: green !important;
+    font-size: 10px;
+    height: 10px;
+    line-height: 10px;
+    margin-left: 0 !important;
+    margin-bottom: 0px !important;
+    width: 16px !important;
+  }
+
   .chng-dn {
     color: red !important;
     font-size: 20px;
@@ -82,9 +92,19 @@ function setCustomColor(customColor, svgId) {
 
   .chng-dn-small {
     color: red !important;
-    font-size: .375em;
+    font-size: 10px;
     height: 10px;
     line-height: 10px;
+    margin-left: 0 !important;
+    margin-bottom: 0px !important;
+    width: 10px !important;
+  }
+
+  .chng-dn-ytd-small {
+    color: red !important;
+    font-size: 8px !important;
+    height: 8px !important;
+    line-height: 8px !important;
     margin-left: 0 !important;
     margin-bottom: 0px !important;
     width: 10px !important;
@@ -100,11 +120,11 @@ function setCustomColor(customColor, svgId) {
     width: 16px !important;
   }
 
-  .chng-up-small {
+  .chng-up-ytd-small {
     color: green !important;
-    font-size: .375em;
-    height: 10px;
-    line-height: 10px;
+    font-size: 8px !important;
+    height: 8px !important;
+    line-height: 8px !important;
     margin-left: 0 !important;
     margin-bottom: 0px !important;
     width: 10px !important;
@@ -132,6 +152,11 @@ function setCustomColor(customColor, svgId) {
 
   .year {
     font-size: 10px;
+    margin-right: 2px;
+  }
+
+.year-small {
+    font-size: 8px !important;
     margin-right: 2px;
   }
 
