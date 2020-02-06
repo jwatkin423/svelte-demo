@@ -60,9 +60,6 @@ let width = 420;
 let height = 270;
 let textWidth = 420;
 
-$: bdOne = width < 488 ? 70 : 80;
-$: bdTwo = width < 488 ? 30 : 10;
-
 // primary color
 $: primary_fill_color = p_color;
 $: secondary_fill_color = s_color;
@@ -301,7 +298,7 @@ function formatPointText(point) {
 		{/if}
 		{#if i == 3}
 		    <rect
-                x="{(.62 * width) + 45}px"
+                x="{(.63 * width) + 45}px"
                 y="{yScale(point)}"
                 width="{barWidth}"
                 height="{height - padding.bottom  -  yScale(point)}"
@@ -347,7 +344,7 @@ function formatPointText(point) {
 			{#if i == 3}
 				<text 
                     class="point-text"
-					x="{(.62 * width) + 60}px"
+					x="{(.63 * width) + 60}px"
 					y="{yScale(point) - 5}"
 					>{formatPointText(point)}</text>
 			{/if}
