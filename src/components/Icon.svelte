@@ -52,12 +52,19 @@ function setCustomColor(customColor, svgId) {
     vertical-align: middle;
     margin-bottom: 4px;
   }
+  
   .item-menu {
-    color: black !important;
+    width: 10px !important;
+    color: #666666 !important;
     font-size: 15px;
     height: 15px;
     line-height: 10px;
     margin-bottom: 0px !important;
+    margin-left: 0;
+  }
+
+  .item-group {
+    margin-right: 10px;
   }
 
   .chng-up {

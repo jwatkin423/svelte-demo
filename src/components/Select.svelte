@@ -5,8 +5,7 @@ import {faCaretRight, faCaretDown} from '@fortawesome/free-solid-svg-icons';
 import { createEventDispatcher } from 'svelte';
 import AreaValueSelect from './AreaValuesSelect.svelte';
 import SubSelect from './SubSelect.svelte';
-// import  AutoComplete from 'svelte-autocomplete/dist/index';
-
+import HRbar from './HRBar.svelte';
 
 const dispatch = createEventDispatcher();
 let icon = [faCaretRight, faCaretDown];
@@ -239,10 +238,10 @@ onMount(() => {
         width: 230px;
         background-color: white;
         position: absolute;
-        border-top: 1px solid black;
-        border-left: 1px solid black;
-        border-right: 1px solid black;
-        border-bottom: 3px solid black;
+        border-top: 1px solid #CCCCCC;
+        border-left: 1px solid #CCCCCC;
+        border-right: 1px solid #CCCCCC;
+        border-bottom: 3px solid #333;
     }
  
     .option-wrapper {
@@ -257,12 +256,11 @@ onMount(() => {
     }
 
     input {
-        height: 20px;
         line-height: 20px;
         font-size: 10px;
         position: relative;
         display: inline-block;
-        margin-left: 10px;
+        /* margin-left: 10px; */
         margin-right: 5px;
         margin-top: 0px;
         margin-bottom: 0px;
@@ -271,12 +269,12 @@ onMount(() => {
     a > label {
         height: 20px;
         line-height: 20px;
-        font-size: 10px;
+        font-size: 12px;
         position: relative;
         display: inline-block;
         vertical-align: middle;
         margin-bottom: 5px;
-        color: black;
+        color: #666666;
     } 
 
     a:visited {
@@ -287,13 +285,13 @@ onMount(() => {
         display: inline-block;
         vertical-align: middle;
         margin-bottom: 5px;
-        color: black;
+        color: #666666;
     } 
 
     hr {
         margin-top: 10px;
         margin-bottom: 0;
-        color: #666666;
+        color: #CCCCCC;
     }
 
     .pull-right {
@@ -329,6 +327,91 @@ onMount(() => {
     h3 {
         padding-left: 10px;
         font-size: 12px;
+        color: #666666;
+        font-weight: 800;
+        margin: 0px !important;
+        line-height: 30px;
+        height: 30px;
+    }
+
+    .hr-title {
+        margin-top: 0 !important;
+    }
+
+    @media only screen and (min-width: 1025px) {
+        .item-group {
+            margin-right: 0 !important;
+        }
+
+        .option-wrapper {
+            margin-left: 10px;
+        }
+    }
+
+    @media only screen and (max-width: 1024px) {
+
+        .option-wrapper {
+            margin-left: 30px;
+        }
+
+        .property-input-select {
+            margin-left: 30px;
+        }
+
+        .area-input-select {
+            margin-left: 30px;
+        }
+
+        .option-wrapper {
+            height: 30px;
+        }
+
+        .input-select {
+            line-height: 30px;
+        }
+
+        .select-menu-block {
+            width: 460px;
+        }
+
+        div.option-wrapper {
+            height: 30px;
+            line-height: 30px;
+        }
+
+        label {
+            line-height: 30px;
+            height: 30px;
+        }
+
+        
+    }
+
+    @media only screen and (max-width: 768px) {
+        
+
+        #time-values-menu {
+            top: 85px;
+        }
+
+		.select-menu-block {
+            position: absolute;
+        }
+        
+        .sub-menu-area-group, .option-wrapper {
+            text-align: left;
+        }
+
+        .sub-menu-area {
+            width: 100% !important;
+            left: 0px !important;
+            text-align: left;
+        }
+
+        .area-wrapper {
+            text-align: left !important;
+        }
+
     }
 
     @media only screen and (max-width: 480px) {
@@ -347,58 +430,43 @@ onMount(() => {
         }
     }
 
-    @media only screen and (max-width: 768px) {
-        .all-property-items {
-            margin-left: 30px;
-        }
-        
-        .poperty-item {
-            margin-left: 60px;
-        }
-
-        .option-wrapper {
-            height: 30px;
-        }
-
+    @media only screen and (min-width: 769px) and (max-width: 1024px) {
         #time-values-menu {
-            top: 85px;
+            top: 79px;
         }
 
-		.select-menu-block {
-            position: absolute;
-            margin-top: 5px;
-        }
-        
-        .sub-menu-area-group, .option-wrapper {
-            text-align: left;
+        #area-types-menu {
+            top: 34px;
         }
 
-        .sub-menu-area {
-            width: 100% !important;
-            left: 0px !important;
-            text-align: left;
+        #property-types-menu {
+            top: -11px;
         }
-
-        .area-wrapper {
-            text-align: left !important;
-        }
-
-        .area-option-menu {
-            margin-left: 30px;
-        }
-
-        .all-area-option-menu {
-            margin-left: 30px;
-        }
-
     }
     
+    @media only screen and (max-width: 480px) {
+        #time-values-menu {
+            top: 78px;
+        }
+
+        #area-types-menu {
+            top: 34px;
+        }
+
+        #property-types-menu {
+            top: -11px;
+        }
+    }
+
 </style>
 
 {#if itemType === 'property-types'}
     <div class='select-menu-block' id='property-types-menu'>
         {#if items.length > 0}
-        <h3>{menuTitle}</h3>
+            {#if window.innerWidth > 1024}
+                <h3>{menuTitle}</h3>
+                <HRbar />
+            {/if}
         <div class='option-wrapper all-property-items' id='{'all-group-menu'}'>
             <input class='all-property-input-select' type='checkbox' name='all' value='all' bind:checked={allPropertyChecked}>
             <a href='.' on:click|preventDefault>
@@ -412,9 +480,9 @@ onMount(() => {
                         <a href='.' on:click|preventDefault on:click={() => showOptions(item.group)}>
                         <label>{item.value}</label>
                         {#if currentGroupId !== item.group}
-                            <i class="property-type-menu-item"><Icon class="item-menu" tempId="{item + '-item'}" icon={icon[0]} /></i>
+                            <i class="property-type-menu-item"><Icon class="item-menu item-group" tempId="{item + '-item'}" icon={icon[0]} /></i>
                         {:else}
-                            <i class="property-type-menu-item"><Icon class="item-menu" tempId="{item + '-item'}" icon={icon[1]} /></i>
+                            <i class="property-type-menu-item"><Icon class="item-menu item-group" tempId="{item + '-item'}" icon={icon[1]} /></i>
                         {/if}
                         </a>
                 </div>
@@ -431,7 +499,10 @@ onMount(() => {
 {#if itemType === 'area-types'}
     <div class="select-menu-block" id='area-types-menu'>
         {#if items.length > 0}
-            <h3>{menuTitle}</h3>
+            {#if window.innerWidth > 1024}
+                <h3>{menuTitle}</h3>
+                <HRbar />
+            {/if}
             <div class='option-wrapper all-area-option-menu' id='{'all-group-menu'}'>
                 {#if initialAreaType.toLowerCase() === 'all'}
                     <input class='all-area-input-select' type='radio' name='area-type' value='all' checked='checked'>
@@ -465,9 +536,9 @@ onMount(() => {
                     <a href='.' on:click|preventDefault on:click={() => showAreaOptions(item)}>
                         <label>{item}</label>
                         {#if currentAreaSubMenuType !== item.replace(/[^a-zA-Z0-9]+/g, '-').toLowerCase() }
-                            <i class="area-type-menu-item"><Icon class="item-menu" tempId="{item + '-item'}" icon={icon[0]} /></i>
+                            <i class="area-type-menu-item"><Icon class="item-menu item-group" tempId="{item + '-item'}" icon={icon[0]} /></i>
                         {:else}
-                            <i class="area-type-menu-item"><Icon class="item-menu" tempId="{item + '-item'}" icon={icon[1]} /></i>
+                            <i class="area-type-menu-item"><Icon class="item-menu item-group" tempId="{item + '-item'}" icon={icon[1]} /></i>
                         {/if}
                     </a>
                 </div>
@@ -487,7 +558,10 @@ onMount(() => {
 
 {#if itemType === 'time-values'}
     <div class="select-menu-block" id='time-values-menu'>
-        <h3>{menuTitle}</h3>
+        {#if window.innerWidth > 1024}
+            <h3>{menuTitle}</h3>
+            <HRbar />
+        {/if}
         {#each timeValues as tv}
             <div class='option-wrapper'>
                 {#if parseInt(param) === tv.value}

@@ -11,6 +11,7 @@ import searchData from '../helpers/searchdata';
 
 export let params;
 export let url;
+export let p_color;
 
 let initialPropertyClassList = 'none';
 $: initialPropertyClassList = typeof (params) === 'undefined' ? false : params.propertyClassList;
@@ -84,13 +85,17 @@ let showTimeMenu = false;
 
 function toggleShowPopertyMenu() {
     showPropertyMenu = showPropertyMenu === true ? false : true;
+    let prtyBtn = document.getElementById('btn-proptery');
 
     // toggle other menus off
     // set the position of the menu
     if (showPropertyMenu) {
+        prtyBtn.style.color = p_color;
         showAreaTypesMenu = false
         showTimeMenu = false
         setLeft('property-types');
+    } else {
+        prtyBtn.style.removeProperty('color');
     }
 }
 
@@ -122,13 +127,16 @@ let showAreaTypesMenu = false;
 
 function toggleShowAreaTypesMenu() {
     showAreaTypesMenu = showAreaTypesMenu === true ? false : true;
-    
+    let prtyBtn = document.getElementById('btn-area');
     // toggle other menus off
     // set the position of the menu
     if (showAreaTypesMenu) {
+        prtyBtn.style.color = p_color;
         showPropertyMenu = false;
         showTimeMenu = false
         setAreaLeft('area-types');
+    } else {
+        prtyBtn.style.removeProperty('color');
     }
    
 }
@@ -160,10 +168,11 @@ function closeAreaMenu() {
 function toggleShowTimeMenu() {
 
     showTimeMenu = showTimeMenu === true ? false : true;
-
+    let prtyBtn = document.getElementById('btn-time');
     // toggle other menus off
     // set the position of the menu
     if (showTimeMenu) {
+        prtyBtn.style.color = p_color;
         timeIcon = 1;
         showPropertyMenu = false;
         showAreaTypesMenu = false;
@@ -173,7 +182,9 @@ function toggleShowTimeMenu() {
         document.getElementById('time-values-menu').style.display = 'block';
     } else {
         timeIcon = 0;
+        prtyBtn.style.removeProperty('color');
     }
+
 }
 
 function setTimeMenuleft(id) {
@@ -184,9 +195,9 @@ function setTimeMenuleft(id) {
     menu.style.removeProperty('top');
     leftEl = el.offsetLeft + 'px';
     menu.style.left = leftEl;
-
-    let themeMenu = document.getElementById('area-types');
+    let themeMenu = document.getElementById(id);
     menu.style.width = themeMenu.offsetWidth + 'px';
+    
 
     let els = document.querySelectorAll('.sub-menu-time');
     els.forEach((el) => {
@@ -357,9 +368,11 @@ onMount(() => {
 <style>
 
     form {
-        height: 200px;
+        height: 175px;
         width: 100%;
         background-color: white;
+        /* margin-left: auto;
+        margin-right: auto; */
     }
 
     .type-menu {
@@ -388,6 +401,8 @@ onMount(() => {
         background-color: white;
         border: none;
         margin-left: 0;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
     }
 
     button:active {
@@ -415,13 +430,18 @@ onMount(() => {
 
     .label {
         display: block;
-        padding-top: 0px;
+        padding-top: 0px !important;
+        width: 100%;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
     }
     
     i {
         line-height: 24px;
         height: 30px;
         float: right;
+        width: 10px;
+        margin-right: 10px;
     }
 
     .showPropertyMenu {
@@ -479,7 +499,7 @@ onMount(() => {
         {#if pTypes.length > 0}
         <div class="themed" id='property-types'>
             <div class='label'>
-                <button class='menu-button' on:click|preventDefault on:click={toggleShowPopertyMenu} href=".">Property Type
+                <button class='menu-button' on:click|preventDefault on:click={toggleShowPopertyMenu} href="." id='btn-proptery'>Property Type
                     {#if !showPropertyMenu}
                         <i><Icon class="item-menu" tempId="property-type-menu-right" icon={icon[0]} /></i>
                     {:else}
@@ -505,7 +525,7 @@ onMount(() => {
         {#if atKeys.length > 0}
             <div class="themed" id="area-types">
                 <div class='label'>
-                    <button class='menu-button' on:click|preventDefault on:click={toggleShowAreaTypesMenu} href=".">Area Types
+                    <button class='menu-button' on:click|preventDefault on:click={toggleShowAreaTypesMenu} href="." id='btn-area'>Area Types
                         {#if !showAreaTypesMenu}
                             <i><Icon class="item-menu" tempId="area-type-menu-right" icon={icon[0]} /></i>
                         {:else}

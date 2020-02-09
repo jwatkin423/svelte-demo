@@ -142,6 +142,9 @@ window.onclick = function(e) {
         && !e.target.matches('a.sorted-group-item')
         && !e.target.matches('.select-menu-block > h3')
         && !e.target.matches('a.res-menu-link')
+        && !e.target.matches('input.autocomplete-input')
+        && !e.target.matches('div.autocomplete-list-item')
+        && !e.target.matches('button.clear-search')
         ) {
 
         if (showClass) {
@@ -315,28 +318,6 @@ let resizeImg;
         height: 75px;
     }
 
-    @media only screen and (max-width: 480px) {
-        .navbar-td, .menu-wrapper, .menu {
-            height: 55px;
-        }
-
-        .nav-item {
-            height: 55px;
-            line-height: 55px;
-        }
-
-        .nav-item > a {
-            line-height: 55px;
-            height: 55px;
-            vertical-align: middle;
-            font-size: 18px;
-        }
-
-        .logo {
-            height: 55px;
-        }
-    }
-
     @media only screen and (min-width: 769px) {
         .ham-menu {
             display:none;
@@ -373,6 +354,31 @@ let resizeImg;
     .logo-container {
         display: none;
     }
+
+    @media only screen and (max-width: 480px) {
+        .navbar-td, .menu-wrapper, .menu {
+            height: 55px;
+        }
+
+        .nav-item {
+            height: 55px;
+            line-height: 55px;
+        }
+
+        .nav-item > a {
+            line-height: 55px;
+            height: 55px;
+            vertical-align: middle;
+            font-size: 18px;
+        }
+
+        .logo {
+            height: 55px;
+        }
+
+    }
+
+    
 
 </style>
 
@@ -487,12 +493,12 @@ let resizeImg;
 	</div>
 </div>
 <div class:show="{showClass === true}" class="dropdown-content" id="search-menu-content">
-    {#if screenSize > 768}
-        <Menu params={searchParams} url={baseSearchUrl} mlsId={mlsId}/>
-    {:else if (screenSize <= 768 && screenSize > 480)}
-        <TabletMenu params={searchParams} url={baseSearchUrl} mlsId={mlsId}/>
+    {#if screenSize > 1024}
+        <Menu params={searchParams} url={baseSearchUrl} mlsId={mlsId} p_color={theme_color}/>
+    {:else if (screenSize <= 1024 && screenSize > 480)}
+        <TabletMenu params={searchParams} url={baseSearchUrl} mlsId={mlsId} p_color={theme_color}/>
      {:else}   
-        <SmartPhoneMenu params={searchParams} url={baseSearchUrl} mlsId={mlsId}/>
+        <SmartPhoneMenu params={searchParams} url={baseSearchUrl} mlsId={mlsId} p_color={theme_color}/>
     {/if}
 </div>
 <div class="ham-menu">

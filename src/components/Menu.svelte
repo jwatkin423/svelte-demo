@@ -11,6 +11,7 @@ import searchData from '../helpers/searchdata';
 
 export let params;
 export let url;
+export let p_color;
 
 let initialPropertyClassList = 'none';
 $: initialPropertyClassList = typeof (params) === 'undefined' ? false : params.propertyClassList;
@@ -83,33 +84,35 @@ let showTimeMenu = false;
 
 function toggleShowPopertyMenu() {
     showPropertyMenu = showPropertyMenu === true ? false : true;
-
+    let prtyBtn = document.querySelector('#btn-property');
+    let areaBtn = document.getElementById('btn-area');
+    let timeBtn = document.getElementById('btn-time');
     // toggle other menus off
     // set the position of the menu
     if (showPropertyMenu) {
+        prtyBtn.style.color = p_color;
         showAreaTypesMenu = false
         showTimeMenu = false
         setLeft('property-types');
+        areaBtn.style.removeProperty('color');
+        timeBtn.style.removeProperty('color');
+    } else {
+        prtyBtn.style.removeProperty('color');
+        areaBtn.style.removeProperty('color');
+        timeBtn.style.removeProperty('color');
     }
 }
 
 function setLeft(id)  {
-
     let el = document.getElementById(id);
     let menu = document.getElementById(id + '-menu');
     menu.style.removeProperty('left');
     menu.style.removeProperty('top');
     leftEl = el.offsetLeft + 'px';
     menu.style.left = leftEl;
-
-    if (window.innerWidth <= 768) {
-        menu.style.top = '-10px';
-    }
-
+    
     let els = document.querySelectorAll('.sub-menu-property');
     els.forEach((el) => {
-        let lEl = parseInt(leftEl);
-        el.style.left = '10px';
         el.style.zIndex = 1;
     });
     
@@ -119,13 +122,24 @@ let showAreaTypesMenu = false;
 
 function toggleShowAreaTypesMenu() {
     showAreaTypesMenu = showAreaTypesMenu === true ? false : true;
+    let prtyBtn = document.querySelector('#btn-property');
+    let areaBtn = document.getElementById('btn-area');
+    let timeBtn = document.getElementById('btn-time');
     
     // toggle other menus off
     // set the position of the menu
     if (showAreaTypesMenu) {
+        areaBtn.style.color = p_color;
         showPropertyMenu = false;
         showTimeMenu = false
         setAreaLeft('area-types');
+
+        timeBtn.style.removeProperty('color');
+        prtyBtn.style.removeProperty('color');
+    } else {
+        prtyBtn.style.removeProperty('color');
+        areaBtn.style.removeProperty('color');
+        timeBtn.style.removeProperty('color');
     }
    
 }
@@ -143,7 +157,7 @@ function setAreaLeft(id)  {
     let els = document.querySelectorAll('.sub-menu-area');
     els.forEach((el) => {
         el.style.zIndex = 9;
-        el.style.left = '10px';
+        // el.style.left = '10px';
     });
     
 }
@@ -155,10 +169,13 @@ function closeAreaMenu() {
 function toggleShowTimeMenu() {
 
     showTimeMenu = showTimeMenu === true ? false : true;
-
+    let prtyBtn = document.querySelector('#btn-property');
+    let areaBtn = document.getElementById('btn-area');
+    let timeBtn = document.getElementById('btn-time');
     // toggle other menus off
     // set the position of the menu
     if (showTimeMenu) {
+        timeBtn.style.color = p_color;
         timeIcon = 1;
         showPropertyMenu = false;
         showAreaTypesMenu = false;
@@ -166,7 +183,12 @@ function toggleShowTimeMenu() {
         setTimeMenuleft('time-values');
 
         document.getElementById('time-values-menu').style.display = 'block';
+        prtyBtn.style.removeProperty('color');
+        areaBtn.style.removeProperty('color');
     } else {
+        prtyBtn.style.removeProperty('color');
+        areaBtn.style.removeProperty('color');
+        timeBtn.style.removeProperty('color');
         timeIcon = 0;
     }
 }
@@ -419,6 +441,7 @@ onMount(() => {
         line-height: 30px;
         height: 30px;
         float: right;
+        margin-right: 10px;
     }
 
     .showPropertyMenu {
@@ -467,7 +490,7 @@ onMount(() => {
         {#if pTypes.length > 0}
         <div class="themed" id='property-types'>
             <div class='label'>
-                <button class='menu-button' on:click|preventDefault on:click={toggleShowPopertyMenu} href=".">Property Type
+                <button class='menu-button' on:click|preventDefault on:click={toggleShowPopertyMenu} href="." id='btn-property'>Property Type
                     {#if !showPropertyMenu}
                         <i><Icon class="item-menu" tempId="property-type-menu-right" icon={icon[0]} /></i>
                     {:else}
@@ -493,7 +516,7 @@ onMount(() => {
         {#if atKeys.length > 0}
             <div class="themed" id="area-types">
                 <div class='label'>
-                    <button class='menu-button' on:click|preventDefault on:click={toggleShowAreaTypesMenu} href=".">Area Types
+                    <button class='menu-button' on:click|preventDefault on:click={toggleShowAreaTypesMenu} href="." id='btn-area'>Area Types
                         {#if !showAreaTypesMenu}
                             <i><Icon class="item-menu" tempId="area-type-menu-right" icon={icon[0]} /></i>
                         {:else}

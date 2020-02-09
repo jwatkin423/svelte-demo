@@ -53,7 +53,6 @@ onMount(() => {
 
     .sub-menu-property {
         display: block;
-        width: 200px;
         background-color: white;
         position: relative;
     }
@@ -79,15 +78,15 @@ onMount(() => {
         display: inline-block;
         vertical-align: middle;
         margin-bottom: 5px;
+        color: #666666;
     } 
 
     input {
-        height: 20px;
         line-height: 20px;
         font-size: 10px;
         position: relative;
         display: inline-block;
-        margin-left: 10px;
+        margin-left: 20px;
         margin-right: 5px;
         margin-top: 0px;
         margin-bottom: 0px;
@@ -106,15 +105,22 @@ onMount(() => {
         float: right;
     }
 
-    @media only screen and (max-width: 768px) {
+    @media only screen and (max-width: 1024px) {
         .sub-menu-item {
             text-align: left;
+        }
+
+        .property-input-select-item {
             margin-left: 90px;
         }
 
         .option-wrapper {
             height: 30px;
         }
+    }
+
+    @media only screen and (max-width: 1024px) {
+        
     }
 </style>
 

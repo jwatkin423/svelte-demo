@@ -141,15 +141,19 @@ function formatLastPeriod(period) {
     }
 
     .th-mnth-ytd {
-        height: 8px;
-        line-height: 8px;
-        font-size: 8px;
+        height: 10px;
+        line-height: 10px;
+        font-size: 10px;
         font-weight: 800;
         max-width: 50px;
         color: #666666;
         text-align: center;
         padding-bottom: unset !important;
         padding-top: 5px;
+    }
+
+    i {
+        font-size: 8px;
     }
 
     td {
