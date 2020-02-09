@@ -1,6 +1,8 @@
 <script>
 import { onMount } from 'svelte';
 import Sorted from './Sorted.svelte';
+import  AutoComplete from 'simple-svelte-autocomplete';
+// import  AutoCompleteTwo from 'svelte-autocomplete/dist/index';
 
 export let areaValueData = {};
 export let type;
@@ -11,14 +13,31 @@ export let initialAreaType;
 $: areaValueTypeSelected = typeSelected;
 
 let tempKey = 0;
+let idClass = '';
 $: idClass = type.replace(/[^a-zA-Z0-9]+/g, '-').toLowerCase();
 $: areaValueParams = params;
 
-let data = [];
-$: data = Object.keys(areaValueData).map((i) => areaValueData[dataKeys[i]]);
 let dataKeys = [];
 $: dataKeys = Object.keys(areaValueData);
+let data = [];
+$: data = Object.keys(areaValueData).map((i) => areaValueData[dataKeys[i]]);
+
 let anchorKeys = [];
+
+let searchAreaValues = [];
+
+let temp;
+temp = Object.keys(areaValueData).forEach((key) => {
+    let avd = areaValueData[key];
+    let aV = avd.map((a, i) => {
+        if (typeof(a.areaValue) !== undefined)  {
+            searchAreaValues.push(a.areaValue);
+        }
+        
+    });
+    return aV;
+});
+
 
 $: anchorKeys = dataKeys.map((key, i) => {
     if (key.toLowerCase() === 'a' || key === 'b' || key === 'c' && (tempKey !== 1)){
@@ -93,6 +112,7 @@ let aVsSelected;
 let aVEls;
 let areaTypeSelected;
 $: areaTypeSelected = typeSelected;
+
 let uncheckedCount = 0;
 function areaValueSelected() {
     
@@ -107,7 +127,7 @@ function areaValueSelected() {
             let currentType = element.dataset.parent;
             if (aVsSelected.find(d => d == value)) {
                 if(currentType === areaTypeSelected) {
-                    element.checked =  true;
+                    element.checked = true;
                 } else {
                     uncheckedCount++;
                 }
@@ -117,15 +137,54 @@ function areaValueSelected() {
         });
     }
 
-    if(!uncheckedCount == 0) {
+    if(uncheckedCount == 0) {
         let allAVcb = document.querySelector('.all-' + idClass);
         allAVcb.checked = true;
     }
+    uncheckedCount == 0;
+}
 
+function setAnchorAll() {
+    let allEls = document.querySelectorAll('.' + 'item-group');
+
+    dataKeys.forEach((key) => {
+        let groupEls = document.querySelectorAll('.' + idClass + '.set-' + key);
+        let count = 0;
+
+        groupEls.forEach((el) => {
+            if (el.checked == false) {
+                count++;
+            }
+        });
+
+        if (count == 0) {
+            let groupAllEl = document.querySelector('.all-' + key + '-' + idClass);
+            groupAllEl.checked = true;
+        }
+    });
+} 
+
+let groupCountUnchecked = 0;
+function selectAllArea() {
+    let allAreaSelEl = document.querySelector('.all-' + idClass);
+    let allGroupSelEls = document.querySelectorAll('.all-group-' + idClass);
+
+    allGroupSelEls.forEach((el) => {
+        if (el.checked == false) {
+            groupCountUnchecked++;
+        }
+    });
+
+    if (groupCountUnchecked == 0) {
+        allAreaSelEl.checked = true;
+    }
 }
 
 onMount(() => {
     areaValueSelected();
+    setAnchorAll();
+    selectAllArea();
+
 });
 
 let tempId = -1;
@@ -153,6 +212,90 @@ function currentAVType(thisEl) {
         }
     });
 }
+let selectedAreaValue = '';
+
+$: showSearched(selectedAreaValue);
+
+function showSearched(e) {
+
+    let sav = selectedAreaValue;
+    let allEls = document.querySelectorAll('.div-area-input-select-item.div-' + idClass);
+    let selAll = document.querySelector('.div-all-' + idClass);
+    let hrSelAll = document.querySelector('.hr-all-' + idClass);
+    let selAllGroup = document.querySelectorAll('.div-all-group-' + idClass);
+    let hrSelAllGroup = document.querySelectorAll('.hr-all-group-' + idClass);
+
+    allEls.forEach((el) => {
+        el.style.display = 'inline-block';
+    });
+
+    if (sav !== '') {
+        selAll.style.display = 'none';
+        selAllGroup.forEach((el) => {
+            el.style.display = 'none';
+        });
+        
+        hrSelAllGroup.forEach((el) => {
+            el.style.display = 'none';
+        });
+
+        sav = (sav).toLowerCase().replace(/ /g, '-').replace(/,/g, '-');
+        let id = 'div-' + idClass + '-' + sav;
+
+        allEls.forEach((el) => {
+            if (el.id !== id) {
+                el.style.display = 'none';
+            } else {
+                el.style.textAlign = 'left';
+            }
+        });
+    } else {
+        if (sav == '') {
+            allEls.forEach((el) => {
+                
+            if (el.style.display === 'none') {
+                el.style.removeProperty('display');
+                el.style.removeProperty('text-align');
+                el.styl.display = 'inline-block';
+            }
+        });
+        }
+    }
+
+}
+
+function clearSearched() {
+    let searchEl = document.querySelector('.input.autocomplete-input');
+
+    if (searchEl) {
+        let searchVal = searchEl.value;
+
+        let allEls = document.querySelectorAll('.div-area-input-select-item.div-' + idClass);
+
+        allEls.forEach((el) => {
+            if (el.style.display === 'none') {
+                el.style.display = 'inline-block';
+            }
+        });
+
+        let selAll = document.querySelector('.div-all-' + idClass);
+        let hrSelAll = document.querySelector('.hr-all-' + idClass);
+        let selAllGroup = document.querySelectorAll('.div-all-group-' + idClass);
+        let hrSelAllGroup = document.querySelectorAll('.hr-all-group-' + idClass);
+
+        selAll.style.display = 'block';
+        selAllGroup.forEach((el) => {
+            el.style.display = 'block';
+        });
+        
+        hrSelAllGroup.forEach((el) => {
+            el.style.display = 'block';
+        });
+
+        selectedAreaValue = '';
+    }
+    
+}
 
 </script>
 
@@ -161,7 +304,7 @@ function currentAVType(thisEl) {
         display: none;
         background-color: white;
         position: relative;
-        width: 220px;
+        width: 100%;
         max-height: 400px;
         overflow-y: scroll;
         overflow-x: hidden;
@@ -182,20 +325,20 @@ function currentAVType(thisEl) {
     label {
         height: 20px;
         line-height: 20px;
-        font-size: 10px;
+        font-size: 12px;
         position: relative;
         display: inline-block;
         vertical-align: middle;
         margin-bottom: 5px;
+        color: #666666;
     } 
 
     input {
-        height: 20px;
         line-height: 20px;
         font-size: 10px;
         position: relative;
         display: inline-block;
-        margin-left: 10px;
+        margin-left: 20px;
         margin-right: 5px;
         margin-top: 0px;
         margin-bottom: 0px;
@@ -220,6 +363,58 @@ function currentAVType(thisEl) {
         font-size: 10px;
     }
 
+    .search-area-wrapper {
+        width: 100%;
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+
+    @media only screen and (min-width: 1025px) {
+        .ng {
+            margin-left: 40px;
+        }
+    }
+
+    @media only screen and (max-width: 1024px) {
+        
+        .all-area-select {
+            margin-left: 30px !important;
+         }
+
+        input {
+            margin-left: 60px
+        }
+
+        .sub-menu-area {
+            width: 440px;
+        }
+
+        div.option-wrapper {
+            height: 30px;
+            line-height: 30px;
+            text-align: left;
+        }
+
+        input {
+            line-height: 30px;
+        }
+        
+        label {
+            height: 30px;
+            line-height: 30px;
+            margin-bottom: 0 !important;
+        }
+
+    }
+
+    .clear-search {
+        float: right;
+        height: 20px;
+        line-height: 20px;
+        padding: 0;
+        width: 20px;
+    }
+
     @media only screen and (max-width: 768px) {
 		.sub-menu-area {
             display: inline-block;
@@ -235,10 +430,32 @@ function currentAVType(thisEl) {
 
 {#if data.length > 0}
     <div class="sub-menu-area" id="{idClass}">
+    <hr />
+        <div class="search-area-wrapper">
+            <!-- <input type='text' placeholder="Search" id="search-area-{idClass}" class="search-area" /> -->
+            <AutoComplete 
+                items={searchAreaValues} 
+                bind:selectedItem={selectedAreaValue} 
+                noResultsText="No results found" 
+                placeholder="Search"
+                className={"search-area-" + idClass + " search-area-div"}
+                onChange={showSearched()}
+                maxItemsToShowInList={7}
+                minCharactersToSearch={3}
+                />
+                <button class="clear-search" on:click|preventDefault on:click={clearSearched}>X</button>
+        </div>
+        <!-- <Sorted sortKeys={dataKeys} type={idClass}/> -->
+        <hr class="hr-all-{idClass}" />
         <div class="sub-menu-item">
-            <div class='option-wrapper'>
-                <input class='area-input-select-item input-select-item all-{idClass}' type='checkbox' name='all-{idClass}' value='all' on:click="{() => {
-                        let elsClassName = '.' + idClass;
+            <div class='option-wrapper div-all-{idClass}'>
+                <input 
+                    class='area-input-select-item input-select-item all-{idClass} all-area-select' 
+                    type='checkbox' 
+                    name='all-{idClass}'
+                    value='all' 
+                    on:click="{() => {
+                        let elsClassName = '.set-' + idClass;
                         let els = document.querySelectorAll(elsClassName);
                         let allEl = document.querySelector('.all-' + idClass);
                         let allElChecked = allEl.checked;
@@ -251,32 +468,66 @@ function currentAVType(thisEl) {
                             }
                         });
 
+                        let allGroupEls = document.querySelectorAll('.all-group-' + idClass);
+                        allGroupEls.forEach((el) => {
+                            if(allElChecked) {
+                                el.checked = true;
+                            } else {
+                                el.checked = false;
+                            }
+                        });
+
                     }}">
                     <label class="all-{type}">All</label>
             </div>
         </div>
-        <hr />
-        <Sorted sortKeys={dataKeys} type={idClass}/>
-        <hr />
+        
     {#each dataKeys as item, i}
+        <div class="sub-menu-item">
+            <div class='option-wrapper div-all-group-{idClass}'>
+                <input 
+                    class='area-input-select-item input-select-item all-{item}-{idClass} all-area-select item-group all-group-{idClass}'
+                    type='checkbox'
+                    name='all-{item}'
+                    value='all'
+                    on:click="{() => {
+                        let elsClassName = '.' + idClass + '.set-' + item;
+                        let els = document.querySelectorAll(elsClassName);
+                        let allEl = document.querySelector('.all-' + item + '-' + idClass);
+                        let allElChecked = allEl.checked;
+                        
+                        els.forEach((el) => {
+                            if(allElChecked) {
+                                el.checked = true;
+                            } else {
+                                el.checked = false;
+                            }
+                        });
+
+                    }}">
+                    <label class="all-{type}">{item}</label>
+            </div>
+        </div>
         {#each areaValueData[item] as menuItem}
             <div class="sub-menu-area-group" id="{setAnchorId(i)}">
                     <div class="sub-menu-item" >
-                        <div class='option-wrapper area-wrapper'>
-                            <input 
-                                class='area-input-select-item input-select-item {idClass}'
+                        <div class='option-wrapper area-wrapper div-area-input-select-item div-{idClass}' id="div-{idClass}-{(menuItem.areaValue).toLowerCase().replace(/ /g, '-').replace(/,/g, '-')}">
+                            <input
+                                id="{idClass}-{(menuItem.areaValue).toLowerCase().replace(/ /g, '-').replace(/,/g, '-')}"
+                                class='area-input-select-item input-select-item {idClass} set-{item} set-{idClass} ng'
                                 data-parent='{type}'
+                                data-item={item}
                                 type='checkbox' 
                                 name='areaValue' 
                                 value='{menuItem.areaValue}'
                                 on:change={(e) => { currentAVType(e.target) }}>
-                            <label class="{type}">{menuItem.areaValue}</label>
-                            <span class='pull-right area-value-count'>({menuItem.areaCount})</span>
+                            <label class="{type}">{menuItem.areaValue} ({menuItem.areaCount})</label>
+                            
                         </div>
                     </div>
                 </div>
         {/each}
-        <hr />
+        <hr class="hr-all-group-{idClass}" />
     {/each}
     </div>
 {/if}
