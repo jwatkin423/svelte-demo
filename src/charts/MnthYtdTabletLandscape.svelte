@@ -59,11 +59,8 @@ function swapPointsElements(points) {
 // chart and misc dimensions
 const padding = { top: 20, right: 15, bottom: 29, left: 25 };
 let width = 420;
-let height = 270;
+let height = 436;
 let textWidth = 488;
-
-$: bdOne = width < 488 ? 70 : 80;
-$: bdTwo = width < 488 ? 30 : 10;
 
 // primary color
 $: primary_fill_color = p_color;
@@ -197,7 +194,7 @@ function formatPointText(point) {
 		margin-top: 0px;
 		background-color: #ffffff;
 		display: block;
-		height: 376px;
+		height: 436px;
 		width: 500px;
         margin: auto;
 	}
