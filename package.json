@@ -23,6 +23,7 @@
     "fa-svelte": "^3.0.0",
     "query-string": "^6.8.3",
     "query-string-parser": "^0.2.3",
+    "simple-svelte-autocomplete": "^1.1.1",
     "sirv-cli": "^0.4.4",
     "svelte-autocomplete": "0.0.4",
     "svelte-router": "^3.0.0-alpha.2",
