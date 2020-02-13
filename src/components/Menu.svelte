@@ -398,7 +398,7 @@ onMount(() => {
     button {
         height: 30px;
         line-height: 30px;
-        font-size: 10px;
+        font-size: 12px;
         float: left;
         text-decoration: none;
         color: #666666;
