@@ -375,7 +375,18 @@ function clearSearched() {
         .ng {
             margin-left: 40px;
         }
+
+        .search-area-wrapper {
+            text-align: center;
+            width: 210px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 20px;
+            padding-left: 0;
+            padding-right: 0;
+        }
     }
+
 
     @media only screen and (max-width: 1024px) {
         
@@ -457,7 +468,6 @@ function clearSearched() {
         {/if}    
     <hr class="hr-search-title" />
         <div class="search-area-wrapper">
-            <!-- <input type='text' placeholder="Search" id="search-area-{idClass}" class="search-area" /> -->
             <AutoComplete 
                 items={searchAreaValues} 
                 bind:selectedItem={selectedAreaValue} 

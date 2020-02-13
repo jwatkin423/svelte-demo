@@ -432,6 +432,12 @@ onMount(() => {
         }
     }
 
+    @media only screen and (min-width: 1025px) {
+        label {
+            margin-bottom: 0;
+        }
+    }
+
     @media only screen and (min-width: 412px) and (max-width: 768px) {
         .select-menu-block {
             width: 460px;
