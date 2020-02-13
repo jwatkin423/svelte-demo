@@ -303,13 +303,15 @@ function clearSearched() {
     .sub-menu-area {
         display: none;
         background-color: white;
-        position: relative;
-        width: 100%;
-        max-height: 400px;
+        position: absolute;
+        width: 230px;
+        max-height: 200px;
         overflow-y: scroll;
         overflow-x: hidden;
-        scrollbar-color: #CCCCCC #C6C6C6;
-        scrollbar-width: thin;       
+        border-top: 1px solid #CCCCCC;
+        border-left: 1px solid #CCCCCC;
+        border-right: 1px solid #CCCCCC;
+        border-bottom: 3px solid #333;
     }
 
 
@@ -386,7 +388,7 @@ function clearSearched() {
         }
 
         .sub-menu-area {
-            width: 440px;
+            width: 460px;
         }
 
         div.option-wrapper {
@@ -415,22 +417,45 @@ function clearSearched() {
         width: 20px;
     }
 
+    .search-area-title {
+        height: 30px;
+        line-height: 30px;
+        font-size: 12px;
+        color: #666666;
+        margin-left: 10px;
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+
+    @media only screen and (max-width: 1024px) {
+        .hr-search-title {
+            margin-top: 0px;
+        }
+    }
+
     @media only screen and (max-width: 768px) {
 		.sub-menu-area {
             display: inline-block;
             text-align: left;
-            margin-left: 60px;
-            width: -webkit-fill-available;
             margin-right: 10px;
         }
 
 	}
 
+    @media only screen and (max-width: 480px) {
+        .sub-menu-area {
+            margin-left: 0 !important;
+        }
+    }
+
 </style>
 
 {#if data.length > 0}
     <div class="sub-menu-area" id="{idClass}">
-    <hr />
+        {#if window.innerWidth <= 1024}
+            <h3 class="search-area-title">Specific Area Type</h3>
+        {/if}    
+    <hr class="hr-search-title" />
         <div class="search-area-wrapper">
             <!-- <input type='text' placeholder="Search" id="search-area-{idClass}" class="search-area" /> -->
             <AutoComplete 
