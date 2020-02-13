@@ -112,9 +112,18 @@ function showAreaOptions(type, checked) {
     if (!allAreaChecked) {
         let tempType = type.replace(/[^a-zA-Z0-9]+/g, '-').toLowerCase();
         if (currentAreaSubMenuType !== tempType) {
+            let menuBlock = document.getElementById('area-types-menu');
+            let menuBlockHeight = menuBlock.offsetHeight - 3;
+            let menuBlockLeft = menuBlock.style.left - 1;
             let parentMenuEl = document.getElementById(tempType + '-menu');
             let subMenuEl = document.getElementById(tempType);
             subMenuEl.style.display = 'block';
+            subMenuEl.style.top = menuBlockHeight + 'px';
+            subMenuEl.style.left = menuBlockLeft + 'px';
+
+            if (window.innerWidth <= 480) {
+                subMenuEl.style.width = menuBlock.style.width;
+            }
             currentAreaSubMenuType = tempType;
         } else {
             currentAreaSubMenuType = '';
