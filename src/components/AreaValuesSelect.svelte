@@ -372,6 +372,10 @@ function clearSearched() {
     }
 
     @media only screen and (min-width: 1025px) {
+        label {
+            margin-bottom: 0 !important;
+        }
+        
         .ng {
             margin-left: 40px;
         }
