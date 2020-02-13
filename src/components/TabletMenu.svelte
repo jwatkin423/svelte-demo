@@ -393,7 +393,7 @@ onMount(() => {
     button {
         height: 30px;
         line-height: 30px;
-        font-size: 10px;
+        font-size: 12px;
         float: left;
         margin-left: 10px;
         text-decoration: none;
@@ -410,6 +410,8 @@ onMount(() => {
     }
     .search-menu-button {
         border-radius: 5px;
+        text-align: center !important;
+        padding: 0 !important;
     }
 
     .search-button-wrapper {
