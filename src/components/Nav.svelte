@@ -421,68 +421,7 @@ let resizeImg;
                         on:click={toggleShowDownload}
                         href="."
                         class="dropbtn">
-                        <svg
-                            xmlns:dc="http://purl.org/dc/elements/1.1/"
-                            xmlns:cc="http://creativecommons.org/ns#"
-                            xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-                            xmlns:svg="http://www.w3.org/2000/svg"
-                            xmlns="http://www.w3.org/2000/svg"
-                            xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-                            xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-                            inkscape:version="1.0beta2 (2b71d25, 2019-12-03)"
-                            sodipodi:docname="cloud-download-rs.svg"
-                            xml:space="preserve"
-                            enable-background="new 0 0 512 512"
-                            viewBox="0 0 450 400.22299"
-                            height="400.22299"
-                            width="450"
-                            y="0px"
-                            x="0px"
-                            id="Layer_1"
-                            version="1.1"><metadata
-                            id="metadata82"><rdf:RDF><cc:Work
-                                rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
-                                    rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><defs
-                            id="defs80" /><sodipodi:namedview
-                            inkscape:current-layer="Layer_1"
-                            inkscape:window-maximized="0"
-                            inkscape:window-y="85"
-                            inkscape:window-x="2610"
-                            inkscape:cy="200.112"
-                            inkscape:cx="225"
-                            inkscape:zoom="2.0371094"
-                            inkscape:guide-bbox="true"
-                            showguides="true"
-                            showgrid="false"
-                            id="namedview78"
-                            inkscape:window-height="1126"
-                            inkscape:window-width="1917"
-                            inkscape:pageshadow="2"
-                            inkscape:pageopacity="0"
-                            guidetolerance="10"
-                            gridtolerance="10"
-                            objecttolerance="10"
-                            borderopacity="1"
-                            inkscape:document-rotation="0"
-                            bordercolor="#666666"
-                            pagecolor="#ffffff"><sodipodi:guide
-                            id="guide84"
-                            orientation="0,-1"
-                            position="103.99521,400.64023" /><sodipodi:guide
-                            id="guide86"
-                            orientation="0,-1"
-                            position="74.54171,-0.90914205" /></sodipodi:namedview>
-                            <g transform="translate(-31,-55.888)" id="g75">
-                                <path inkscape:connector-curvature="0" id="path71"
-                                    d="m 442.55,203.072 c 4.172,-11.615 6.45,-24.132 6.45,-37.184 0,-60.751 -49.248,-110 -110,
-                                    -110 -34.805,0 -65.829,16.169 -85.985,41.4 -12.395,-6.021 -26.31,-9.4 -41.015,-9.4 -51.915,
-                                    0 -94,42.085 -94,94 0,0.28 0.008,0.559 0.011,0.839 C 68.92,189.095 31,231.062 31,281.888 c 0,55.229 44.771,
-                                    100 100,100 h 63.646 l -60.209,-73.732 h 89.538 v -93.102 h 88.667 v 93.102 l 88.729,0.002 -60.207,73.73 H 
-                                    381 c 55.229,0 100,-44.771 100,-100 0,-32.015 -15.046,-60.513 -38.45,-78.816 z" />
-                                <polygon id="polygon73" points="232.923,224.085 232.923,317.047 154.35,317.047 211.128,386.578 267.904,456.111 324.68,
-                                    386.578 381.456,317.049 302.885,317.047 302.885,224.085 " />
-                        </g>
-                    </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 16"><title>Asset 1</title><g id="Layer_2" data-name="Layer 2"><g id="Layer_1-2" data-name="Layer 1"><path d="M19.35,6a7.49,7.49,0,0,0-14-2A6,6,0,0,0,6,16H19a5,5,0,0,0,.35-10ZM17,9l-5,5L7,9h3V5h4V9Z"/></g></g></svg>
                     </a>
                 </div>
                 <div class:showDownload="{showDownload === true}" class="download-menu">
