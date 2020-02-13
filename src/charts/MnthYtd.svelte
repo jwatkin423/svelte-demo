@@ -184,8 +184,27 @@ function formatPoint(point, strtPos = 90, tCount = 0) {
 	return strtPos - (len + mv);
 }
 
-function formatPointText(point) {
-	return point.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+function formatPointText(num) {
+	 if (num) {
+
+        if (num >= 1000000000) {
+			num /= 1000000000;
+			num = Number(Math.round(num + 'e' + 1) + 'e-1').toFixed(1);
+            num = num + "B";
+        }
+        else if(num >= 1000000 && num < 1000000000) {
+			num /= 1000000;
+			num = Number(Math.round(num + 'e' + 1) + 'e-1').toFixed(1);
+            num = num + "M";
+        } 
+        else if (num >= 1000 & num < 1000000) {
+			num /= 1000;
+			num = Number(Math.round(num + 'e' + 1) + 'e-1');
+            num = num + "K";
+        }
+    }
+
+    return num;
 }
 
 </script>

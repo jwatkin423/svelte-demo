@@ -79,7 +79,7 @@ $: yScale = scaleLinear()
 $: innerWidth = width - (padding.left + padding.right);
 // set the text width
 $: textWidth = innerWidth / (xTicks.length / 2);
-const barWidth = 30;
+const barWidth = 20;
 
 let tickSplits = '';
 export let monthYear = '';
@@ -180,8 +180,28 @@ function formatPoint(point, strtPos = 90, tCount = 0) {
 	return strtPos - (len + mv);
 }
 
-function formatPointText(point) {
-	return point.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+function formatPointText(num) {
+	
+	 if (num) {
+
+        if (num >= 1000000000) {
+			num /= 1000000000;
+			num = Number(Math.round(num + 'e' + 1) + 'e-1').toFixed(1);
+            num = num + "B";
+        }
+        else if(num >= 1000000 && num < 1000000000) {
+			num /= 1000000;
+			num = Number(Math.round(num + 'e' + 1) + 'e-1').toFixed(1);
+            num = num + "M";
+        } 
+        else if (num >= 1000 & num < 1000000) {
+			num /= 1000;
+			num = Number(Math.round(num + 'e' + 1) + 'e-1');
+            num = num + "K";
+        }
+    }
+	
+    return num;
 }
 
 </script>
@@ -192,7 +212,10 @@ function formatPointText(point) {
 		background-color: #ffffff;
 		display: block;
 		height: 270px;
-		max-width: 420px;
+		/* max-width: 420px; */
+		margin-left: auto;
+		margin-right: auto;
+		width: 100%;
 	}
 
 	svg {
@@ -252,6 +275,10 @@ function formatPointText(point) {
 		margin-left: 10px;
 	}
 
+	.x-axis-point {
+		text-anchor: middle;
+	}
+
 </style>
 
 {#if yTicks.length > 0}
@@ -271,7 +298,7 @@ function formatPointText(point) {
 	{#each points as point, i}
 		{#if i == 0}
     		<rect
-                x="{(.22 * width)}px"
+                x="120px"
                 y="{yScale(point)}"
                 width="{barWidth}"
                 height="{height - padding.bottom - yScale(point)}"
@@ -280,7 +307,7 @@ function formatPointText(point) {
 		{/if}
 		{#if i == 1}
 		    <rect
-                x="{(.25 * width) + 45}px"
+                x="150px"
                 y="{yScale(point)}"
                 width="{barWidth}"
                 height="{height - padding.bottom - yScale(point)}"
@@ -289,7 +316,7 @@ function formatPointText(point) {
 		{/if}
 		{#if i == 2}
     		<rect
-                x="{(.60 * width)}px"
+                x="250px"
                 y="{yScale(point)}"
                 width="{barWidth}"
                 height="{height - padding.bottom - yScale(point)}"
@@ -298,7 +325,7 @@ function formatPointText(point) {
 		{/if}
 		{#if i == 3}
 		    <rect
-                x="{(.63 * width) + 45}px"
+                x="280px"
                 y="{yScale(point)}"
                 width="{barWidth}"
                 height="{height - padding.bottom  -  yScale(point)}"
@@ -308,12 +335,12 @@ function formatPointText(point) {
 	{/each}
 
 	{#each xTicks as tick, i}
-		<g class="tick" transform="translate({xScale(i)},{height - 10})">
+		<g class="tick" >
 			{#if i == 0}
-				<text x="{(.3 * width) }px">{formatText(tick)}</text>
+				<text class="x-axis-point" x="135px" y="{height - 10}px">{formatText(tick)}</text>
 			{/if}	
 			{#if i == 2}
-				<text x="{((width * .65) * .25) + 5}px">YTD</text>
+				<text class="x-axis-point" x="265px" y="{height - 10}px">YTD</text>
 			{/if}
 		</g>
 	{/each}
@@ -323,28 +350,28 @@ function formatPointText(point) {
 			{#if i == 0}
 				<text
 					class="point-text"
-					x="{(.22 * width) + 15}px"
+					x="130px"
 					y="{yScale(point) - 5}"
 					>{formatPointText(point)}</text>
 			{/if}
 			{#if i == 1}
 				<text 
                     class="point-text"
-					x="{(.25 * width) + 60}px"
+					x="160px"
 					y="{yScale(point) - 5}"
 					>{formatPointText(point)}</text>
 			{/if}
 			{#if i == 2}
 				<text 
                     class="point-text"
-					x="{(.6 * width) + 15}px"
+					x="260px"
 					y="{yScale(point) - 5}"
 					>{formatPointText(point)}</text>
 			{/if}	
 			{#if i == 3}
 				<text 
                     class="point-text"
-					x="{(.63 * width) + 60}px"
+					x="290px"
 					y="{yScale(point) - 5}"
 					>{formatPointText(point)}</text>
 			{/if}
