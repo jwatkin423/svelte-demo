@@ -297,7 +297,7 @@ function hideToolTip() {
 	.x-axis .tick text {
 		fill: #666666;
 		text-anchor: middle;
- 		font-size: 9px;
+ 		font-size: 10px;
 	}
 
 	.path-line {
