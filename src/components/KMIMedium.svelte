@@ -20,37 +20,55 @@ let icon = [faCaretUp, faCaretDown, faCircle];
 
 let count = [];
 
+$: toFixed = chartType === 'spOpRatio' ? 2 : 1;
 $: initialMonth = data[0];
 $: lastMonth = data[data.length - 1];
 $: change = (lastMonth - initialMonth).toFixed(1);
 $: monthTwo = data[2];
 $: mthChange = (monthTwo - initialMonth).toFixed(1);
+$: chngPercent = ((change/initialMonth) * 100).toFixed(toFixed);
 
 $: ytdChange = (data[3] - data[1]).toFixed(1);
-$: percentMnthChange = Math.ceil(((mthChange / initialMonth) * 100)).toFixed(1);
-$: percentYtdChange = Math.ceil(((ytdChange / data[3]) * 100)).toFixed(1);
+
+$: percentMnthChange = Math.ceil(((mthChange / initialMonth) * 100)).toFixed(toFixed);
+$: percentYtdChange = Math.ceil(((ytdChange / data[3]) * 100)).toFixed(toFixed);
 
 let periodSplits;
 
 function formatNumber(num) {
+    let origNum = num;
 
     if (num) {
 
-        if (chartType !== 'fsldMsi') {
+        if (num >= 1000000000) {
+			num /= 1000000000;
+			num = Number(Math.round(num + 'e' + 1) + 'e-1').toFixed(1);
+            num = num + "B";
+        }
+        else if(num >= 1000000 && num < 1000000000) {
+			num /= 1000000;
+			num = Number(Math.round(num + 'e' + 1) + 'e-1').toFixed(1);
+            num = num + "M";
+        } 
+        else if (num >= 1000 & num < 1000000) {
+			num /= 1000;
+			num = Number(Math.round(num + 'e' + 1) + 'e-1');
+            num = num + "K";
+        }
+
+
+        if (chartType !== 'fsldMsi' && chartType !== 'spOpRatio') {
             num = num.replace(/\.[0-9]{1}$/, '');
         }
 
-        if (num < 0 ) {
-            num = num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-            num = num.replace(/\-/, '');
+        if (origNum < 0 ) {
+            num = num.toString().replace(/\-/, '');
             num =  dollar + num;
         } else {
-            num = num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            num = num.toString();
             num = dollar + num;
         }
     }
-
-    
 
     return num;
 }
@@ -125,7 +143,6 @@ function formatLastPeriod(period) {
         margin-top: 0;
         margin-left: auto;
         margin-right: auto;
-        width: 360px;
     }
 
     th {
@@ -145,7 +162,7 @@ function formatLastPeriod(period) {
         line-height: 12px;
         font-size: 12px;
         font-weight: 800;
-        width: 50px;
+        width: 125px;
         color: #666666;
         text-align: center;
         padding-bottom: unset !important;
@@ -172,7 +189,7 @@ function formatLastPeriod(period) {
         height: 14px !important;
         line-height: 14px !important;
         font-size: 14px !important;
-        width: 50px;
+        width: 125px;
     }
 
 </style>
@@ -196,10 +213,10 @@ function formatLastPeriod(period) {
                     <td id="change">{ formatNumber(change) } <ChangeArrows change={change} /></td>
                     <td>
                         {#if change >= 0}
-                            {((change/initialMonth) * 100).toFixed(1)}%
+                            {((change/initialMonth) * 100).toFixed(toFixed)}%
                             <ChangeArrows change={change} />
                         {:else}
-                            ({((change/initialMonth * 100)).toFixed(1).toString().replace(/\-/, '')}%)
+                            ({((change/initialMonth * 100)).toFixed(toFixed).toString().replace(/\-/, '')}%)
                             <ChangeArrows change={change} />
                         {/if}
                         
@@ -245,7 +262,7 @@ function formatLastPeriod(period) {
                             {percentYtdChange}%
                             <ChangeArrows change={ytdChange} />
                         {:else}
-                            ({percentYtdChange}%)
+                            ({percentYtdChange.toString().replace(/\-/, '')}%)
                             <ChangeArrows change={ytdChange} />
                         {/if}
                     </td>
