@@ -156,7 +156,7 @@ function setAreaLeft(id)  {
     let els = document.querySelectorAll('.sub-menu-area');
     els.forEach((el) => {
         el.style.zIndex = 9;
-        el.style.left = '10px';
+        // el.style.left = '10px';
     });
     
 }
@@ -393,7 +393,7 @@ onMount(() => {
     button {
         height: 30px;
         line-height: 30px;
-        font-size: 10px;
+        font-size: 12px;
         float: left;
         text-decoration: none;
         color: #666666;
