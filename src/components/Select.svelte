@@ -434,7 +434,7 @@ onMount(() => {
 
     @media only screen and (min-width: 1025px) {
         label {
-            margin-bottom: 0;
+            margin-bottom: 0 !important;
         }
     }
 
