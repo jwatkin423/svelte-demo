@@ -29,6 +29,9 @@ let heyo = false;
 
 export let rightPadding;
 
+// chart type
+export let chartType;
+
 // chart and misc dimensions
 let padding = { top: 25, right: 0, bottom: 30, left: 30 };
 let width = 748;
@@ -176,7 +179,16 @@ function showToolTip(i, leftX, topY, point) {
 	let hoverDate = date ;
 	let units = py;
 
-	units = py + ' units';
+	let unitsSuffix = 'units';
+	
+	if (chartType === 'spOpRatio') {
+		unitsSuffix = '%';
+	} else if (chartType === 'fsldMsi')  {
+		unitsSuffix = 'months';
+	}
+
+	units = py + ' ' + unitsSuffix;
+
 	if (showDollar) {
 		units = dollar + py;
 	}
@@ -371,63 +383,61 @@ function hideToolTip() {
 
 {#if path.length > 1}
 
-<div class="chart" bind:clientWidth={width} bind:clientHeight={height}>
-	<svg xmlns="http://www.w3.org/2000/svg">
+	<div class="chart" bind:clientWidth={width} bind:clientHeight={height}>
+		<svg xmlns="http://www.w3.org/2000/svg">
 
-		<!-- y axis -->
-		{#each yTicks as tick, i}
-			<g class="tick y-axis tick-{tick}" transform="translate(20, {yScale(tick)})">
-				<line x1="30" x2="{line}"></line>
-				<text dx="0" y="3">{tick >= 100 ? formatTick(tick) : tick}</text>
-			</g>
-		{/each}
-		<!-- </g> -->
-
-		<!-- x axis -->
-		<g class="axis x-axis" transform="translate(0,0)">
-			{#each xTicks as tick, i}
-				<g class="tick tick-{ tick }" transform="translate({xScale(i) + 20},{height - 40})" >
-					
-                    {#if !tick.includes('<br>') && i !== (xTicks.length - 1) }
-						<line class="small-tick" y1="10" y2="20" x1="0" x2="0"></line>
-					{:else if (tick.includes('<br>') && i !== (xTicks.length - 1))}
-						<line y1="10" y2="-86%" x1="0" x2="0"></line>
-						<text dx=0 y="25">{formatText(tick)}</text>
-					{/if}
-					{#if i === (xTicks.length - 1) }
-						<line y1="10" y2="-86%" x1="0" x2="0"></line>
-						<text dx=0 y="25">{formatText(tick)}</text>
-					{/if}	
+			<!-- y axis -->
+			{#each yTicks as tick, i}
+				<g class="tick y-axis tick-{tick}" transform="translate(20, {yScale(tick)})">
+					<line x1="30" x2="{line}"></line>
+					<text dx="0" y="3">{tick >= 100 ? formatTick(tick) : tick}</text>
 				</g>
 			{/each}
+			<!-- </g> -->
 
-			{#each xTicks as tick, i}
-				<g class="tick tick-{ tick }" transform="translate({xScale(i) + 20},{height - 30})">
-                    {#if (tick.includes('<br>') && i !== (xTicks.length - 1))}
-						<text dx=0 y="25">{formatYear(tick)}</text>
-					{/if}
-					{#if i === (xTicks.length - 1) }
-						<text dx=0 y="25">{formatLastTickYear(tick)}</text>
-					{/if}	
-				</g>
-			{/each}
-			<g transform="translate(20, 0)">
-				<!-- data -->
-				<path class="path-line" d={path} stroke={primary_fill_color}></path>
-
-				<!-- set the circles for the data points -->
-				{#each chartData as point, i}
-					<circle class="enabled" class:heyo cx='{xScale(point.x)}' cy='{yScale(point.y)}' r='{r}' fill={primary_fill_color}
-					on:mouseover={(e) => {showToolTip(i, e.pageX, e.clientY, point) }} 
-					on:mouseleave={hideToolTip}/>
+			<!-- x axis -->
+			<g class="axis x-axis" transform="translate(0,0)">
+				{#each xTicks as tick, i}
+					<g class="tick tick-{ tick }" transform="translate({xScale(i) + 20},{height - 40})" >
+						
+						{#if !tick.includes('<br>') && i !== (xTicks.length - 1) }
+							<line class="small-tick" y1="10" y2="20" x1="0" x2="0"></line>
+						{:else if (tick.includes('<br>') && i !== (xTicks.length - 1))}
+							<line y1="10" y2="-86%" x1="0" x2="0"></line>
+							<text dx=0 y="25">{formatText(tick)}</text>
+						{/if}
+						{#if i === (xTicks.length - 1) }
+							<line y1="10" y2="-86%" x1="0" x2="0"></line>
+							<text dx=0 y="25">{formatText(tick)}</text>
+						{/if}	
+					</g>
 				{/each}
+
+				{#each xTicks as tick, i}
+					<g class="tick tick-{ tick }" transform="translate({xScale(i) + 20},{height - 30})">
+						{#if (tick.includes('<br>') && i !== (xTicks.length - 1))}
+							<text dx=0 y="25">{formatYear(tick)}</text>
+						{/if}
+						{#if i === (xTicks.length - 1) }
+							<text dx=0 y="25">{formatLastTickYear(tick)}</text>
+						{/if}	
+					</g>
+				{/each}
+				<g transform="translate(20, 0)">
+					<!-- data -->
+					<path class="path-line" d={path} stroke={primary_fill_color}></path>
+
+					<!-- set the circles for the data points -->
+					{#each chartData as point, i}
+						<circle class="enabled" class:heyo cx='{xScale(point.x)}' cy='{yScale(point.y)}' r='{r}' fill={primary_fill_color}
+						on:mouseover={(e) => {showToolTip(i, e.pageX, e.clientY, point) }} 
+						on:mouseleave={hideToolTip}/>
+					{/each}
+				</g>
 			</g>
-		</g>
-        
-	</svg>
-</div>
-
-
+			
+		</svg>
+	</div>
 
 {:else}
 	<h3>Still processing the data ... </h3>

@@ -114,6 +114,7 @@ function closeOpenHovers() {
 window.onclick = function(e) {
     // console.log(e.target);
     if(!e.target.matches('.dropbtn') 
+        && !e.target.matches('svg.svg-btn') 
         && !e.target.matches('svg.fa-svelte') 
         && !e.target.matches('path') 
         && !e.target.matches('path.path-line') 
@@ -145,16 +146,33 @@ window.onclick = function(e) {
         && !e.target.matches('input.autocomplete-input')
         && !e.target.matches('div.autocomplete-list-item')
         && !e.target.matches('button.clear-search')
+        && !e.target.matches('b')
         ) {
 
         if (showClass) {
             toggleShowMenu();
+            removeActiveFilters();
         }
 
         if (showHamburger) {
             toggleShowHamMenu();
+            removeActiveFilters();
         }
     }
+}
+
+function removeActiveFilters() {
+    let prtyBtn = document.getElementById('btn-property');
+    let areaBtn = document.getElementById('btn-area');
+    let timeBtn = document.getElementById('btn-time');
+
+    if (prtyBtn && areaBtn && timeBtn) {
+        prtyBtn.style.removeProperty('color');
+        areaBtn.style.removeProperty('color');
+        timeBtn.style.removeProperty('color');
+    }
+
+    
 }
 
 window.ontouchend = function(e) {
@@ -239,10 +257,11 @@ let resizeImg;
         vertical-align: middle;
     }
 
-    a {
+    a, button.btn-drpdn {
         font-size: 18px;
         color: #ffffff;
         line-height: 18px;
+        background-color: transparent;
     }
 
     .dropbtn {
@@ -251,6 +270,7 @@ let resizeImg;
         border: none;
         cursor: pointer;
         height: 30px;
+        width: 30px;
         line-height: 18px;
         vertical-align: sub;
     }
@@ -398,21 +418,28 @@ let resizeImg;
             <div class="menu">
                 <!-- <div class="nav-item left-item"></div> -->
                 <div class="dropdown nav-item center-item">
-                    <a 
+                    <button 
                         on:click|preventDefault
                         on:click={toggleShowMenu}
                         href="."
-                        class="dropbtn">
-                        <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-                                width="971.986px" height="971.986px" viewBox="0 0 971.986 971.986" style="enable-background:new 0 0 971.986 971.986;"
-                                xml:space="preserve">
-                            <g>
+                        class="dropbtn btn-drpdn">
+                        <svg 
+                            version="1.1" 
+                            id="Capa_1" 
+                            xmlns="http://www.w3.org/2000/svg" 
+                            xmlns:xlink="http://www.w3.org/1999/xlink" 
+                            x="0px" y="0px"
+                            width="971.986px" 
+                            height="971.986px" 
+                            viewBox="0 0 971.986 971.986" 
+                            style="enable-background:new 0 0 971.986 971.986;"
+                            class="svg-btn"
+                            xml:space="preserve">
                                 <path d="M370.216,459.3c10.2,11.1,15.8,25.6,15.8,40.6v442c0,26.601,32.1,40.101,51.1,21.4l123.3-141.3
                                     c16.5-19.8,25.6-29.601,25.6-49.2V500c0-15,5.7-29.5,15.8-40.601L955.615,75.5c26.5-28.8,6.101-75.5-33.1-75.5h-873
                                     c-39.2,0-59.7,46.6-33.1,75.5L370.216,459.3z"/>
-                            </g>
                         </svg>
-                    </a>
+                    </button>
                         
                 </div> <!-- end dropdown -->
                 <div class="nav-item pull-right right-item">

@@ -69,3 +69,24 @@ button:focus {
 	height: 20px;
 	color: #cccccc;
 }
+
+.autocomplete-list {
+	height: 150px;
+}
+
+.autocomplete {
+	background-color: white;
+	z-index: 999;
+}
+
+.ml-30 {
+	margin-left: 30px;
+}
+
+.ml-60{
+	margin-left: 60px;
+}
+
+.ml-90 {
+	margin-left: 90px;
+}

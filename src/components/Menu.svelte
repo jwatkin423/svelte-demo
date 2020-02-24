@@ -15,6 +15,7 @@ export let p_color;
 
 let initialPropertyClassList = 'none';
 $: initialPropertyClassList = typeof (params) === 'undefined' ? false : params.propertyClassList;
+
 let initalAreaType = 'none';
 $: initialAreaType = params ? params.areaType : false;
 
@@ -153,12 +154,6 @@ function setAreaLeft(id)  {
     leftEl = el.offsetLeft + 'px';
     menu.style.left = leftEl;
     // menu.style.top = '35px';
-
-    let els = document.querySelectorAll('.sub-menu-area');
-    els.forEach((el) => {
-        el.style.zIndex = 9;
-        // el.style.left = '10px';
-    });
     
 }
 
@@ -230,10 +225,11 @@ function closeTimeMenu() {
 }
 
 let propertySelectedArr = [];
+let propertyItems = [];
 let propertyDisplayValueArr = [];
 let propertySelected = '';
 let areaType = '';
-$: areaType = params ? params.areaType : ''; 
+$: areaType = params ? decodeURI(params.areaType) : '';
 let areaValueSelectedArr = [];
 let areaValueSelected = '';
 let timePeriod;
@@ -275,9 +271,19 @@ function buildSearchParams() {
     areaValueSelected = '';
     propertyDisplayValueArr = [];
     areaValuesDisplayText = '';
+    let allArea = false;
+    
+    let propertyItemsEls = document.querySelectorAll('.property-input-select-item');
+    
+    propertyItemsEls.forEach((piEls) => {
+        if (piEls.checked) {
+            propertyItems.push(piEls);
+        }
+    });
 
-    let propertyItems = document.querySelectorAll('.property-input-select-item:checked');
-    let allArea = document.querySelector('.all-area-input-select').checked;
+    allArea = document.querySelector('.all-area-input-select').checked;
+
+    // return false;
     let areaValueItems = [];
 
     let inputAreaTypes = document.querySelectorAll('.area-input-select');
@@ -286,11 +292,11 @@ function buildSearchParams() {
             areaType = cEl.dataset.type;
         }
     });
-    
+
     if (!allArea) {
         areaValueItems = document.querySelectorAll('input[data-parent="' + areaType + '"]:checked');
     }
-
+    
     if ((propertyItems.length > 0 && areaValueItems.length > 0) || (propertyItems.length > 0 && allArea)) {
 
         propertyItems.forEach((propEl) => {
@@ -303,8 +309,9 @@ function buildSearchParams() {
         
         propertySelected = propertySelectedArr.join();
         propertyTypeDisplayText = propertyDisplayValueArr.join();
+        areaValue = document.querySelector('.area-input-select:checked');
 
-        if (!areaValue) {
+        if (areaValue) {
             areaValueItems.forEach((av) => {
                 if (av.checked) {
                     areaValueSelectedArr.push(av.value.replace(',', '|'));
@@ -315,6 +322,7 @@ function buildSearchParams() {
             areaValueSelected = areaValueSelectedArr.join();
             areaValuesDisplayText = areaValuesDisplayTextArr.join();
         } else {
+            areaType = 'ALL'
             areaValueSelected = 'ALL';
             areaValuesDisplayText = 'ALL';
         }
@@ -338,14 +346,19 @@ function buildSearchParams() {
         let querySrting = 'mlsId=' + mlsId + '&search=' + search + '&timePeriod=' + timePeriod + '&timePeriodValue=' + timePeriodValue + '&areaType=' + areaType + '&areaValueList=' + areaValueSelected + '&propertyTypeList=' + propertySelected + '&areaValuesDisplayText=' + areaValuesDisplayText +'&propertyTypeDisplayText=' + propertyTypeDisplayText;
         let newUrl = url + pathname + '?' + encodeURI(querySrting);
         // newUrl = newUrl.replace('http://localhost:5000', 'http://staging.jw');
+        // newUrl = newUrl.replace('http://staging.jw', 'http://localhost:5000');
 
         location.replace(newUrl);
+        // console.log(newUrl);
+        // return false;
 
     } else {
         alert("Please select at least one area type and one property type");
     }
 }
 let e = false;
+let searchBtn = '';
+
 onMount(() => {
 
     searchData.subscribe(value => {
@@ -374,7 +387,7 @@ onMount(() => {
         isLoading = false;
         createSearchMenus(e);
     }
-
+    
 });
 
 </script>
@@ -389,7 +402,6 @@ onMount(() => {
         width: 110px;
         height: 30px;
         line-height: 30px;
-        border: 1px solid #666666;
         --borderRadius: 15px;
         --placeHolderColor: #3F4F5F;
         margin-left: 10px;
@@ -404,9 +416,9 @@ onMount(() => {
         color: #666666;
         width: 100%;
         background-color: transparent;
-        border: none;
         padding: 0;
         margin-left: 0 !important;
+        border: 1px solid #666666;
     }
 
     button:active {
@@ -426,7 +438,6 @@ onMount(() => {
         width: 60px;
         height: 30px;
         line-height: 30px;
-        border: 1px solid #666666;
         border-radius: 5px;
         margin-left: 10px;
         display: inline-block;
@@ -490,7 +501,11 @@ onMount(() => {
         {#if pTypes.length > 0}
         <div class="themed" id='property-types'>
             <div class='label'>
-                <button class='menu-button' on:click|preventDefault on:click={toggleShowPopertyMenu} href="." id='btn-property'>Property Type
+                <button 
+                    class='menu-button' 
+                    on:click|preventDefault on:click={toggleShowPopertyMenu} 
+                    href="." 
+                    id='btn-property'>Property Type
                     {#if !showPropertyMenu}
                         <i><Icon class="item-menu" tempId="property-type-menu-right" icon={icon[0]} /></i>
                     {:else}
@@ -500,11 +515,11 @@ onMount(() => {
             </div>
         </div>
         <div class:showPropertyMenu class="type-menu">
-                <Select 
+                <Select
                     items={pTypes} 
-                    menuTitle={'Property Types'} 
-                    itemType="property-types" 
-                    parentId={'property-types'} 
+                    menuTitle={'Property Types'}
+                    itemType="property-types"
+                    parentId={'property-types'}
                     initialPropertyClassList={initialPropertyClassList}
                     initialAreaType={initialAreaType}
                     on:close={closePropertyMenu}
@@ -569,7 +584,13 @@ onMount(() => {
             </div>
             <div class="search-button-themed">
                 <div class="label">
-                    <button on:click|preventDefault class="menu-button search-menu-button" on:click={buildSearchParams}>Search</button>
+                    <button 
+                        on:click|preventDefault 
+                        class="menu-button search-menu-button" 
+                        id="search-menu-btn" 
+                        on:click={buildSearchParams}
+                        style="color: {p_color}; border: 1px solid {p_color} !important;"
+                        >Search</button>
                 </div>
             </div>
         </div>

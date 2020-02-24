@@ -20,6 +20,9 @@ export let chartType = '';
 let icon = [faCaretUp, faCaretDown, faCircle];
 
 let count = [];
+let change = 'NA';
+let lastMonth = 1.0;
+let initialMonth = 0.0;
 
 $: toFixed = chartType === 'spOpRatio' ? 2 : 1;
 $: initialMonth = data[0];
@@ -27,31 +30,83 @@ $: lastMonth = data[data.length - 1];
 $: change = (lastMonth - initialMonth).toFixed(1);
 $: monthTwo = data[2];
 $: mthChange = (monthTwo - initialMonth).toFixed(1);
-$: chngPercent = ((change/initialMonth) * 100).toFixed(toFixed);
+$: chngPercent = changePercentage(change, initialMonth);
 
 $: ytdChange = (data[3] - data[1]).toFixed(1);
 
-$: percentMnthChange = Math.ceil(((mthChange / initialMonth) * 100)).toFixed(toFixed);
-$: percentYtdChange = Math.ceil(((ytdChange / data[3]) * 100)).toFixed(toFixed);
+$: toFixed = chartType === 'spOpRatio' ? 2 : 1;
+$: initialMonth = parseFloat(data[0]);
+$: lastMonth = data[data.length - 1];
+$: change = (lastMonth - initialMonth).toFixed(toFixed);
+$: monthTwo = data[2];
+$: yearOne = data[1];
+$: yearTwo = data[3];
+$: mthChange = (monthTwo - initialMonth).toFixed(toFixed);
+$: chngPercent = changePercentage(change, initialMonth);
+$: ytdChange = (data[3] - data[1]).toFixed(toFixed);
+
+$: percentMnthChange = mnthYtdChangePercentage(mthChange, initialMonth);
+$: percentYtdChange = mnthYtdChangePercentage(ytdChange, yearOne);
 
 let periodSplits;
+
+function mnthYtdChangePercentage(change, initialMonth, type) {
+    let percent = change;
+    if (change !== 'NA') {
+        
+        if ((change == 0.0 || change == 0) && initialMonth != 0) {
+            percent = 0;
+        } else if (initialMonth == 0 && change != 0) {
+            percent = "NA";
+        }else if (initialMonth == 0 && change == 0) {
+            percent = 0;
+        } else {
+            if (change >= 0) {
+                return Math.ceil(((change / initialMonth) * 100)).toFixed(toFixed);
+            } else {
+                return Math.ceil(((change / initialMonth) * 100)).toFixed(toFixed);;
+            }
+        }
+    }
+
+    return percent;
+}
+
+function changePercentage(change, initialMonth) {
+    if (change !== 'NA') {
+        
+        if (change == 0.0 || change == 0 && initialMonth != 0) {
+            return 0;
+        } else if (initialMonth == 0 && change != 0) {
+            return "NA";
+        }else if (initialMonth == 0 && change == 0) {
+            return 0;
+        } else {
+            if (change >= 0) {
+                return ((change/initialMonth) * 100).toFixed(toFixed);
+            } else {
+                return ((change/initialMonth) * 100).toFixed(toFixed).toString().replace(/\-/, '');
+            }
+        }
+    }
+}
 
 function formatNumber(num) {
     let origNum = num;
 
-    if (num) {
+    if (num && num !== 'NA') {
 
-        if (num >= 1000000000) {
+        if (Math.abs(num) >= 1000000000) {
 			num /= 1000000000;
 			num = Number(Math.round(num + 'e' + 1) + 'e-1').toFixed(1);
             num = num + "B";
         }
-        else if(num >= 1000000 && num < 1000000000) {
+        else if(Math.abs(num) >= 1000000 && Math.abs(num) < 1000000000) {
 			num /= 1000000;
 			num = Number(Math.round(num + 'e' + 1) + 'e-1').toFixed(1);
             num = num + "M";
         } 
-        else if (num >= 1000 & num < 1000000) {
+        else if (Math.abs(num) >= 1000 & Math.abs(num) < 1000000) {
 			num /= 1000;
 			num = Number(Math.round(num + 'e' + 1) + 'e-1');
             num = num + "K";
@@ -59,7 +114,10 @@ function formatNumber(num) {
 
 
         if (chartType !== 'fsldMsi' && chartType !== 'spOpRatio') {
-            num = num.replace(/\.[0-9]{1}$/, '');
+
+            if (origNum.toString().indexOf('.')) {
+                num = num.toString().replace(/\.[0-9]{1}$/, '');
+            }
         }
 
         if (origNum < 0 ) {
@@ -214,14 +272,21 @@ function formatLastPeriod(period) {
                     <td id="last-month">{ formatNumber(lastMonth) } </td>
                     <td id="change">{ formatNumber(change) } <ChangeArrows change={change} /></td>
                     <td>
-                        {#if change >= 0}
-                            {((change/initialMonth) * 100).toFixed(toFixed)}%
-                            <ChangeArrows change={change} />
-                        {:else}
-                            ({((change/initialMonth * 100)).toFixed(toFixed).toString().replace(/\-/, '')}%)
-                            <ChangeArrows change={change} />
+                        {#if chngPercent !== 'NA' && chngPercent != 0}
+                            {#if change > 0}
+                                <!-- {((change/initialMonth) * 100).toFixed(toFixed)}% -->
+                                {chngPercent}
+                                <ChangeArrows change={change} />
+                            {:else}
+                                <!-- ({((change/initialMonth * 100)).toFixed(toFixed).toString().replace(/\-/, '')}%) -->
+                                {chngPercent}
+                                <ChangeArrows change={change} />
+                            {/if}
+                        {:else if chngPercent == 0}
+                            0%
+                        {:else if chngPercent === 'NA'}
+                            NA
                         {/if}
-                        
                      </td>
                 </tr>
             </tbody>
@@ -245,12 +310,18 @@ function formatLastPeriod(period) {
                     <td class='td-mnth-ytd'>{formatNumber(data[2])}</td>
                     <td class='td-mnth-ytd'>{formatNumber(mthChange)} <ChangeArrows change={mthChange} /></td>
                     <td class='td-mnth-ytd percent-change'>
-                        {#if mthChange >= 0}
-                            {percentMnthChange}%
-                            <ChangeArrows change={mthChange} />
-                        {:else}
-                            ({percentMnthChange}%)
-                            <ChangeArrows change={mthChange} />
+                        {#if percentMnthChange !== 'NA' && percentMnthChange != 0}
+                            {#if mthChange >= 0}
+                                {percentMnthChange}%
+                                <ChangeArrows change={mthChange} />
+                            {:else}
+                                ({percentMnthChange}%)
+                                <ChangeArrows change={mthChange} />
+                            {/if}
+                        {:else if percentMnthChange == 0}
+                                0%  
+                        {:else if percentMnthChange === 'NA'}
+                            NA
                         {/if}
                     </td>
                 </tr>
@@ -260,13 +331,19 @@ function formatLastPeriod(period) {
                     <td class='td-mnth-ytd'>{formatNumber(data[3])}</td>
                     <td class='td-mnth-ytd'>{formatNumber(ytdChange)} <ChangeArrows change={ytdChange} /></td>
                     <td class='td-mnth-ytd percent-change'>
-                        {#if ytdChange >= 0}
-                            {percentYtdChange}%
-                            <ChangeArrows change={ytdChange} />
-                        {:else}
-                            ({percentYtdChange.toString().replace(/\-/, '')}%)
-                            <ChangeArrows change={ytdChange} />
-                        {/if}
+                        {#if percentYtdChange !== 'NA' && percentYtdChange != 0}
+                            {#if ytdChange >= 0}
+                                {percentYtdChange}%
+                                <ChangeArrows change={ytdChange} />
+                            {:else}
+                                ({percentYtdChange}%)
+                                <ChangeArrows change={ytdChange} />
+                            {/if}
+                        {:else if percentYtdChange == 0}
+                                0%
+                        {:else if percentYtdChange === 'NA'}
+                            NA
+                        {/if} 
                     </td>
                 </tr>
             </tbody>

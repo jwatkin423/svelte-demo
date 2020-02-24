@@ -109,42 +109,53 @@ function drawChart(event, initial = 0) {
 		key = event.detail.text;
 	}
 
-	document.getElementById('m-' + key).click();
+	if (key !== '' && key !== 'error_code') {
+		document.getElementById('m-' + key).click();
+	}
 
-	const setData = ddsData.chartData[key].data;
-	let dt = setData.map((d) => {return d});
+	if (key !== 'error_code') {
+		const setData = ddsData.chartData[key].data;
+		let dt = setData.map((d) => {return d});
+		
+		rpadL = setData.length == 13 ? -20 : 20;
+		rpadM = setData.length == 13 ? 0 : 30;
+		rpadS = setData.length == 13 ? 0 : 20;
+
+		barChartData = {
+			data: dt,
+			key: key,
+			label: ddsData.chartData[key].label,
+			p_color: p_color
+		};
+
+		chartTitle = ddsData.chartData[key].label;
+		
+		mPoints = setData.map( (el, i) => {
+					el /= 1;
+				return {y: el, x: i};
+		});
+
+		yTicks = processPoints(setData);
+	}
 	
-	rpadL = setData.length == 13 ? -20 : 20;
-	rpadM = setData.length == 13 ? 0 : 30;
-	rpadS = setData.length == 13 ? 0 : 20;
-
-	barChartData = {
-	 	data: dt,
-	 	key: key,
-	 	label: ddsData.chartData[key].label,
-		p_color: p_color
-	};
-
-	chartTitle = ddsData.chartData[key].label;
-	
-	mPoints = setData.map( (el, i) => {
-				el /= 1;
-			return {y: el, x: i};
-	});
-
-	yTicks = processPoints(setData);
 	
 }
 
 function processPoints (data) {
 	let maxValue = Math.max.apply(null, data);
-	return tickMarks(maxValue)
+	return tickMarks(maxValue);
 }
 
 let width = 1280;
 let height = 675;
 
-// $: console.log('Screen size: ' + screenSize);
+function formatChartTitle(title) {
+	if (title === 'Avg DOM') {
+		return 'Average Days on Market';
+	}
+
+	return title;
+}
 
 </script>
 
@@ -242,6 +253,11 @@ let height = 675;
 		height: 40px;
 	}
 
+	.no-data {
+		color: #b92f2f;
+		text-align: center;
+	}
+
 	@media only screen and (max-width: 1289px) {
 		.chart-title {
 			width: 100%;
@@ -272,9 +288,9 @@ let height = 675;
 
 
 
-{#if ddsData}
+{#if "soldUnits" in ddsData.chartData}
 
-<div class="content-area" bind:clientHeight={height} bind:clientWidth={width}>
+	<div class="content-area" bind:clientHeight={height} bind:clientWidth={width}>
 
 	<div class="td-sidebar">
 		<div class="sidebar-buffer"></div>
@@ -289,7 +305,7 @@ let height = 675;
 		
 	</div>
 	<div class="chart-title">
-			<h3 class="chart-title-h3">{chartTitle.toUpperCase()}</h3>
+			<h3 class="chart-title-h3">{formatChartTitle(chartTitle)}</h3>
 	</div>
 		<div class="content-inner-wrapper">
 			<div class="kmi-wrapper">
@@ -350,7 +366,8 @@ let height = 675;
 						mappedPoints={mappedPoints} 
 						showDollar={dollar}
 						reportYear={year}
-						rightPadding={rpadL}/>
+						rightPadding={rpadL}
+						chartType={barData.key}/>
 				{/if}
 				{#if screenSize <= 1024 && screenSize >768}
 					<TabletLandScapeChart 
@@ -362,7 +379,8 @@ let height = 675;
 						mappedPoints={mappedPoints} 
 						showDollar={dollar}
 						reportYear={year}
-						rightPadding={rpadM}/>
+						rightPadding={rpadM}
+						chartType={barData.key}/>
 				{/if}
 				{#if screenSize <= 768 && screenSize > 480}
 					<TabletPortraitChart 
@@ -374,7 +392,8 @@ let height = 675;
 						mappedPoints={mappedPoints} 
 						showDollar={dollar}
 						reportYear={year}
-						rightPadding={rpadM}/>
+						rightPadding={rpadM}
+						chartType={barData.key}/>
 				{/if}
 				{#if screenSize <= 480}
 					<SmartPhoneChart 
@@ -386,7 +405,8 @@ let height = 675;
 						mappedPoints={mappedPoints} 
 						showDollar={dollar}
 						reportYear={year}
-						rightPadding={rpadS}/>
+						rightPadding={rpadS}
+						chartType={barData.key}/>
 				{/if}
 				
 			{:else}	
@@ -444,4 +464,10 @@ let height = 675;
 		</div>
 </div>
 
+{:else}
+	<div class="content-area" bind:clientHeight={height} bind:clientWidth={width}>
+	<div class="no-data">
+		<h3>There is either no data or incomplete data for this search criteria</h3>
+	</div>
+	</div>
 {/if}

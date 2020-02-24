@@ -3,7 +3,6 @@
 export let disclaimer;
 export let userType;
 export let mlsName;
-export let mlsId;
 export let sponsorDetails;
 export let sponsorList;
 let d = new Date();

@@ -20,15 +20,17 @@ export let searchParam = '';
 export let typeSelected = '';
 export let initialAreaType = '';
 export let initialPropertyClassList = '';
+let unChecked = false;
 
 $: param = searchParam;
-$: areaType = typeSelected;
+$: areaType = decodeURI(typeSelected);
+$: typeSelected = decodeURI(typeSelected);
 let currentGroupId = '';
 let currentAreaSubMenuType = '';
 
 let allAreaChecked;
 
-// $: checkAllOption(itemType, items, searchParam);
+
 let options = [];
 let tempType = '';
 let notAllSelected = [];
@@ -167,8 +169,8 @@ function groupCheckedItems(checked) {
 }
 // time menu settings
 let timeValues = [
-    {description: '1 Year', value: 13},
     {description: '3 Years', value: 37},
+    {description: '1 Year', value: 13},
     {description: 'Mnth/YTD', value: 'mth'}
 ];
 
@@ -179,10 +181,17 @@ function toggle() {
 }
 
 function checkAllArea(e) {
+
+    if (e.checked === true) {
+        unChecked = false;
+    }
+
     let parent = e.dataset.type;
+    let classId = parent.replace(/[^a-zA-Z0-9]+/g, '-').toLowerCase();
     let checked = e.checked;
     let parentAreaEls = document.querySelectorAll('.area-input-select');
-    let areaEls = document.querySelectorAll('.area-input-select-item');
+    let subParentAreaEls = document.querySelectorAll('.all-subparent-select');
+    let areaEls = document.querySelectorAll('.ng');
     
     dispatch('avType', {
         type: parent
@@ -193,6 +202,18 @@ function checkAllArea(e) {
     parentAreaEls.forEach((pEl) => {
         if (parent !== pEl.dataset.type) {
             pEl.checked = false
+        }
+    });
+
+    subParentAreaEls.forEach((sPEl) => {
+        if (sPEl.name === 'all-' + classId) {
+            if (e.checked == true) {
+                sPEl.checked = true;
+            } else {
+                sPEl.checked = false;
+            }
+        } else {
+            sPEl.checked = false;
         }
     });
 
@@ -218,14 +239,24 @@ onMount(() => {
 
     checkAllOption(itemType, items, searchParam);
 
-    allSelected.forEach((el) => {
-        let allEl = document.querySelector('input.all-' + el);
-        allEl.checked = true;
-    });
-
     // closes all opened menus on mount
     closeOpenedAreaMenus();
 });
+
+function selectAllArea() {
+    let allAreas = document.querySelectorAll('.area-input-select-item');
+    let allArea = document.querySelector('.all-area-input-select');
+    let allCatAreas = document.querySelectorAll('.area-input-select');
+    if (allArea.checked) {
+        allAreas.forEach((el) => {
+            el.checked = true;
+        });
+
+        closeOpenedAreaMenus();
+        unChecked = true;
+    }
+
+}
 
 </script>
 
@@ -244,13 +275,13 @@ onMount(() => {
 
     .select-menu-block {
         display: block;
-        width: 230px;
+        width: 460px;
         background-color: white;
         position: absolute;
         border-top: 1px solid #CCCCCC;
         border-left: 1px solid #CCCCCC;
         border-right: 1px solid #CCCCCC;
-        border-bottom: 3px solid #333;
+        border-bottom: 5px solid #666666;
     }
  
     .option-wrapper {
@@ -260,7 +291,6 @@ onMount(() => {
     }
 
     .option-wrapper > input {
-        display: inline-block;
         text-align: left;
     }
 
@@ -351,10 +381,6 @@ onMount(() => {
         .item-group {
             margin-right: 0 !important;
         }
-
-        .option-wrapper {
-            margin-left: 10px;
-        }
     }
 
     @media only screen and (max-width: 1024px) {
@@ -380,7 +406,7 @@ onMount(() => {
         }
 
         .select-menu-block {
-            width: 460px;
+            width: 458px;
         }
 
         div.option-wrapper {
@@ -400,7 +426,7 @@ onMount(() => {
         
 
         #time-values-menu {
-            top: 85px;
+            top: 76px;
         }
 
 		.select-menu-block {
@@ -440,32 +466,32 @@ onMount(() => {
 
     @media only screen and (min-width: 412px) and (max-width: 768px) {
         .select-menu-block {
-            width: 460px;
-            top: 35px;
+            width: 458px;
+            top: 33px;
         }
     }
 
     @media only screen and (min-width: 769px) and (max-width: 1024px) {
         #time-values-menu {
-            top: 79px;
+            top: 76px;
         }
 
         #area-types-menu {
-            top: 34px;
+            top: 33px;
         }
 
         #property-types-menu {
-            top: -11px;
+            top: -10px;
         }
     }
     
     @media only screen and (max-width: 480px) {
         #time-values-menu {
-            top: 78px;
+            top: 76px;
         }
 
         #area-types-menu {
-            top: 34px;
+            top: 33px;
         }
 
         #property-types-menu {
@@ -482,15 +508,20 @@ onMount(() => {
                 <h3>{menuTitle}</h3>
                 <HRbar />
             {/if}
-        <div class='option-wrapper all-property-items' id='{'all-group-menu'}'>
-            <input class='all-property-input-select' type='checkbox' name='all' value='all' bind:checked={allPropertyChecked}>
+        <div class='option-wrapper all-property-items ml-30' id='{'all-group-menu'}'>
+            <input 
+                class='all-property-input-select' 
+                type='checkbox' 
+                name='all' 
+                value='all' 
+                bind:checked={allPropertyChecked}>
             <a href='.' on:click|preventDefault>
                 <label>ALL</label>
             </a>
         </div>
             {#each items as item}
             
-                <div class='option-wrapper poperty-item' id='{item.group + '-menu'}'>
+                <div class='option-wrapper poperty-item ml-60' id='{item.group + '-menu'}'>
                         <input class='property-input-select {item.group}' type='checkbox' data-type='{item.group}' name='{item.group}' value='{item.group}' on:click={() => {groupCheckedItems(item.group)}}>
                         <a href='.' on:click|preventDefault on:click={() => showOptions(item.group)}>
                         <label>{item.value}</label>
@@ -506,7 +537,7 @@ onMount(() => {
         {/if}
         <hr />
         <div class="pull-right done-btn">
-            <button on:click|preventDefault class="sub-menu-btn" on:click="{toggle}">done</button>
+            <button on:click|preventDefault class="sub-menu-btn" on:click="{toggle}">Done</button>
         </div>
     </div>
 {/if}
@@ -518,18 +549,18 @@ onMount(() => {
                 <h3>{menuTitle}</h3>
                 <HRbar />
             {/if}
-            <div class='option-wrapper all-area-option-menu' id='{'all-group-menu'}'>
+            <div class='option-wrapper all-area-option-menu ml-30' id='{'all-group-menu'}'>
                 {#if initialAreaType.toLowerCase() === 'all'}
-                    <input class='all-area-input-select' type='radio' name='area-type' value='all' checked='checked'>
+                    <input class='all-area-input-select' type='radio' name='area-type' value='all' checked='checked' on:click="{selectAllArea}">
                 {:else}
-                    <input class='all-area-input-select' type='radio' name='area-type' value='all' >
+                    <input class='all-area-input-select' type='radio' name='area-type' value='all' on:click="{selectAllArea}">
                 {/if}
                 <a href='.' on:click|preventDefault>
                     <label>ALL</label>
                 </a>
             </div>
             {#each items as item}
-                <div class='option-wrapper area-option-menu' id='{item.replace(/[^a-zA-Z0-9]+/g, '-').toLowerCase() + '-menu'}'>
+                <div class='option-wrapper area-option-menu ml-30' id='{item.replace(/[^a-zA-Z0-9]+/g, '-').toLowerCase() + '-menu'}'>
                     {#if item === typeSelected && initialAreaType.toLowerCase() !== 'all'}
                         <input 
                             class='input-select area-input-select'
@@ -550,7 +581,7 @@ onMount(() => {
                     {/if}
                     <a href='.' on:click|preventDefault on:click={() => showAreaOptions(item)}>
                         <label>{item}</label>
-                        {#if currentAreaSubMenuType !== item.replace(/[^a-zA-Z0-9]+/g, '-').toLowerCase() }
+                        {#if currentAreaSubMenuType !== item.replace(/[^a-zA-Z0-9]+/g, '-').toLowerCase() || unChecked === true }
                             <i class="area-type-menu-item"><Icon class="item-menu item-group" tempId="{item + '-item'}" icon={icon[0]} /></i>
                         {:else}
                             <i class="area-type-menu-item"><Icon class="item-menu item-group" tempId="{item + '-item'}" icon={icon[1]} /></i>
@@ -566,7 +597,7 @@ onMount(() => {
         
         <hr />
         <div class="pull-right done-btn">
-            <button on:click|preventDefault class="sub-menu-btn" on:click="{toggle}">done</button>
+            <button on:click|preventDefault class="sub-menu-btn" on:click="{toggle}">Done</button>
         </div>
     </div>        
 {/if}
@@ -578,7 +609,7 @@ onMount(() => {
             <HRbar />
         {/if}
         {#each timeValues as tv}
-            <div class='option-wrapper'>
+            <div class='option-wrapper ml-30'>
                 {#if parseInt(param) === tv.value}
                     <input class='input-select input-select-time' type='radio' name='time' value='{tv.value}' checked='checked'>
                 {:else if parseInt(param) !== 13 && parseInt(param) !== 37}
@@ -593,7 +624,7 @@ onMount(() => {
         {/each}
         <hr />
         <div class="pull-right done-btn">
-                <button on:click|preventDefault class="sub-menu-btn" on:click="{toggle}">done</button>
+                <button on:click|preventDefault class="sub-menu-btn" on:click="{toggle}">Done</button>
         </div>
     </div>
 {/if}

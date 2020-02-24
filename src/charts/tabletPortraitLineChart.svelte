@@ -29,6 +29,9 @@ let heyo = false;
 
 export let rightPadding;
 
+// chart type
+export let chartType;
+
 // chart and misc dimensions
 let padding = { top: 25, right: 0, bottom: 30, left: 30 };
 let width = 748;
@@ -176,7 +179,16 @@ function showToolTip(i, leftX, topY, point) {
 	let hoverDate = date ;
 	let units = py;
 
-	units = py + ' units';
+	let unitsSuffix = 'units';
+	
+	if (chartType === 'spOpRatio') {
+		unitsSuffix = '%';
+	} else if (chartType === 'fsldMsi')  {
+		unitsSuffix = 'months';
+	}
+
+	units = py + ' ' + unitsSuffix;
+	
 	if (showDollar) {
 		units = dollar + py;
 	}

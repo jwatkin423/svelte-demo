@@ -9,7 +9,9 @@ export let data;
 let active;
 
 onMount(() => {
-    active = data[keys[0]].key;
+	if (data.length > 0) {
+		active = data[keys[0]].key;
+	}
 });
 
 // set key

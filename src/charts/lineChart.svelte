@@ -28,6 +28,9 @@ $: dollar = showDollar ? '$' : '';
 let heyo = false;
 export let rightPadding;
 
+// chart type
+export let chartType;
+
 // chart and misc dimensions
 let padding = { 
 	top: 35, 
@@ -101,7 +104,7 @@ $: textWidth = innerWidth / xTicks.length;
 
 let lineHeight = -height;
 let line = width - padding.right;
-$: line = (width * .95) + 3;
+$: line = (width - 40);
 
 
 // format ticks
@@ -193,7 +196,16 @@ function showToolTip(i, leftX, topY, point) {
 	let hoverDate = date ;
 	let units = py;
 
-	units = py + ' units';
+	let unitsSuffix = 'units';
+	
+	if (chartType === 'spOpRatio') {
+		unitsSuffix = '%';
+	} else if (chartType === 'fsldMsi')  {
+		unitsSuffix = 'months';
+	}
+
+	units = py + ' ' + unitsSuffix;
+	
 	if (showDollar) {
 		units = dollar + py;
 	}

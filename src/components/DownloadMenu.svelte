@@ -84,7 +84,7 @@ function validateForm() {
         position: absolute;
         top: 30px;
         right: 10px;
-        border-bottom: 5px solid black;
+        border-bottom: 5px solid #666666;
         -webkit-box-shadow: 2px 0px 0px 0px #ccc; 
         box-shadow: 2px 0px 0px 0px #ccc;
     }
@@ -154,7 +154,6 @@ function validateForm() {
 
     .sub-menu-btn {
         height: 20px;
-        line-height: 20px;
         font-size: 10px;
         padding: 0;
         width: 60px;
@@ -241,8 +240,8 @@ function validateForm() {
                     </div>
                 {/each}    
             <div class="pull-right done-btn">
-                <button on:click|preventDefault on:click={closeMenu} class="sub-menu-btn" >cancel</button>
-                <button on:click|preventDefault on:click={submitForm} id='submit-button' class="sub-menu-btn" disabled={disabled} type="submit">done</button>
+                <button on:click|preventDefault on:click={closeMenu} class="sub-menu-btn" >Cancel</button>
+                <button on:click|preventDefault on:click={submitForm} id='submit-button' class="sub-menu-btn" disabled={disabled} type="submit">Download</button>
             </div>
             </form>
     {/if}

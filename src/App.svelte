@@ -147,7 +147,6 @@ onMount(() => {
 				disclaimer={pageData.strDisclaimer} 
 				userType={pageData.userType} 
 				mlsName={pageData.mlsName} 
-				mlsId={pageData.mlsId}
 				sponsorDetails={pageData.sponsor_detail}
 				sponsorList={pageData.sponsor_list}
 				/>

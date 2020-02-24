@@ -84,9 +84,10 @@ let showPropertyMenu = false;
 let showTimeMenu = false;
 
 function toggleShowPopertyMenu() {
-    showPropertyMenu = showPropertyMenu === true ? false : true;
-    let prtyBtn = document.getElementById('btn-proptery');
-
+        showPropertyMenu = showPropertyMenu === true ? false : true;
+    let prtyBtn = document.querySelector('#btn-property');
+    let areaBtn = document.getElementById('btn-area');
+    let timeBtn = document.getElementById('btn-time');
     // toggle other menus off
     // set the position of the menu
     if (showPropertyMenu) {
@@ -94,13 +95,16 @@ function toggleShowPopertyMenu() {
         showAreaTypesMenu = false
         showTimeMenu = false
         setLeft('property-types');
+        areaBtn.style.removeProperty('color');
+        timeBtn.style.removeProperty('color');
     } else {
         prtyBtn.style.removeProperty('color');
+        areaBtn.style.removeProperty('color');
+        timeBtn.style.removeProperty('color');
     }
 }
 
 function setLeft(id)  {
-
     let el = document.getElementById(id);
     let menu = document.getElementById(id + '-menu');
     menu.style.removeProperty('left');
@@ -111,7 +115,7 @@ function setLeft(id)  {
     menu.style.top = '-10px';
 
     let themeMenu = document.getElementById('property-types');
-    menu.style.width = themeMenu.offsetWidth + 'px';
+    menu.style.width = (themeMenu.offsetWidth - 2) + 'px';
 
 
     let els = document.querySelectorAll('.sub-menu-property');
@@ -127,16 +131,24 @@ let showAreaTypesMenu = false;
 
 function toggleShowAreaTypesMenu() {
     showAreaTypesMenu = showAreaTypesMenu === true ? false : true;
-    let prtyBtn = document.getElementById('btn-area');
+    let prtyBtn = document.getElementById('btn-property');
+    let areaBtn = document.getElementById('btn-area');
+    let timeBtn = document.getElementById('btn-time');
+    
     // toggle other menus off
     // set the position of the menu
     if (showAreaTypesMenu) {
-        prtyBtn.style.color = p_color;
+        areaBtn.style.color = p_color;
         showPropertyMenu = false;
         showTimeMenu = false
         setAreaLeft('area-types');
+
+        timeBtn.style.removeProperty('color');
+        prtyBtn.style.removeProperty('color');
     } else {
         prtyBtn.style.removeProperty('color');
+        areaBtn.style.removeProperty('color');
+        timeBtn.style.removeProperty('color');
     }
    
 }
@@ -151,7 +163,27 @@ function setAreaLeft(id)  {
     menu.style.left = leftEl;
     
     let themeMenu = document.getElementById('area-types');
-    menu.style.width = themeMenu.offsetWidth + 'px';
+    let menuWidth = (themeMenu.offsetWidth - 2);
+    let sawWidth = (themeMenu.offsetWidth * .9) + 'px';
+    menu.style.width = menuWidth + 'px';
+    
+    let sHeaderEls = document.querySelectorAll('.submenu-header');
+    sHeaderEls.forEach((el) => {
+        el.style.removeProperty('width');
+        el.style.width = menuWidth + 'px';;
+    });
+
+    let sawEls = document.querySelectorAll('.search-area-wrapper');
+    sawEls.forEach((el) => {
+        el.style.removeProperty('width');
+        el.style.removeProperty('paddingLeft');
+        el.style.removeProperty('paddingRight');
+        el.style.width = sawWidth;
+        let paddingLeft = (menuWidth * .05);
+        el.style.paddingRight = (paddingLeft - 2) + 'px';
+        el.style.paddingLeft = paddingLeft + 'px';
+        
+    });
 
     let els = document.querySelectorAll('.sub-menu-area');
     els.forEach((el) => {
@@ -168,11 +200,13 @@ function closeAreaMenu() {
 function toggleShowTimeMenu() {
 
     showTimeMenu = showTimeMenu === true ? false : true;
-    let prtyBtn = document.getElementById('btn-time');
+    let prtyBtn = document.querySelector('#btn-property');
+    let areaBtn = document.getElementById('btn-area');
+    let timeBtn = document.getElementById('btn-time');
     // toggle other menus off
     // set the position of the menu
     if (showTimeMenu) {
-        prtyBtn.style.color = p_color;
+        timeBtn.style.color = p_color;
         timeIcon = 1;
         showPropertyMenu = false;
         showAreaTypesMenu = false;
@@ -180,9 +214,13 @@ function toggleShowTimeMenu() {
         setTimeMenuleft('time-values');
 
         document.getElementById('time-values-menu').style.display = 'block';
-    } else {
-        timeIcon = 0;
         prtyBtn.style.removeProperty('color');
+        areaBtn.style.removeProperty('color');
+    } else {
+        prtyBtn.style.removeProperty('color');
+        areaBtn.style.removeProperty('color');
+        timeBtn.style.removeProperty('color');
+        timeIcon = 0;
     }
 
 }
@@ -196,7 +234,7 @@ function setTimeMenuleft(id) {
     leftEl = el.offsetLeft + 'px';
     menu.style.left = leftEl;
     let themeMenu = document.getElementById(id);
-    menu.style.width = themeMenu.offsetWidth + 'px';
+    menu.style.width = (themeMenu.offsetWidth - 2) + 'px';
     
 
     let els = document.querySelectorAll('.sub-menu-time');
@@ -216,10 +254,11 @@ function closeTimeMenu() {
 }
 
 let propertySelectedArr = [];
+let propertyItems = [];
 let propertyDisplayValueArr = [];
 let propertySelected = '';
 let areaType = '';
-$: areaType = params ? params.areaType : ''; 
+$: areaType = params ? decodeURI(params.areaType) : '';
 let areaValueSelectedArr = [];
 let areaValueSelected = '';
 let timePeriod;
@@ -255,15 +294,25 @@ function clearAll() {
 
 
 function buildSearchParams() {
-    propertySelectedArr = [];
+     propertySelectedArr = [];
     propertySelected = '';
     areaValueSelectedArr = [];
     areaValueSelected = '';
     propertyDisplayValueArr = [];
     areaValuesDisplayText = '';
+    let allArea = false;
+    
+    let propertyItemsEls = document.querySelectorAll('.property-input-select-item');
+    
+    propertyItemsEls.forEach((piEls) => {
+        if (piEls.checked) {
+            propertyItems.push(piEls);
+        }
+    });
 
-    let propertyItems = document.querySelectorAll('.property-input-select-item:checked');
-    let allArea = document.querySelector('.all-area-input-select').checked;
+    allArea = document.querySelector('.all-area-input-select').checked;
+
+    // return false;
     let areaValueItems = [];
 
     let inputAreaTypes = document.querySelectorAll('.area-input-select');
@@ -272,11 +321,11 @@ function buildSearchParams() {
             areaType = cEl.dataset.type;
         }
     });
-    
+
     if (!allArea) {
         areaValueItems = document.querySelectorAll('input[data-parent="' + areaType + '"]:checked');
     }
-
+    
     if ((propertyItems.length > 0 && areaValueItems.length > 0) || (propertyItems.length > 0 && allArea)) {
 
         propertyItems.forEach((propEl) => {
@@ -289,8 +338,9 @@ function buildSearchParams() {
         
         propertySelected = propertySelectedArr.join();
         propertyTypeDisplayText = propertyDisplayValueArr.join();
+        areaValue = document.querySelector('.area-input-select:checked');
 
-        if (!areaValue) {
+        if (areaValue) {
             areaValueItems.forEach((av) => {
                 if (av.checked) {
                     areaValueSelectedArr.push(av.value.replace(',', '|'));
@@ -301,6 +351,7 @@ function buildSearchParams() {
             areaValueSelected = areaValueSelectedArr.join();
             areaValuesDisplayText = areaValuesDisplayTextArr.join();
         } else {
+            areaType = 'ALL'
             areaValueSelected = 'ALL';
             areaValuesDisplayText = 'ALL';
         }
@@ -326,6 +377,8 @@ function buildSearchParams() {
         // newUrl = newUrl.replace('http://localhost:5000', 'http://staging.jw');
 
         location.replace(newUrl);
+        // console.log(newUrl);
+        // return false;
 
     } else {
         alert("Please select at least one area type and one property type");
@@ -371,8 +424,6 @@ onMount(() => {
         height: 175px;
         width: 100%;
         background-color: white;
-        /* margin-left: auto;
-        margin-right: auto; */
     }
 
     .type-menu {
@@ -385,7 +436,6 @@ onMount(() => {
         margin-bottom: 10px;
         height: 30px;
         line-height: 30px;
-        border: 1px solid #666666;
         --borderRadius: 15px;
         --placeHolderColor: #3F4F5F;
     }
@@ -399,7 +449,7 @@ onMount(() => {
         color: #666666;
         width: 100%;
         background-color: white;
-        border: none;
+        border: 1px solid #666666;
         margin-left: 0;
         padding-left: 0 !important;
         padding-right: 0 !important;
@@ -423,7 +473,6 @@ onMount(() => {
         width: 60px;
         height: 30px;
         line-height: 30px;
-        border: 1px solid #666666;
         border-radius: 5px;
         display: inline-block;
     }
@@ -487,8 +536,14 @@ onMount(() => {
     }
 
     .menu-button {
-        height: 28px;
-        line-height: 27px;
+        height: 30px;
+        line-height: 30px;
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+
+    .first-search-button-themed {
+        margin-right: 20px;
     }
 
 </style>
@@ -499,7 +554,7 @@ onMount(() => {
         {#if pTypes.length > 0}
         <div class="themed" id='property-types'>
             <div class='label'>
-                <button class='menu-button' on:click|preventDefault on:click={toggleShowPopertyMenu} href="." id='btn-proptery'>Property Type
+                <button class='menu-button' on:click|preventDefault on:click={toggleShowPopertyMenu} href="." id='btn-property'>Property Type
                     {#if !showPropertyMenu}
                         <i><Icon class="item-menu" tempId="property-type-menu-right" icon={icon[0]} /></i>
                     {:else}
@@ -573,12 +628,18 @@ onMount(() => {
         <div class="search-button-wrapper">
             <div class="search-button-themed first-search-button-themed">
             <div class="label">
-                <button on:click|preventDefault on:click={clearAll} class="menu-button search-menu-button">Reset</button>
+                <button on:click|preventDefault on:click={clearAll} class="menu-button search-menu-button first-search-button-themed">Reset</button>
             </div>
             </div>
             <div class="search-button-themed">
                 <div class="label">
-                    <button on:click|preventDefault class="menu-button search-menu-button" on:click={buildSearchParams}>Search</button>
+                    <button 
+                        on:click|preventDefault 
+                        class="menu-button search-menu-button" 
+                        id="search-menu-btn" 
+                        on:click={buildSearchParams}
+                        style="color: {p_color}; border: 1px solid {p_color} !important;"
+                        >Search</button>
                 </div>
             </div>
         </div>

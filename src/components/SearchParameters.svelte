@@ -88,8 +88,10 @@ let width = 1280;
                 <span>Time Period:</span> 
                 {#if timePeriodValue == 13} 
                     1 Year
-                {:else}    
+                {:else if timePeriodValue == 37}    
                     3 Years
+                {:else}
+                    Mth/Ytd
                 {/if}
             </div>
             <div class="search-param-key-value">
@@ -99,12 +101,11 @@ let width = 1280;
         </div>
         <div class="bottom-search-params">
             <div class="search-param-key-value">
-                <span>Area Type:</span> {areaType}
+                <span>Area Type:</span> {decodeURI(areaType)}
             </div>
             <div class="search-param-key-value">
                 <i class="param-points"><Icon class="param-points-b" tempId='download-menu' icon={icon[0]} /></i>
                 <span id='area-values-disp'>Area Values:</span> {areaValueCf}
-                <!-- <span id='area-values-disp'>Area Values:</span> {areaVformatted} -->
             </div>
         </div>
     {/if}

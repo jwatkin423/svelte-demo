@@ -86,7 +86,6 @@ onMount(() => {
         font-size: 10px;
         position: relative;
         display: inline-block;
-        margin-left: 20px;
         margin-right: 5px;
         margin-top: 0px;
         margin-bottom: 0px;
@@ -109,11 +108,7 @@ onMount(() => {
         .sub-menu-item {
             text-align: left;
         }
-
-        .property-input-select-item {
-            margin-left: 90px;
-        }
-
+        
         .option-wrapper {
             height: 30px;
         }
@@ -127,24 +122,9 @@ onMount(() => {
 {#if data.length > 0}
     <div class="sub-menu-property" id="{type}" >
 
-        <div class="sub-menu-item">
-                <div class='option-wrapper'>
-                    <input class='property-input-select-item input-select-item all-{type}' data-parent='all-{type}' type='checkbox' name='all-{type}' value='all' on:click="{() => {
-                        let elsClassName = '.' + type;
-                        let els = document.querySelectorAll(elsClassName);
-                        let allEl = document.querySelector('.all-' + type);
-                        let allElChecked = allEl.checked;
-
-                        els.forEach((el) => {
-                            el.checked = allElChecked;
-                        });
-                    }}">
-                    <label class="all-{type}">All</label>
-                </div>
-        </div>
     {#each data as sub}
         <div class="sub-menu-item">
-                <div class='option-wrapper'>
+                <div class='option-wrapper ml-90'>
                     
                     <input 
                         class='property-input-select-item input-select-item {type}'
