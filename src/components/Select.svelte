@@ -577,7 +577,7 @@ function selectAllArea() {
             {/if}
             <div class='option-wrapper all-area-option-menu ml-30' id='{'all-group-menu'}'>
                 {#if initialAreaType.toLowerCase() === 'all'}
-                    <input class='all-area-input-select' type='radio' name='area-type' value='all' checked='checked' on:click="{selectAllArea}">
+                    <input class='all-area-input-select' type='radio' name='area-type' value='all' checked='checked'  on:click="{selectAllArea}">
                 {:else}
                     <input class='all-area-input-select' type='radio' name='area-type' value='all' on:click="{selectAllArea}">
                 {/if}
@@ -595,6 +595,7 @@ function selectAllArea() {
                             name='area-type'
                             value='{item}'
                             checked='checked'
+                            id="parent-{item.replace(/[^a-zA-Z0-9]+/g, '-').toLowerCase()}"
                             on:change="{(e) => checkAllArea(e.target)}" />
                     {:else}
                         <input 
@@ -603,10 +604,11 @@ function selectAllArea() {
                             data-type="{item}" 
                             name='area-type' 
                             value='{item}' 
+                            id="parent-{item.replace(/[^a-zA-Z0-9]+/g, '-').toLowerCase()}"
                             on:change="{(e) => checkAllArea(e.target)}" />
                     {/if}
                     <a href='.' on:click|preventDefault on:click={() => showAreaOptions(item)}>
-                        <label>{item}</label>
+                        <label>{item} 123</label>
                         {#if currentAreaSubMenuType !== item.replace(/[^a-zA-Z0-9]+/g, '-').toLowerCase() || unChecked == true }
                             <i class="area-type-menu-item"><Icon class="item-menu item-group" tempId="{item + '-item'}" icon={icon[0]} /></i>
                         {:else}

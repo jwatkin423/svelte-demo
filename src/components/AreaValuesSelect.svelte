@@ -490,12 +490,11 @@ onMount(() => {
                     type='checkbox' 
                     name='all-{idClass}'
                     value='all'
-                    on:click="{() => {
+                    on:click="{(e) => {
                         let elsClassName = '.set-' + idClass;
                         let els = document.querySelectorAll(elsClassName);
                         let allEl = document.querySelector('.all-' + idClass);
                         let allElChecked = allEl.checked;
-                        
                         els.forEach((el) => {
                             if(allElChecked) {
                                 el.checked = true;
@@ -503,6 +502,8 @@ onMount(() => {
                                 el.checked = false;
                             }
                         });
+                        let parentEl = document.getElementById('parent-' + idClass);
+                        parentEl.checked = allEl.checked;
 
                     }}">
                     <label class="all-{type} bold-label">All</label>
