@@ -184,6 +184,21 @@ function toggle() {
     dispatch('close', {
         t: 0
     });
+    removeActiveFilters();
+}
+
+function removeActiveFilters() {
+    let prtyBtn = document.getElementById('btn-property');
+    let areaBtn = document.getElementById('btn-area');
+    let timeBtn = document.getElementById('btn-time');
+
+    if (prtyBtn && areaBtn && timeBtn) {
+        prtyBtn.style.removeProperty('color');
+        areaBtn.style.removeProperty('color');
+        timeBtn.style.removeProperty('color');
+    }
+
+    
 }
 
 function checkAllArea(e) {
@@ -592,7 +607,7 @@ function selectAllArea() {
                     {/if}
                     <a href='.' on:click|preventDefault on:click={() => showAreaOptions(item)}>
                         <label>{item}</label>
-                        {#if currentAreaSubMenuType !== item.replace(/[^a-zA-Z0-9]+/g, '-').toLowerCase() || unChecked === true }
+                        {#if currentAreaSubMenuType !== item.replace(/[^a-zA-Z0-9]+/g, '-').toLowerCase() || unChecked == true }
                             <i class="area-type-menu-item"><Icon class="item-menu item-group" tempId="{item + '-item'}" icon={icon[0]} /></i>
                         {:else}
                             <i class="area-type-menu-item"><Icon class="item-menu item-group" tempId="{item + '-item'}" icon={icon[1]} /></i>
