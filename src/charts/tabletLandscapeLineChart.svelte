@@ -88,7 +88,7 @@ $: textWidth = innerWidth / xTicks.length;
 
 let lineHeight = -height;
 let line = width;
-$: line = width - (width > 650 ? 40 : 30);
+$: line = width - 35;
 
 // format ticks
 function formatTick(tick) {

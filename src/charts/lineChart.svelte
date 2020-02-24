@@ -104,7 +104,7 @@ $: textWidth = innerWidth / xTicks.length;
 
 let lineHeight = -height;
 let line = width - padding.right;
-$: line = (width - 40);
+$: line = (width - 50);
 
 
 // format ticks
