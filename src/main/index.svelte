@@ -265,8 +265,8 @@ function formatChartTitle(title) {
 	}
 
 	@media only screen and (max-width: 768px) {
- 		.td-sidebar {
- 			display: none;
+ 		.td-sidebar, .sidebar-buffer, .sidebar-menu-links, .sidebar-menu-title, .sidebar-title-area {
+			 display: none;
 		}
 		
 		.chart-wrapper {

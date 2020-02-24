@@ -61,6 +61,12 @@ function formatLabel(label) {
 			line-height: 30px;
 		}
 	}
+
+	@media only screen and (max-width: 768px) {
+		.td-list-active, .td-list-item-link, .td-list-item-link:hover, .td-list-par {
+			display: none;
+		}
+	}
 </style>
 
 {#each keys as key}
