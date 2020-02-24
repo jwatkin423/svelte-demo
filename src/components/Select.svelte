@@ -84,6 +84,7 @@ function checkAllOption(itemType, items, searchParam) {
  * show property menus
  * */
 function showOptions(groupId) {
+
     closeOpenedMenus();
     if (currentGroupId !== groupId) {
         let parentMenuEl = document.getElementById(groupId + '-menu');
@@ -93,6 +94,8 @@ function showOptions(groupId) {
     } else {
         currentGroupId = '';
     }
+
+    
     
 }
 
@@ -165,7 +168,10 @@ function propertyChecked(checked) {
 let groupChecked = false;
 
 function groupCheckedItems(checked) {
-    showOptions(checked);
+    let propItems = document.querySelectorAll('.property-input-select-item.' + checked);
+    propItems.forEach((propEl) => {
+        propEl.checked = document.querySelector('.property-input-select.' + checked).checked;
+    });
 }
 // time menu settings
 let timeValues = [
@@ -522,7 +528,12 @@ function selectAllArea() {
             {#each items as item}
             
                 <div class='option-wrapper poperty-item ml-60' id='{item.group + '-menu'}'>
-                        <input class='property-input-select {item.group}' type='checkbox' data-type='{item.group}' name='{item.group}' value='{item.group}' on:click={() => {groupCheckedItems(item.group)}}>
+                        <input 
+                            class='property-input-select {item.group}' 
+                            type='checkbox' data-type='{item.group}' 
+                            name='{item.group}' 
+                            value='{item.group}' 
+                            on:click={() => {groupCheckedItems(item.group)}}>
                         <a href='.' on:click|preventDefault on:click={() => showOptions(item.group)}>
                         <label>{item.value}</label>
                         {#if currentGroupId !== item.group}
