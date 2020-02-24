@@ -608,7 +608,7 @@ function selectAllArea() {
                             on:change="{(e) => checkAllArea(e.target)}" />
                     {/if}
                     <a href='.' on:click|preventDefault on:click={() => showAreaOptions(item)}>
-                        <label>{item} 123</label>
+                        <label>{item}</label>
                         {#if currentAreaSubMenuType !== item.replace(/[^a-zA-Z0-9]+/g, '-').toLowerCase() || unChecked == true }
                             <i class="area-type-menu-item"><Icon class="item-menu item-group" tempId="{item + '-item'}" icon={icon[0]} /></i>
                         {:else}
