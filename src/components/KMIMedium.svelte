@@ -267,7 +267,7 @@ function formatLastPeriod(period) {
                                         {chngPercent}
                                         <ChangeArrows change={change} />
                                     {:else}
-                                        {chngPercent}
+                                        ({chngPercent}%)
                                         <ChangeArrows change={change} />
                                     {/if}
                                 {:else if chngPercent == 0}

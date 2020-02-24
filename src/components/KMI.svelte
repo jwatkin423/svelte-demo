@@ -264,12 +264,10 @@ function formatLastPeriod(period) {
                     <td>
                         {#if chngPercent !== 'NA' && chngPercent != 0}
                             {#if change > 0}
-                                <!-- {((change/initialMonth) * 100).toFixed(toFixed)}% -->
                                 {chngPercent}
                                 <ChangeArrows change={change} />
                             {:else}
-                                <!-- ({((change/initialMonth * 100)).toFixed(toFixed).toString().replace(/\-/, '')}%) -->
-                                {chngPercent}
+                                ({chngPercent}%)
                                 <ChangeArrows change={change} />
                             {/if}
                         {:else if chngPercent == 0}
