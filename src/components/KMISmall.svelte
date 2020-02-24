@@ -23,6 +23,7 @@ let change = 'NA';
 let lastMonth = 1.0;
 let initialMonth = 0.0;
 
+$: toFixed = chartType === 'spOpRatio' ? 2 : 1;
 $: initialMonth = parseFloat(data[0]);
 $: lastMonth = data[data.length - 1];
 $: change = (lastMonth - initialMonth).toFixed(toFixed);
