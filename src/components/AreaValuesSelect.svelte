@@ -145,7 +145,7 @@ function areaValueSelected() {
                 if (aVsSelected.length == avItems.length) {
                     document.querySelector('input.all-' + idClass).checked = true;
                 }
-                
+
                 aVsSelected.forEach((avS) => {
 
                 let tempSel = avS.toLowerCase().replace(/ /g, '-').replace(/,/g, '-');
@@ -172,12 +172,6 @@ function areaValueSelected() {
 }
 
 let groupCountUnchecked = 0;
-// function selectAllArea() {
-//     let allAreaSelEl = document.querySelector('.all-' + idClass);
-//     if (allAreaSelEl.dataset.group === initialAreaType.toLowerCase().replace(/ /g, '-').replace(/,/g, '-')) {
-//         allAreaSelEl.checked = true;
-//     }
-// }
 
 let tempId = -1;
 function setAnchorId(i) {
@@ -299,8 +293,6 @@ function test() {
 onMount(() => {
 
     areaValueSelected();
-    // selectAllArea();
-    // checkedAll();
 
 });
 </script>
