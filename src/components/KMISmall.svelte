@@ -8,8 +8,15 @@ export let reportPeriod;
 export let year;
 export let searchType;
 
-export let p_color;
-export let s_color;
+// primary color prop
+export let p_color = false;
+export let s_color = false;
+
+// primary color
+let primary_fill_color = '';
+let secondary_fill_color = '';
+$: primary_fill_color = p_color ? p_color : '#019184';
+$: secondary_fill_color = s_color ? s_color :' #666666';
 
 export let showDollar;
 $: dollar = showDollar ? '$' : '';
@@ -287,8 +294,8 @@ function formatLastPeriod(period) {
             <thead>
                 <tr>
                     <th class="th-mnth-ytd"></th>
-                    <th class="th-mnth-ytd"><i><Icon customColor={p_color} class="year-small" tempId="previous-year" icon={icon[0]} /></i>{formatYear(reportPeriod[0])}</th>
-                    <th class="th-mnth-ytd"><i><Icon customColor={s_color} class="year-small" tempId="current-year" icon={icon[0]} /></i>{formatYear(reportPeriod[2])}</th>
+                    <th class="th-mnth-ytd"><i><Icon customColor={primary_fill_color} class="year-small" tempId="previous-year" icon={icon[0]} /></i>{formatYear(reportPeriod[0])}</th>
+                    <th class="th-mnth-ytd"><i><Icon customColor={secondary_fill_color} class="year-small" tempId="current-year" icon={icon[0]} /></i>{formatYear(reportPeriod[2])}</th>
                     <th class="th-mnth-ytd">Change</th>
                     <th class="th-mnth-ytd">Change %</th>
                 </tr>
