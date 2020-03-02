@@ -286,7 +286,8 @@ let resizeImg;
         left: 0;
         background-color: white;
         max-width: 1280;
-        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        /* box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); */
+        border-bottom: 5px solid #666666;
         position: relative;
         z-index: 9999;
         padding: 5px 0 5px 0;
