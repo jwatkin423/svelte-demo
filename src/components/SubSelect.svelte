@@ -17,7 +17,7 @@ function propertySelected() {
     
     if (params) {
         poprertiesSelected = propertyParams.split(',').map((i) => {
-            return parseInt(i);
+            return i;
         });
         let propertyEls = document.querySelectorAll('.property-input-select-item');
         let parentEls = document.querySelectorAll('.property-input-select');
