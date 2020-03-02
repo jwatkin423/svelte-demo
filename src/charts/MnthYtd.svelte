@@ -13,13 +13,18 @@ export let yPoints;
 $: yTicks = yPoints;
 
 // primary color prop
-export let p_color;
-export let s_color;
+export let p_color = false;
+export let s_color = false;
+
+// primary color
+let primary_fill_color = '';
+let secondary_fill_color = '';
+$: primary_fill_color = p_color ? p_color : '#019184';
+$: secondary_fill_color = s_color ? s_color :' #666666';
 
 export let mappedPoints = [];
 
-let primary_fill_color = '';
-$: primary_fill_color = p_color;
+
 
 let points = [];
 $: points = [...data];
@@ -65,9 +70,7 @@ let textWidth = 488;
 $: bdOne = width < 488 ? 70 : 80;
 $: bdTwo = width < 488 ? 30 : 10;
 
-// primary color
-$: primary_fill_color = p_color;
-$: secondary_fill_color = s_color;
+
 
 // initializing x scale
 $: xScale = scaleLinear()

@@ -13,13 +13,16 @@ export let yPoints;
 $: yTicks = yPoints;
 
 // primary color prop
-export let p_color;
-export let s_color;
+export let p_color = false;
+export let s_color = false;
+
+// primary color
+let primary_fill_color = '';
+let secondary_fill_color = '';
+$: primary_fill_color = p_color ? p_color : '#019184';
+$: secondary_fill_color = s_color ? s_color :' #666666';
 
 export let mappedPoints = [];
-
-let primary_fill_color = '';
-$: primary_fill_color = p_color;
 
 let points = [];
 $: points = [...data];
@@ -61,11 +64,6 @@ const padding = { top: 20, right: 15, bottom: 29, left: 25 };
 let width = 420;
 let height = 436;
 let textWidth = 488;
-
-
-// primary color
-$: primary_fill_color = p_color;
-$: secondary_fill_color = s_color;
 
 // initializing x scale
 $: xScale = scaleLinear()
