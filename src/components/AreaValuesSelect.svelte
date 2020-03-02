@@ -134,29 +134,40 @@ function areaValueSelected() {
         if (type === initialAreaType && typeof(aVsSelected) !== 'array') {
             if (aVsSelected.toLowerCase === 'all') {
                 let areaItemEls = document.querySelectorAll('.' + idClass);
-                areaItemEls.forEach((el) => {
-                el.checked = true;
+                    areaItemEls.forEach((el) => {
+                    el.checked = true;
                 });
 
                 document.querySelector('.all-' + idClass).checked = true;
             } else {
-                let avItems = document.querySelectorAll('.ng.' + idClass)
+                let avItems = document.querySelectorAll('.ng.' + idClass);
 
                 if (aVsSelected.length == avItems.length) {
                     document.querySelector('input.all-' + idClass).checked = true;
                 }
 
-                aVsSelected.forEach((avS) => {
+                if (typeof(aVsSelected) === 'array') {
+                    aVsSelected.forEach((avS) => {
+                        let tempSel = avS.toLowerCase().replace(/ /g, '_').replace(/,/g, '_');
 
-                let tempSel = avS.toLowerCase().replace(/ /g, '-').replace(/,/g, '-');
+                        let id = idClass + '-' + tempSel;
+                        let tempInput = document.getElementById(id);
 
-                let id = idClass + '-' + tempSel;
-                let tempInput = document.getElementById(id);
+                        if (tempInput) {
+                            tempInput = document.getElementById(id).checked = true;
+                        }
+                    });
+                } else {
+                    let tempSel = aVsSelected.toLowerCase().replace(/ /g, '_').replace(/,/g, '_');
 
-                if (tempInput) {
-                    tempInput = document.getElementById(id).checked = true;
+                    let id = idClass + '-' + tempSel;
+                    let tempInput = document.getElementById(id);
+
+                    if (tempInput) {
+                        tempInput = document.getElementById(id).checked = true;
+                    }
                 }
-            });
+                
             }
             
         } 
@@ -215,7 +226,7 @@ function showSearched() {
     let parentEl = document.getElementById('div-submenu-' + idClass);
 
     if (sav !== '') {
-        sav = (sav).toLowerCase().replace(/ /g, '-').replace(/,/g, '-');
+        sav = (sav).toLowerCase().replace(/ /g, '_').replace(/,/g, '_');
         let id = 'div-' + idClass + '-' + sav;
         let targetEl = document.getElementById(id);
         let topPos = targetEl.offsetTop;
@@ -339,9 +350,12 @@ onMount(() => {
         font-size: 10px;
         position: relative;
         display: inline-block;
+        margin: unset !important;
+        margin-left: 0;
         margin-right: 5px;
         margin-top: 0px;
         margin-bottom: 0px;
+        
     }  
 
     .done-btn {
@@ -521,9 +535,9 @@ onMount(() => {
                 <div class="sub-menu-item" >
                     <div 
                         class='option-wrapper area-wrapper div-area-input-select-item div-{idClass} ml-60' 
-                        id="div-{idClass}-{(menuItem.areaValue).toLowerCase().replace(/ /g, '-').replace(/,/g, '-')}">
+                        id="div-{idClass}-{(menuItem.areaValue).toLowerCase().replace(/ /g, '_').replace(/,/g, '_')}">
                         <input
-                            id="{idClass}-{(menuItem.areaValue).toLowerCase().replace(/ /g, '-').replace(/,/g, '-')}"
+                            id="{idClass}-{(menuItem.areaValue).toLowerCase().replace(/ /g, '_').replace(/,/g, '_')}"
                             class='area-input-select-item input-select-item {idClass} set-{item} set-{idClass} ng'
                             data-parent='{type}'
                             data-item={item}
