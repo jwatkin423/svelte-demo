@@ -72,7 +72,7 @@
 
         canvas.width  = cW;
         canvas.height = cH;
-        context.drawImage(tmp || img, 0, 0, cW, cH, 0,0);
+        context.drawImage(tmp || img, 0, 0, cW, cH);
         dst.src = canvas.toDataURL(type, quality);
 
         if (cW <= width || cH <= height) {
