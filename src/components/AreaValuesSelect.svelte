@@ -232,18 +232,25 @@ function showSearched() {
         let topPos = targetEl.offsetTop;
         let targetItem = document.getElementById(idClass + '-' + sav);
         parentEl.scrollTop = topPos;
+        
+        
+        let nonTargetItems = document.querySelectorAll('.area-input-select-item');
+        nonTargetItems.forEach((ntiEl) => {
+            ntiEl.checked = false;
+        });
+
         targetItem.checked = true;
 
         let parentType = targetItem.dataset.parent;
 
         let parentCatEls = document.querySelectorAll('.area-input-select');
         parentCatEls.forEach((catEl) => {
-        if (catEl.dataset.type === parentType) {
-            catEl.checked = true;
-        } else {
-            catEl.checked = false;
-        }
-    });
+            if (catEl.dataset.type === parentType) {
+                catEl.checked = true;
+            } else {
+                catEl.checked = false;
+            }
+        });
     }
 }
 
