@@ -4,7 +4,7 @@ import Icon from "./Icon.svelte";
 import {faCaretRight, faCaretDown} from '@fortawesome/free-solid-svg-icons';
 import { createEventDispatcher } from 'svelte';
 import AreaValueSelect from './AreaValuesSelect.svelte';
-import SubSelect from './SubSelect.svelte';
+import SubSelect from './PropertySelect.svelte';
 import HRbar from './HRBar.svelte';
 
 const dispatch = createEventDispatcher();
