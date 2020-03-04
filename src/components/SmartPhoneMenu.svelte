@@ -4,8 +4,6 @@ import Select from './Select.svelte';
 import Icon from "./Icon.svelte";
 import {faCaretRight, faCaretDown} from '@fortawesome/free-solid-svg-icons';
 import Elipsis from './Elipsis.svelte';
-import SubSelect from './SubSelect.svelte';
-import AreaValueSelect from './AreaValuesSelect.svelte';
 import TimeSelect from './TimeSelect.svelte';
 import searchData from '../helpers/searchdata';
 
@@ -280,16 +278,7 @@ function setAvType(e) {
 }
 
 function clearAll() {
-    let propertyCheckedBoxes = document.querySelectorAll(".property-input-select-item:checked");
-    let areaValueCheckedBoxes = document.querySelectorAll(".area-input-select-item:checked");
-    propertyCheckedBoxes.forEach((propEl) => {
-        propEl.checked = false;
-    });
-
-    areaValueCheckedBoxes.forEach((avEl) => {
-        avEl.checked = false;
-    });
-
+    window.open(window.location.href, "_self");
 }
 
 
