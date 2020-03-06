@@ -304,10 +304,6 @@ function checkedAll() {
     }
 }
 
-function test() {
-    console.log("This is when it working");
-}
-
 onMount(() => {
 
     areaValueSelected();
@@ -542,17 +538,17 @@ onMount(() => {
                 <div class="sub-menu-item" >
                     <div 
                         class='option-wrapper area-wrapper div-area-input-select-item div-{idClass} ml-60' 
-                        id="div-{idClass}-{(menuItem.areaValue).toLowerCase().replace(/ /g, '_').replace(/,/g, '_')}">
+                        id="div-{idClass}-{(menuItem.v).toLowerCase().replace(/ /g, '_').replace(/,/g, '_')}">
                         <input
-                            id="{idClass}-{(menuItem.areaValue).toLowerCase().replace(/ /g, '_').replace(/,/g, '_')}"
+                            id="{idClass}-{(menuItem.v).toLowerCase().replace(/ /g, '_').replace(/,/g, '_')}"
                             class='area-input-select-item input-select-item {idClass} set-{item} set-{idClass} ng'
                             data-parent='{type}'
                             data-item={item}
                             type='checkbox' 
                             name='areaValue' 
-                            value='{menuItem.areaValue}'
+                            value='{menuItem.v}'
                             on:change={(e) => { currentAVType(e.target) }}>
-                        <label class="{type}">{menuItem.areaValue} ({menuItem.areaCount})</label>
+                        <label class="{type}">{menuItem.v} ({menuItem.c})</label>
                         
                     </div> <!-- option wrapper-->
                 </div><!-- sub-menu-item-->
