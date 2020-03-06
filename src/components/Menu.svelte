@@ -249,35 +249,7 @@ function setAvType(e) {
 }
 
 function clearAll() {
-    /*let propertyCheckedBoxes = document.querySelectorAll(".property-input-select-item");
-    let areaValueCheckedBoxes = document.querySelectorAll(".area-input-select-item");
-    let propList = params.propertyTypeList.split(',');
-    let parentPropList = document.querySelectorAll('.property-input-select');
-    let propDataTypes = [];
-
-    propertyCheckedBoxes.forEach((propEl) => {
-        if (propList.indexOf(propEl.value) >= 0) {
-            propEl.checked = true;
-            propDataTypes.push(propEl.dataset.parent);
-        } else {
-            propEl.checked = false;
-        }
-    });
-
-    areaValueCheckedBoxes.forEach((avEl) => {
-        avEl.checked = false;
-    });
-
-
-    parentPropList.forEach((parentPropEl) => {
-        if (propDataTypes.indexOf(parentPropEl.dataset.type) >= 0) {
-            parentPropEl.checked = true;
-        } else {
-            parentPropEl.checked = false;
-        } 
-    });*/
     window.open(window.location.href, "_self");
-
 }
 
 
