@@ -9,7 +9,7 @@ export let type;
 export let typeSelected;
 export let params;
 export let initialAreaType;
-
+$: console.log(areaValueData);
 $: areaValueTypeSelected = typeSelected;
 
 let tempKey = 0;
@@ -30,8 +30,8 @@ let temp;
 temp = Object.keys(areaValueData).forEach((key) => {
     let avd = areaValueData[key];
     let aV = avd.map((a, i) => {
-        if (typeof(a.areaValue) !== undefined)  {
-            searchAreaValues.push(a.areaValue);
+        if (typeof(a.v) !== undefined)  {
+            searchAreaValues.push(a.v);
         }
         
     });
