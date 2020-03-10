@@ -253,100 +253,109 @@ function formatLastPeriod(period) {
 </style>
 
 <div class="table-wrapper">
-    {#if data.length > 0  && reportPeriod.length > 0}
-        {#if searchType !== 'mnth-ytd'}    
-                <table>
-                    <thead>
-                        <tr>
-                            <th>{formatMonth(reportPeriod[0])}</th>
-                            <th>{formatLastPeriod(reportPeriod[reportPeriod.length - 1])}</th>
-                            <th>Change</th>
-                            <th>Change %</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td id="inital-month">{ formatNumber(initialMonth) } </td>
-                            <td id="last-month">{ formatNumber(lastMonth) } </td>
-                            <td id="change">{ formatNumber(change) } <ChangeArrows change={change} /></td>
-                            <td>
-                                {#if chngPercent !== 'NA' && chngPercent != 0}
-                                    {#if change > 0}
-                                        {chngPercent}
-                                        <ChangeArrows change={change} />
-                                    {:else}
-                                        ({chngPercent}%)
-                                        <ChangeArrows change={change} />
-                                    {/if}
-                                {:else if chngPercent == 0}
-                                    0%
-                                {:else if chngPercent === 'NA'}
-                                    NA
+    {#if data.length !== 0 && searchType !== 'mnth-ytd'}
+    
+        <table>
+            <thead>
+                <tr>
+                    <th>{formatMonth(reportPeriod[0])}</th>
+                    <th>{formatLastPeriod(reportPeriod[reportPeriod.length - 1])}</th>
+                    <th>Change</th>
+                    <th>% Change</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td id="inital-month">{ formatNumber(initialMonth) }</td>
+                    <td id="last-month">{ formatNumber(lastMonth) } </td>
+                    {#if change >= 0}
+                        <td id="change">{ formatNumber(change) } <ChangeArrows change={change} /></td>
+                    {:else}
+                        <td id="change">({ formatNumber(change) }) <ChangeArrows change={change} /></td>
+                    {/if}
+                    <td>
+                        {#if chngPercent !== 'NA' && chngPercent != 0}
+                            {#if change > 0}
+                                {chngPercent}
+                                <ChangeArrows change={change} />
+                            {:else}
+                                ({chngPercent}%)
+                                <ChangeArrows change={change} />
+                            {/if}
+                        {:else if chngPercent == 0}
+                            0%
+                        {:else if chngPercent === 'NA'}
+                            NA
+                        {/if}
+                     </td>
+                </tr>
+            </tbody>
+        </table>
+    {:else}
+        <div class="div-mnth-ytd">
+            <table class="table-mnth-ytd">
+                <thead>
+                    <tr>
+                        <th class="th-mnth-ytd"></th>
+                        <th class="th-mnth-ytd"><i><Icon customColor={primary_fill_color} class="year" tempId="previous-year" icon={icon[2]} /></i>{formatYear(reportPeriod[0])}</th>
+                        <th class="th-mnth-ytd"><i><Icon customColor={secondary_fill_color} class="year" tempId="current-year" icon={icon[2]} /></i>{formatYear(reportPeriod[2])}</th>
+                        <th class="th-mnth-ytd">Change</th>
+                        <th class="th-mnth-ytd">% Change</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class='td-mnth-ytd'>{formatMonthOnly(reportPeriod[0])}</td>
+                        <td class='td-mnth-ytd'>{formatNumber(data[0])}</td>
+                        <td class='td-mnth-ytd'>{formatNumber(data[2])}</td>
+                        {#if mthChange >= 0}
+                            <td class='td-mnth-ytd'>{formatNumber(mthChange)} <ChangeArrows change={mthChange} /></td>
+                        {:else}
+                            <td class='td-mnth-ytd'>({formatNumber(mthChange)}) <ChangeArrows change={mthChange} /></td>
+                        {/if}
+                        <td class='td-mnth-ytd percent-change'>
+                            {#if percentMnthChange !== 'NA' && percentMnthChange != 0}
+                                {#if mthChange >= 0}
+                                    {percentMnthChange}%
+                                    <ChangeArrows change={mthChange} />
+                                {:else}
+                                    ({percentMnthChange}%)
+                                    <ChangeArrows change={mthChange} />
                                 {/if}
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-        {:else}
-            <div class="div-mnth-ytd">
-                <table class="table-mnth-ytd">
-                    <thead>
-                        <tr>
-                            <th class='th-mnth-ytd'></th>
-                            <th class='th-mnth-ytd'><i><Icon customColor={primary_fill_color} class="year" tempId="previous-year" icon={icon[2]} /></i>{formatYear(reportPeriod[0])}</th>
-                            <th class='th-mnth-ytd'><i><Icon customColor={secondary_fill_color} class="year" tempId="current-year" icon={icon[2]} /></i>{formatYear(reportPeriod[2])}</th>
-                            <th class='th-mnth-ytd'>Change</th>
-                            <th class='th-mnth-ytd'>Change %</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class='td-mnth-ytd'>{formatMonthOnly(reportPeriod[0])}</td>
-                            <td class='td-mnth-ytd'>{formatNumber(initialMonth)}</td>
-                            <td class='td-mnth-ytd'>{formatNumber(monthTwo)}</td>
-                            <td class='td-mnth-ytd'>{formatNumber(mthChange, 'mnth')} <ChangeArrows change={mthChange} /></td>
-                            <td class='td-mnth-ytd percent-change'>
-                                {#if percentMnthChange !== 'NA' && percentMnthChange != 0}
-                                    {#if mthChange >= 0}
-                                        {percentMnthChange}%
-                                        <ChangeArrows change={mthChange} />
-                                    {:else}
-                                        ({percentMnthChange}%)
-                                        <ChangeArrows change={mthChange} />
-                                    {/if}
-                                {:else if percentMnthChange == 0}
-                                        0%  
-                                {:else if percentMnthChange === 'NA'}
-                                    NA
-                                {/if}    
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class='td-mnth-ytd'>YTD</td>
-                            <td class='td-mnth-ytd'>{formatNumber(data[1])}</td>
-                            <td class='td-mnth-ytd'>{formatNumber(data[3])}</td>
-                            <td class='td-mnth-ytd'>{formatNumber(ytdChange, "ytd")} <ChangeArrows change={ytdChange} /></td>
-                            <td class='td-mnth-ytd percent-change'>
-                                {#if percentYtdChange !== 'NA' && percentYtdChange != 0}
-                                    {#if ytdChange >= 0}
-                                        {percentYtdChange}%
-                                        <ChangeArrows change={ytdChange} />
-                                    {:else}
-                                        ({percentYtdChange}%)
-                                        <ChangeArrows change={ytdChange} />
-                                    {/if}
-                                {:else if percentYtdChange == 0}
-                                        0%
-                                {:else if percentYtdChange === 'NA'}
-                                    NA
-                                {/if}  
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        {/if}
-    {:else }    
-    <h3>NO DATA</h3>
-{/if}
+                            {:else if percentMnthChange == 0}
+                                    0%  
+                            {:else if percentMnthChange === 'NA'}
+                                NA
+                            {/if}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class='td-mnth-ytd'>YTD</td>
+                        <td class='td-mnth-ytd'>{formatNumber(data[1])}</td>
+                        <td class='td-mnth-ytd'>{formatNumber(data[3])}</td>
+                        {#if ytdChange >= 0}
+                            <td class='td-mnth-ytd'>{formatNumber(ytdChange)} <ChangeArrows change={ytdChange} /></td>
+                        {:else}
+                            <td class='td-mnth-ytd'>({formatNumber(ytdChange)}) <ChangeArrows change={ytdChange} /></td>
+                        {/if}
+                        <td class='td-mnth-ytd percent-change'>
+                            {#if percentYtdChange !== 'NA' && percentYtdChange != 0}
+                                {#if ytdChange >= 0}
+                                    {percentYtdChange}%
+                                    <ChangeArrows change={ytdChange} />
+                                {:else}
+                                    ({percentYtdChange}%)
+                                    <ChangeArrows change={ytdChange} />
+                                {/if}
+                            {:else if percentYtdChange == 0}
+                                    0%
+                            {:else if percentYtdChange === 'NA'}
+                                NA
+                            {/if} 
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    {/if}
 </div>
