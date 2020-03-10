@@ -9,7 +9,7 @@ export let type;
 export let typeSelected;
 export let params;
 export let initialAreaType;
-$: console.log(areaValueData);
+
 $: areaValueTypeSelected = typeSelected;
 
 let tempKey = 0;
