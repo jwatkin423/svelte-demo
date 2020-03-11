@@ -67,6 +67,7 @@ let showClass = false;
 
 function toggleShowMenu() {
     showClass = showClass === true ? false : true;
+    showHamburger = false;
     
     if(showClass){
         showDownload = false;
@@ -76,10 +77,10 @@ function toggleShowMenu() {
 let showHamburger = false;
 
 function setPlusColor() {
-    if(background_color) {
-        document.getElementById('hamburger').style.color = background_color;
+    if(theme_color) {
+        document.getElementById('hamburger').style.color = theme_color;
         document.getElementById('hamburger').style.fontSize = '12px';
-        document.querySelector('.res-menu-link').style.color = background_color;
+        document.querySelector('.res-menu-link').style.color = theme_color;
     }
 }
 
@@ -89,6 +90,7 @@ onMount(() => {
 
 function toggleShowHamMenu() {
     showHamburger = showHamburger === true ? false : true;
+    showClass = false;
 }
 
 function setKey(e) {
@@ -157,6 +159,7 @@ window.onclick = function(e) {
         if (showHamburger) {
             toggleShowHamMenu();
             removeActiveFilters();
+            
         }
     }
 }
@@ -310,7 +313,7 @@ let resizeImg;
 
     .hamburger {
         display: none;
-        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        border-bottom: 5px solid #666666;
         padding: 5px 0 5px 0;
         background-color: white;
         max-width: 1280;
