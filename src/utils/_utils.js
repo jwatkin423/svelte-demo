@@ -9,11 +9,20 @@ export function tickMarks(maxValue) {
     
         let tickCount = 8;
 
-        let uTsize = maxValue/(tickCount -1);
-        let x = Math.ceil(Math.log10(uTsize) -1 );
-        let pow10x = Math.pow(10, x);
-        let roundedTickRange = Math.ceil(uTsize / pow10x) * pow10x;
+        let uTsize = maxValue/(tickCount);
         
+        // if (uTsize % 5 == 0) {
+        //     uTsize = parseInt(Math.floor(uTsize / 5 ) * 5);
+        // } else {
+        //     uTsize = parseInt((Math.floor(uTsize / 5)) * 5) + 5; 
+        // }
+
+        let x = Math.ceil(Math.log10(uTsize) -1 );
+
+        let pow10x = Math.pow(10, x);
+
+        let roundedTickRange = Math.ceil(uTsize / pow10x) * pow10x;
+
         let tempTotal = 0;
         for (var i = 0; tempTotal < maxValue; i++) {
             tempTotal += roundedTickRange;

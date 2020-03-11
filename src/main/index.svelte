@@ -305,7 +305,7 @@ function formatChartTitle(title) {
 		
 	</div>
 	<div class="chart-title">
-			<h3 class="chart-title-h3">{formatChartTitle(chartTitle)}</h3>
+			<h3 class="chart-title-h3">{chartTitle}</h3>
 	</div>
 		<div class="content-inner-wrapper">
 			<div class="kmi-wrapper">

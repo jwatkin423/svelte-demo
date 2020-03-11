@@ -19,14 +19,6 @@ export function test(j) {
     });
 }
 
-function formatLabel(label) {
-	if (label === 'Avg DOM') {
-		return 'Average Days on Market';
-	}
-
-	return label;
-}
-
 </script>
 
 <style>
@@ -77,7 +69,7 @@ function formatLabel(label) {
             class:td-list-active={active === key}
             href="."
             id={key}>
-            {formatLabel(data[key].label)}
+            {data[key].label}
         </a>
     </li>
 {/each}

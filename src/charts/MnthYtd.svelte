@@ -293,7 +293,7 @@ function formatPointText(num) {
 		{#each yTicks as tick, i}
 			<g class="tick tick-{tick}" transform="translate(5, {yScale(tick) - padding.bottom + 10})">
 				<line x1="35px" x2="95%"></line>
-				<text dx="10" y="3">{tick >= 100 ? formatTick(tick) : tick}</text>
+				<text dx="0" y="3">{tick >= 100 ? formatTick(tick) : dollar + '' + tick}</text>
 			</g>
 		{/each}
 	</g>

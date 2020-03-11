@@ -51,16 +51,33 @@ let desc;
 // X and Y scale initialize
 let xScale = scaleLinear();
 let yScale = scaleLinear();
+let d3TicksScale = scaleLinear();
+let lowerDomain = 0;
+let upperDomain = 0;
+let d3Ticks = [];
+
+$: buildYtickMarks(mappedPoints);
+
+function buildYtickMarks(mappedPoints) {
+	let ticksDomain = [];
+
+	mappedPoints.forEach((v, i) => {
+		ticksDomain = [...ticksDomain, v.y];
+	}); 
+
+	if (ticksDomain.length > 0) {
+		upperDomain = Math.max.apply(Math, ticksDomain);
+		d3Ticks = d3TicksScale.domain([0, upperDomain]).nice().ticks();
+		yScale = scaleLinear()
+		.domain([Math.min.apply(null, d3Ticks), Math.max.apply(null, d3Ticks)])
+		.range([height - padding.bottom, padding.top]);
+	}
+}
 
 // initializing x scale
 $: xScale = scaleLinear()
 	.domain([0, xTicks.length])
 	.range([padding.left, width  - rightPadding]);
-
-// initializing y scale
-$: yScale = scaleLinear()
-	.domain([Math.min.apply(null, yTicks), Math.max.apply(null, yTicks)])
-	.range([height - padding.bottom, padding.top]);
 
 // chart data key/value pair
 let chartData;
@@ -385,7 +402,7 @@ function hideToolTip() {
 		{#each yTicks as tick, i}
 			<g class="tick y-axis tick-{tick}" transform="translate(10, {yScale(tick)})">
 				<line x1="30" x2="{line + 15}"></line>
-				<text dx="0" y="3">{tick >= 100 ? formatTick(tick) : tick}</text>
+				<text dx="0" y="3">{tick >= 100 ? formatTick(tick) : dollar + '' + tick}</text>
 			</g>
 		{/each}
 		<!-- </g> -->

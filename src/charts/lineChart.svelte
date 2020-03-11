@@ -3,6 +3,7 @@ import chartStore from '../utils/chart-store';
 import Tspan from '../charts/tspan.svelte';
 import { scaleLinear } from 'd3-scale';
 import { onMount } from 'svelte';
+
 // report period props
 export let reportPeriod;
 export let reportYear;
@@ -49,16 +50,33 @@ let desc;
 // X and Y scale initialize
 let xScale = scaleLinear();
 let yScale = scaleLinear();
+let d3TicksScale = scaleLinear();
+let lowerDomain = 0;
+let upperDomain = 0;
+let d3Ticks = [];
+
+$: buildYtickMarks(mappedPoints);
+
+function buildYtickMarks(mappedPoints) {
+	let ticksDomain = [];
+
+	mappedPoints.forEach((v, i) => {
+		ticksDomain = [...ticksDomain, v.y];
+	}); 
+
+	if (ticksDomain.length > 0) {
+		upperDomain = Math.max.apply(Math, ticksDomain);
+		d3Ticks = d3TicksScale.domain([0, upperDomain]).nice().ticks();
+		yScale = scaleLinear()
+		.domain([Math.min.apply(null, d3Ticks), Math.max.apply(null, d3Ticks)])
+		.range([height - padding.bottom, padding.top]);
+	}
+}
 
 // initializing x scale
 $: xScale = scaleLinear()
 	.domain([0, xTicks.length])
 	.range([padding.left, width  - rightPadding]);
-
-// initializing y scale
-$: yScale = scaleLinear()
-	.domain([Math.min.apply(null, yTicks), Math.max.apply(null, yTicks)])
-	.range([height - padding.bottom, padding.top]);
 
 // chart data key/value pair
 let chartData;
@@ -109,23 +127,20 @@ $: line = (width * .96);
 
 // format ticks
 function formatTick(tick) {
-	
-	if (tick >= 100 < 1000) {
-		let tMod = tick % 5;
-		if (tMod != 0) {
-			tick += tMod;
-		}
-	}	
 
-	if (tick >= 1000 && tick < 1000000)  {
-		tick = (tick / 1000);
-		tick = Math.ceil(tick);
+	if (tick >= 1000 && tick < 100000)  {
+		tick = (tick / 1000).toFixed(1);
+		tick += 'K';
+	}
+
+	if (tick >= 100000 && tick < 1000000) {
+		tick = tick / 1000;
 		tick += 'K';
 	}
 
 	if (tick >= 1000000) {
 		tick = (tick / 1000000);
-		tick = Math.ceil(tick);
+		tick = Math.floor(tick);
 		tick += 'M';
 	}
 
@@ -402,10 +417,10 @@ function hideToolTip() {
 	<svg xmlns="http://www.w3.org/2000/svg">
 
 		<!-- y axis -->
-		{#each yTicks as tick, i}
+		{#each d3Ticks as tick, i}
 			<g class="tick y-axis tick-{tick}" transform="translate(20, {yScale(tick)})">
 				<line x1="30" x2="{line}"></line>
-				<text dx="0" y="3">{tick >= 100 ? formatTick(tick) : tick}</text>
+				<text dx="0" y="3">{tick >= 100 ? formatTick(tick) : dollar + '' + tick}</text>
 			</g>
 		{/each}
 		<!-- </g> -->

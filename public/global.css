@@ -64,8 +64,13 @@ button:focus {
 	border: 1px solid #ccc;
 }
 
+.autocomplete-list-item {
+	font-size: 12px;
+}
+
 .autocomplete-list-item.selected {
 	color: #cccccc;
+	font-size: 12px;
 }
 
 .autocomplete-list {
