@@ -22,6 +22,8 @@ export let initialAreaType = '';
 export let initialPropertyClassList = '';
 let unChecked = false;
 
+let currentChecked = '';
+
 $: param = searchParam;
 $: areaType = decodeURI(typeSelected);
 $: typeSelected = decodeURI(typeSelected);
@@ -113,25 +115,34 @@ function closeOpenedMenus() {
  * show area menus
  * */
 function showAreaOptions(type, checked) {
-    closeOpenedAreaMenus();
-    if (!allAreaChecked) {
-        let tempType = type.replace(/[^a-zA-Z0-9]+/g, '-').toLowerCase();
-        if (currentAreaSubMenuType !== tempType) {
-            let menuBlock = document.getElementById('area-types-menu');
-            let menuBlockHeight = menuBlock.offsetHeight - 3;
-            let menuBlockLeft = menuBlock.style.left - 1;
-            let parentMenuEl = document.getElementById(tempType + '-menu');
-            let subMenuEl = document.getElementById(tempType);
-            subMenuEl.style.display = 'block';
-            subMenuEl.style.top = menuBlockHeight + 'px';
-            subMenuEl.style.left = menuBlockLeft + 'px';
+    currentChecked = type;
 
-            if (window.innerWidth <= 480) {
-                subMenuEl.style.width = menuBlock.style.width;
+    let id = "parent-" + type.replace(/[^a-zA-Z0-9]+/g, '-').toLowerCase();
+    let target = document.getElementById(id);
+
+    let targetChecked = target.checked;
+
+    if (type === currentChecked && targetChecked) {
+        closeOpenedAreaMenus();
+        if (!allAreaChecked) {
+            let tempType = type.replace(/[^a-zA-Z0-9]+/g, '-').toLowerCase();
+            if (currentAreaSubMenuType !== tempType) {
+                let menuBlock = document.getElementById('area-types-menu');
+                let menuBlockHeight = menuBlock.offsetHeight - 3;
+                let menuBlockLeft = menuBlock.style.left - 1;
+                let parentMenuEl = document.getElementById(tempType + '-menu');
+                let subMenuEl = document.getElementById(tempType);
+                subMenuEl.style.display = 'block';
+                subMenuEl.style.top = menuBlockHeight + 'px';
+                subMenuEl.style.left = menuBlockLeft + 'px';
+
+                if (window.innerWidth <= 480) {
+                    subMenuEl.style.width = menuBlock.style.width;
+                }
+                currentAreaSubMenuType = tempType;
+            } else {
+                currentAreaSubMenuType = '';
             }
-            currentAreaSubMenuType = tempType;
-        } else {
-            currentAreaSubMenuType = '';
         }
     }
  }
