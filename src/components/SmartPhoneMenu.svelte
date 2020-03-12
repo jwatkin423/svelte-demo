@@ -277,8 +277,9 @@ function setAvType(e) {
     areaValue = e.detail.type;
 }
 
+// reset button
 function clearAll() {
-    window.open(window.location.href, "_self");
+    resetChart();
 }
 
 

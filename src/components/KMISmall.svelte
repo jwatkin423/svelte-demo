@@ -1,7 +1,7 @@
 <script>
 import Icon from "./Icon.svelte";
 import ChangeArrows  from './ChangeArrows.svelte';
-import {faCircle} from '@fortawesome/free-solid-svg-icons';
+import {faCaretUp, faCaretDown, faCircle} from '@fortawesome/free-solid-svg-icons';
 
 export let data = [];
 export let reportPeriod;
@@ -23,7 +23,8 @@ $: dollar = showDollar ? '$' : '';
 
 export let chartType = '';
 
-let icon = [faCircle];
+
+let icon = [faCaretUp, faCaretDown, faCircle];
 
 let count = [];
 let change = 'NA';
@@ -162,7 +163,7 @@ function formatYear(period) {
 }
 
 function formatLastPeriod(period) {
-    let newPeriod = period + year;
+    let newPeriod = period + " " + year;
 
     if (period.includes('<br>')) {
         let res = period.split("<br>");
@@ -177,7 +178,6 @@ function formatLastPeriod(period) {
   
     return newPeriod;
 }
-
 </script>
 
 <style>

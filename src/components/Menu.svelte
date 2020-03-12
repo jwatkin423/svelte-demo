@@ -6,6 +6,8 @@ import {faCaretRight, faCaretDown} from '@fortawesome/free-solid-svg-icons';
 import Elipsis from './Elipsis.svelte';
 import TimeSelect from './TimeSelect.svelte';
 import searchData from '../helpers/searchdata';
+import clearData from '../helpers/clear-chart';
+import { resetChart } from '../helpers/chartreset';
 
 export let params;
 export let url;
@@ -248,8 +250,12 @@ function setAvType(e) {
     areaValue = e.detail.type;
 }
 
+let clearchart = 0;
+
+
+// reset button
 function clearAll() {
-    window.open(window.location.href, "_self");
+    resetChart();
 }
 
 
@@ -377,6 +383,8 @@ onMount(() => {
         createSearchMenus(e);
     }
     
+    
+
 });
 
 </script>
