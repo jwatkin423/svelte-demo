@@ -223,6 +223,7 @@ let selectedAreaValue = '';
 function showSearched() {
 
     let sav = selectedAreaValue;
+    
     let parentEl = document.getElementById('div-submenu-' + idClass);
 
     if (sav !== '') {
@@ -233,11 +234,15 @@ function showSearched() {
         let targetItem = document.getElementById(idClass + '-' + sav);
         parentEl.scrollTop = topPos;
         
+        let allItemEl = document.querySelector('.all-' + idClass + '.all-area-select');
+        if (allItemEl.checked) {
+            let nonTargetItems = document.querySelectorAll('.area-input-select-item');
+                nonTargetItems.forEach((ntiEl) => {
+                ntiEl.checked = false;
+            });
+            allItemEl.checked = false;
+        }
         
-        let nonTargetItems = document.querySelectorAll('.area-input-select-item');
-        nonTargetItems.forEach((ntiEl) => {
-            ntiEl.checked = false;
-        });
 
         targetItem.checked = true;
 
@@ -309,6 +314,7 @@ onMount(() => {
     areaValueSelected();
 
 });
+
 </script>
 
 <style>
