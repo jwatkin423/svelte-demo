@@ -1,8 +1,9 @@
 <script>
 import { scaleLinear } from 'd3-scale';
-import { onMount }  from 'svelte';
+import { onMount, afterUpdate } from 'svelte';
+import clearData from '../helpers/clear-chart';
+import { resetChart } from '../helpers/chartreset';
 
-import {afterUpdate} from 'svelte';
 export let data = '';
 export let reportPeriod = [];
 export let reportYear;

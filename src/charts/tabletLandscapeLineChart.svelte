@@ -2,7 +2,10 @@
 import chartStore from '../utils/chart-store';
 import Tspan from '../charts/tspan.svelte';
 import { scaleLinear } from 'd3-scale';
-import { onMount } from 'svelte';
+import { onMount, afterUpdate } from 'svelte';
+import clearData from '../helpers/clear-chart'
+import { resetChart } from '../helpers/chartreset';
+
 // report period props
 export let reportPeriod;
 export let reportYear;
@@ -74,9 +77,8 @@ $: xScale = scaleLinear()
 
 // initializing y scale
 // $: yScale = scaleLinear()
-// 	.domain([Math.min.apply(null, yTicks), Math.max.apply(null, yTicks)])
+// 	.domain([0, Math.max.apply(null, yTicks)])
 // 	.range([height - padding.bottom, padding.top]);
-	// .range([height, padding.top]);
 
 
 // chart data key/value pair
@@ -409,10 +411,10 @@ function hideToolTip() {
 		<svg xmlns="http://www.w3.org/2000/svg">
 
 			<!-- y axis -->
-			{#each yTicks as tick, i}
+			{#each d3Ticks as tick, i}
 				<g class="tick y-axis tick-{tick}" transform="translate(20, {yScale(tick)})">
 					<line x1="30" x2="{line}"></line>
-					<text dx="0" y="3">{tick >= 100 ? formatTick(tick) : dollar + '' + tick}</text>
+					<text class='axis-tick-mark' dx="0" y="3">{tick >= 100 ? formatTick(tick) : dollar + '' + tick}</text>
 				</g>
 			{/each}
 			<!-- </g> -->
@@ -426,11 +428,11 @@ function hideToolTip() {
 							<line class="small-tick" y1="10" y2="20" x1="0" x2="0"></line>
 						{:else if (tick.includes('<br>') && i !== (xTicks.length - 1))}
 							<line y1="10" y2="-86%" x1="0" x2="0"></line>
-							<text dx=0 y="25">{formatText(tick)}</text>
+							<text class='axis-tick-mark' dx=0 y="25">{formatText(tick)}</text>
 						{/if}
 						{#if i === (xTicks.length - 1) }
 							<line y1="10" y2="-86%" x1="0" x2="0"></line>
-							<text dx=0 y="25">{formatText(tick)}</text>
+							<text class='axis-tick-mark' dx=0 y="25">{formatText(tick)}</text>
 						{/if}	
 					</g>
 				{/each}
@@ -441,7 +443,7 @@ function hideToolTip() {
 							<text dx=0 y="25">{formatYear(tick)}</text>
 						{/if}
 						{#if i === (xTicks.length - 1) }
-							<text dx=0 y="25">{formatLastTickYear(tick)}</text>
+							<text class='axis-tick-mark' dx=0 y="25">{formatLastTickYear(tick)}</text>
 						{/if}	
 					</g>
 				{/each}

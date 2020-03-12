@@ -2,7 +2,9 @@
 import chartStore from '../utils/chart-store';
 import Tspan from '../charts/tspan.svelte';
 import { scaleLinear } from 'd3-scale';
-import { onMount } from 'svelte';
+import { onMount, afterUpdate } from 'svelte';
+import clearData from '../helpers/clear-chart';
+import { resetChart } from '../helpers/chartreset';
 
 // report period props
 export let reportPeriod;
@@ -77,6 +79,11 @@ function buildYtickMarks(mappedPoints) {
 $: xScale = scaleLinear()
 	.domain([0, xTicks.length])
 	.range([padding.left, width  - rightPadding]);
+
+// initializing y scale
+// $: yScale = scaleLinear()
+// 	.domain([0, Math.max.apply(null, yTicks)])
+// 	.range([height - padding.bottom, padding.top]);
 
 // chart data key/value pair
 let chartData;
@@ -274,6 +281,18 @@ function hideToolTip() {
 	desc.classList.remove("active");
 }
 
+afterUpdate(() => {
+	let cleared = 0;
+
+    clearData.subscribe(value => {
+        cleared = value;
+    });
+
+    if (cleared == 1) {
+        resetChart();
+    }
+});
+
 </script>
 
 <style>
@@ -420,7 +439,7 @@ function hideToolTip() {
 		{#each d3Ticks as tick, i}
 			<g class="tick y-axis tick-{tick}" transform="translate(20, {yScale(tick)})">
 				<line x1="30" x2="{line}"></line>
-				<text dx="0" y="3">{tick >= 100 ? formatTick(tick) : dollar + '' + tick}</text>
+				<text class='axis-tick-mark' dx="0" y="3">{tick >= 100 ? formatTick(tick) : dollar + '' + tick}</text>
 			</g>
 		{/each}
 		<!-- </g> -->
@@ -434,11 +453,11 @@ function hideToolTip() {
 						<line class="small-tick" y1="0" y2="10" x1="0" x2="0"></line>
 					{:else if (tick.includes('<br>') && i !== (xTicks.length - 1))}
 						<line y1="0" y2="-88%" x1="0" x2="0"></line>
-						<text dx=0 y="16">{formatText(tick)}</text>
+						<text class='axis-tick-mark' dx=0 y="16">{formatText(tick)}</text>
 					{/if}
 					{#if i === (xTicks.length - 1) }
 						<line y1="0" y2="-88%" x1="0" x2="0"></line>
-						<text dx=0 y="16">{formatText(tick)}</text>
+						<text class='axis-tick-mark' dx=0 y="16">{formatText(tick)}</text>
 					{/if}	
 				</g>
 			{/each}
@@ -446,10 +465,10 @@ function hideToolTip() {
 			{#each xTicks as tick, i}
 				<g class="tick tick-{ tick }" transform="translate({xScale(i) + 20},{height - 30})">
                     {#if (tick.includes('<br>') && i !== (xTicks.length - 1))}
-						<text dx=0 y="16">{formatYear(tick)}</text>
+						<text class='axis-tick-mark' dx=0 y="16">{formatYear(tick)}</text>
 					{/if}
 					{#if i === (xTicks.length - 1) }
-						<text dx=0 y="16">{formatLastTickYear(tick)}</text>
+						<text class='axis-tick-mark' dx=0 y="16">{formatLastTickYear(tick)}</text>
 					{/if}	
 				</g>
 			{/each}
