@@ -35,13 +35,13 @@ let initialMonth = 0.0;
 $: toFixed = chartType === 'spOpRatio' ? 2 : 1;
 $: initialMonth = parseFloat(data[0]);
 $: lastMonth = data[data.length - 1];
-$: change = (lastMonth - initialMonth).toFixed(1);
+$: change = (lastMonth - initialMonth).toFixed(toFixed);
 $: monthTwo = data[2];
 $: yearOne = data[1];
 $: yearTwo = data[3];
-$: mthChange = (monthTwo - initialMonth).toFixed(1);
+$: mthChange = (monthTwo - initialMonth).toFixed(toFixed);
 $: chngPercent = changePercentage(change, initialMonth);
-$: ytdChange = (data[3] - data[1]).toFixed(1);
+$: ytdChange = (data[3] - data[1]).toFixed(toFixed);
 
 $: percentMnthChange = mnthYtdChangePercentage(mthChange, initialMonth);
 $: percentYtdChange = mnthYtdChangePercentage(ytdChange, yearOne);

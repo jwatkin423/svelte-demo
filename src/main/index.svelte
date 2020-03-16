@@ -417,6 +417,7 @@ function formatChartTitle(title) {
 						reportPeriod={reportPeriod} 
 						p_color={p_color} 
 						s_color={s_color} 
+						showDollar={dollar}
 						yPoints={yT} 
 						mappedPoints={mappedPoints} 
 						reportYear={year}/>
@@ -429,6 +430,7 @@ function formatChartTitle(title) {
 							reportPeriod={reportPeriod} 
 							p_color={p_color} 
 							s_color={s_color} 
+							showDollar={dollar}
 							yPoints={yT} 
 							mappedPoints={mappedPoints} 
 							reportYear={year}/>
@@ -441,6 +443,7 @@ function formatChartTitle(title) {
 							reportPeriod={reportPeriod} 
 							p_color={p_color} 
 							s_color={s_color} 
+							showDollar={dollar}
 							yPoints={yT} 
 							mappedPoints={mappedPoints} 
 							reportYear={year}/>
@@ -453,6 +456,7 @@ function formatChartTitle(title) {
 							reportPeriod={reportPeriod} 
 							p_color={p_color} 
 							s_color={s_color} 
+							showDollar={dollar}
 							yPoints={yT} 
 							mappedPoints={mappedPoints} 
 							reportYear={year}/>
