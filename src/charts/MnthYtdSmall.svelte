@@ -25,6 +25,9 @@ $: secondary_fill_color = s_color ? s_color :' #666666';
 
 export let mappedPoints = [];
 
+export let showDollar;
+$: dollar = showDollar ? '$' : '';
+
 let points = [];
 $: points = [...data];
 let xTicks = [];
@@ -65,16 +68,44 @@ let height = 270;
 let textWidth = 420;
 
 
+// X and Y scale initialize
+let xScale = scaleLinear();
+let yScale = scaleLinear();
+let d3TicksScale = scaleLinear();
+let lowerDomain = 0;
+let upperDomain = 0;
+let d3Ticks = [];
+
+$: buildYtickMarks(mappedPoints);
+
+function buildYtickMarks(mappedPoints) {
+	let ticksDomain = [];
+	if (mappedPoints.length > 0) {
+		
+		mappedPoints.forEach((v, i) => {
+			ticksDomain = [...ticksDomain, v.y];
+		}); 
+
+		if (ticksDomain.length > 0) {
+			upperDomain = Math.max.apply(Math, ticksDomain);
+			d3Ticks = d3TicksScale.domain([0, upperDomain]).nice().ticks();
+			yScale = scaleLinear()
+			.domain([0, Math.max.apply(null, d3Ticks)])
+			.range([height - padding.bottom, padding.top]);
+		}
+	}
+}
+
 // initializing x scale
 $: xScale = scaleLinear()
 	.domain([0, xTicks.length])
 	.range([0, width]);
 
 // initializing y scale
-$: yScale = scaleLinear()
-	.domain([0, Math.max.apply(null, yTicks)])
-	.range([height - padding.bottom, padding.top]);
-	// .range([height, padding.top]);
+// $: yScale = scaleLinear()
+// 	.domain([0, Math.max.apply(null, yTicks)])
+// 	.range([height - padding.bottom, padding.top]);
+// 	// .range([height, padding.top]);
 
 // set the inner width of the chart
 $: innerWidth = width - (padding.left + padding.right);
@@ -122,27 +153,29 @@ function formatLastTickYear(tick) {
 // format ticks
 function formatTick(tick) {
 	
-	if (tick >= 100 < 1000) {
-		let tMod = tick % 5;
-		if (tMod != 0) {
-			tick += tMod;
-		}
-	}	
+	if (tick >= 1000 && tick < 100000)  {
+		tick = (tick / 1000).toFixed(1);
+		tick += 'K';
+	}
 
-	if (tick >= 1000)  {
-		tick = (tick / 1000);
-		tick = Math.ceil(tick);
+	if (tick >= 100000 && tick < 1000000) {
+		tick = tick / 1000;
 		tick += 'K';
 	}
 
 	if (tick >= 1000000) {
 		tick = (tick / 1000000);
-		tick = Math.ceil(tick);
+		tick = Math.floor(tick);
 		tick += 'M';
+	}
+
+	if (showDollar) {
+		tick = dollar + tick;
 	}
 
 	return tick;
 }
+
 
 function formatPoint(point, strtPos = 90, tCount = 0) {
 	let len = point.length;
@@ -182,29 +215,28 @@ function formatPoint(point, strtPos = 90, tCount = 0) {
 }
 
 function formatPointText(num) {
-	
+
 	 if (num) {
 
         if (num >= 1000000000) {
 			num /= 1000000000;
-			num = Number(Math.round(num + 'e' + 1) + 'e-1').toFixed(1);
+			num = Number(Math.floor(num + 'e' + 1) + 'e-1').toFixed(1);
             num = num + "B";
         }
         else if(num >= 1000000 && num < 1000000000) {
 			num /= 1000000;
-			num = Number(Math.round(num + 'e' + 1) + 'e-1').toFixed(1);
+			num = Number(Math.floor(num + 'e' + 1) + 'e-1').toFixed(1);
             num = num + "M";
         } 
         else if (num >= 1000 & num < 1000000) {
 			num /= 1000;
-			num = Number(Math.round(num + 'e' + 1) + 'e-1');
+			num = Number(Math.floor(num + 'e' + 1) + 'e-1');
             num = num + "K";
         }
     }
-	
+
     return num;
 }
-
 </script>
 
 <style>
@@ -282,16 +314,16 @@ function formatPointText(num) {
 
 </style>
 
-{#if yTicks.length > 0}
+{#if d3Ticks.length > 0}
 
 <div class="chart" bind:clientWidth={width} bind:clientHeight={height}>
 	<svg>
 
 	<g class="axis y-axis" transform="translate(0,{padding.top})">
-		{#each yTicks as tick, i}
+		{#each d3Ticks as tick, i}
 			<g class="tick tick-{tick}" transform="translate(10, {yScale(tick) - padding.bottom + 10})">
 				<line x1="35px" x2="{innerWidth}"></line>
-				<text dx="10px" y="3">{tick >= 100 ? formatTick(tick) : tick}</text>
+				<text dx="10px" y="3">{tick >= 100 ? formatTick(tick) : dollar + '' + tick}</text>
 			</g>
 		{/each}
 	</g>
