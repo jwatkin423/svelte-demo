@@ -237,6 +237,19 @@ function formatPointText(num) {
 
     return num;
 }
+
+afterUpdate(() => {
+	let cleared = 0;
+
+    clearData.subscribe(value => {
+        cleared = value;
+    });
+
+    if (cleared == 1) {
+        resetChart();
+    }
+});
+
 </script>
 
 <style>
@@ -323,7 +336,7 @@ function formatPointText(num) {
 		{#each d3Ticks as tick, i}
 			<g class="tick tick-{tick}" transform="translate(10, {yScale(tick) - padding.bottom + 10})">
 				<line x1="35px" x2="{innerWidth}"></line>
-				<text dx="10px" y="3">{tick >= 100 ? formatTick(tick) : dollar + '' + tick}</text>
+				<text class="axis-tick-mark" dx="10px" y="3">{tick >= 100 ? formatTick(tick) : dollar + '' + tick}</text>
 			</g>
 		{/each}
 	</g>

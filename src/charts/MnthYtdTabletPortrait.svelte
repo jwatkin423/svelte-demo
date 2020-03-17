@@ -238,6 +238,18 @@ function formatPointText(num) {
     return num;
 }
 
+afterUpdate(() => {
+	let cleared = 0;
+
+    clearData.subscribe(value => {
+        cleared = value;
+    });
+
+    if (cleared == 1) {
+        resetChart();
+    }
+});
+
 </script>
 
 <style>
@@ -319,7 +331,7 @@ function formatPointText(num) {
 		{#each yTicks as tick, i}
 			<g class="tick tick-{tick}" transform="translate(5, {yScale(tick) - padding.bottom + 10})">
 				<line x1="35px" x2="95%"></line>
-				<text dx="0" y="3">{tick >= 100 ? formatTick(tick) : dollar + '' + tick}</text>
+				<text class="axis-tick-mark" dx="0" y="3">{tick >= 100 ? formatTick(tick) : dollar + '' + tick}</text>
 			</g>
 		{/each}
 	</g>
@@ -365,10 +377,10 @@ function formatPointText(num) {
 	{#each xTicks as tick, i}
 		<g class="tick" transform="translate({xScale(i)},{height - 10})">
 			{#if i == 0}
-				<text x="155px">{formatText(tick)}</text>
+				<text class="axis-tick-mark" x="155px">{formatText(tick)}</text>
 			{/if}	
 			{#if i == 2}
-				<text x="100px">{tick.toUpperCase()}</text>
+				<text class="axis-tick-mark" x="100px">{tick.toUpperCase()}</text>
 			{/if}
 		</g>
 	{/each}

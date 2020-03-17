@@ -6,6 +6,8 @@ import {faCaretRight, faCaretDown} from '@fortawesome/free-solid-svg-icons';
 import Elipsis from './Elipsis.svelte';
 import TimeSelect from './TimeSelect.svelte';
 import searchData from '../helpers/searchdata';
+import clearData from '../helpers/clear-chart';
+import { resetChart } from '../helpers/chartreset';
 
 export let params;
 export let url;
