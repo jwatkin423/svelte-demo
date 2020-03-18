@@ -52,23 +52,23 @@ let lowerDomain = 0;
 let upperDomain = 0;
 let d3Ticks = [];
 
-$: buildYtickMarks(mappedPoints);
+// $: buildYtickMarks(mappedPoints);
 
-function buildYtickMarks(mappedPoints) {
-	let ticksDomain = [];
+// function buildYtickMarks(mappedPoints) {
+// 	let ticksDomain = [];
 
-	mappedPoints.forEach((v, i) => {
-		ticksDomain = [...ticksDomain, v.y];
-	}); 
+// 	mappedPoints.forEach((v, i) => {
+// 		ticksDomain = [...ticksDomain, v.y];
+// 	}); 
 
-	if (ticksDomain.length > 0) {
-		upperDomain = Math.max.apply(Math, ticksDomain);
-		d3Ticks = d3TicksScale.domain([0, upperDomain]).nice().ticks();
-		yScale = scaleLinear()
-		.domain([Math.min.apply(null, d3Ticks), Math.max.apply(null, d3Ticks)])
-		.range([height - padding.bottom, padding.top]);
-	}
-}
+// 	if (ticksDomain.length > 0) {
+// 		upperDomain = Math.max.apply(Math, ticksDomain);
+// 		d3Ticks = d3TicksScale.domain([0, upperDomain]).nice().ticks();
+// 		yScale = scaleLinear()
+// 		.domain([Math.min.apply(null, d3Ticks), Math.max.apply(null, d3Ticks)])
+// 		.range([height - padding.bottom, padding.top]);
+// 	}
+// }
 
 // initializing x scale
 $: xScale = scaleLinear()
@@ -76,9 +76,9 @@ $: xScale = scaleLinear()
 	.range([padding.left, width  - rightPadding]);
 
 // initializing y scale
-// $: yScale = scaleLinear()
-// 	.domain([0, Math.max.apply(null, yTicks)])
-// 	.range([height - padding.bottom, padding.top]);
+$: yScale = scaleLinear()
+	.domain([0, Math.max.apply(null, yTicks)])
+	.range([height - padding.bottom, padding.top]);
 
 
 // chart data key/value pair
@@ -116,23 +116,20 @@ $: line = width - (width > 650 ? 40 : 30);
 
 // format ticks
 function formatTick(tick) {
-	
-	if (tick >= 100 < 1000) {
-		let tMod = tick % 5;
-		if (tMod != 0) {
-			tick += tMod;
-		}
-	}	
 
-	if (tick >= 1000)  {
-		tick = (tick / 1000);
-		tick = Math.ceil(tick);
+	if (tick >= 1000 && tick < 100000)  {
+		tick = (tick / 1000).toFixed(0);
+		tick += 'K';
+	}
+
+	if (tick >= 100000 && tick < 1000000) {
+		tick = tick / 1000;
 		tick += 'K';
 	}
 
 	if (tick >= 1000000) {
 		tick = (tick / 1000000);
-		tick = Math.ceil(tick);
+		tick = Math.floor(tick);
 		tick += 'M';
 	}
 
@@ -419,7 +416,7 @@ afterUpdate(() => {
 	<svg xmlns="http://www.w3.org/2000/svg">
 
 		<!-- y axis -->
-		{#each d3Ticks as tick, i}
+		{#each yTicks as tick, i}
 			<g class="tick y-axis tick-{tick}" transform="translate(20, {yScale(tick)})">
 				<line x1="30" x2="{line}"></line>
 				<text class='axis-tick-mark' dx="0" y="3">{tick >= 100 ? formatTick(tick) : dollar + '' + tick}</text>

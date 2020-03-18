@@ -59,33 +59,33 @@ let lowerDomain = 0;
 let upperDomain = 0;
 let d3Ticks = [];
 
-$: buildYtickMarks(mappedPoints);
+// $: buildYtickMarks(mappedPoints);
 
-function buildYtickMarks(mappedPoints) {
-	let ticksDomain = [];
+// function buildYtickMarks(mappedPoints) {
+// 	let ticksDomain = [];
 
-	mappedPoints.forEach((v, i) => {
-		ticksDomain = [...ticksDomain, v.y];
-	}); 
+// 	mappedPoints.forEach((v, i) => {
+// 		ticksDomain = [...ticksDomain, v.y];
+// 	}); 
 
-	if (ticksDomain.length > 0) {
-		upperDomain = Math.max.apply(Math, ticksDomain);
-		d3Ticks = d3TicksScale.domain([0, upperDomain]).nice().ticks();
-		yScale = scaleLinear()
-		.domain([Math.min.apply(null, d3Ticks), Math.max.apply(null, d3Ticks)])
-		.range([height - padding.bottom, padding.top]);
-	}
-}
+// 	if (ticksDomain.length > 0) {
+// 		upperDomain = Math.max.apply(Math, ticksDomain);
+// 		d3Ticks = d3TicksScale.domain([0, upperDomain]).nice().ticks();
+// 		yScale = scaleLinear()
+// 		.domain([Math.min.apply(null, d3Ticks), Math.max.apply(null, d3Ticks)])
+// 		.range([height - padding.bottom, padding.top]);
+// 	}
+// }
 
 // initializing x scale
 $: xScale = scaleLinear()
 	.domain([0, xTicks.length])
 	.range([padding.left, width  - rightPadding]);
 
-//initializing y scale
-// $: yScale = scaleLinear()
-// 	.domain([0, Math.max.apply(null, yTicks)])
-// 	.range([height - padding.bottom, padding.top]);
+// initializing y scale
+$: yScale = scaleLinear()
+	.domain([0, Math.max.apply(null, yTicks)])
+	.range([height - padding.bottom, padding.top]);
 
 // chart data key/value pair
 let chartData;
@@ -124,7 +124,7 @@ $: line = width - (width > 650 ? 40 : 30);
 function formatTick(tick) {
 
 	if (tick >= 1000 && tick < 100000)  {
-		tick = (tick / 1000).toFixed(1);
+		tick = (tick / 1000).toFixed(0);
 		tick += 'K';
 	}
 

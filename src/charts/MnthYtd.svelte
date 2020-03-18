@@ -81,25 +81,25 @@ let lowerDomain = 0;
 let upperDomain = 0;
 let d3Ticks = [];
 
-$: buildYtickMarks(mappedPoints);
+// $: buildYtickMarks(mappedPoints);
 
-function buildYtickMarks(mappedPoints) {
-	let ticksDomain = [];
-	if (mappedPoints.length > 0) {
+// function buildYtickMarks(mappedPoints) {
+// 	let ticksDomain = [];
+// 	if (mappedPoints.length > 0) {
 		
-		mappedPoints.forEach((v, i) => {
-			ticksDomain = [...ticksDomain, v.y];
-		}); 
+// 		mappedPoints.forEach((v, i) => {
+// 			ticksDomain = [...ticksDomain, v.y];
+// 		}); 
 
-		if (ticksDomain.length > 0) {
-			upperDomain = Math.max.apply(Math, ticksDomain);
-			d3Ticks = d3TicksScale.domain([0, upperDomain]).nice().ticks();
-			yScale = scaleLinear()
-			.domain([0, Math.max.apply(null, d3Ticks)])
-			.range([height - padding.bottom, padding.top]);
-		}
-	}
-}
+// 		if (ticksDomain.length > 0) {
+// 			upperDomain = Math.max.apply(Math, ticksDomain);
+// 			d3Ticks = d3TicksScale.domain([0, upperDomain]).nice().ticks();
+// 			yScale = scaleLinear()
+// 			.domain([0, Math.max.apply(null, d3Ticks)])
+// 			.range([height - padding.bottom, padding.top]);
+// 		}
+// 	}
+// }
 
 // initializing x scale
 $: xScale = scaleLinear()
@@ -107,10 +107,9 @@ $: xScale = scaleLinear()
 	.range([0, width]);
 
 // initializing y scale
-// $: yScale = scaleLinear()
-// 	.domain([0, Math.max.apply(null, yTicks)])
-// 	.range([height - padding.bottom, padding.top]);
-	// .range([height, padding.top]);
+$: yScale = scaleLinear()
+	.domain([0, Math.max.apply(null, yTicks)])
+	.range([height - padding.bottom, padding.top]);
 
 // set the inner width of the chart
 $: innerWidth = width - (padding.left + padding.right);
@@ -158,7 +157,7 @@ function formatLastTickYear(tick) {
 function formatTick(tick) {
 	
 	if (tick >= 1000 && tick < 100000)  {
-		tick = (tick / 1000).toFixed(1);
+		tick = (tick / 1000).toFixed(0);
 		tick += 'K';
 	}
 
@@ -327,13 +326,13 @@ afterUpdate(() => {
 
 </style>
 
-{#if d3Ticks.length > 0}
+{#if yTicks.length > 0}
 
 <div class="chart" bind:clientWidth={width} bind:clientHeight={height}>
 	<svg>
 
 	<g class="axis y-axis" transform="translate(0,{padding.top})">
-		{#each d3Ticks as tick, i}
+		{#each yTicks as tick, i}
 			<g class="tick tick-{tick}" transform="translate(5, {yScale(tick) - padding.bottom + 10})">
 				<line x1="35px" x2="95%"></line>
 				<text class="axis-tick-mark" dx="0" y="3">{tick >= 100 ? formatTick(tick) : dollar + '' + tick}</text>
