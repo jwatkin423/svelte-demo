@@ -458,7 +458,7 @@ export function tickMarks(maxValue) {
 
         maxCeilDiff = (tickCeiling - maxValue);
         increment20 = increment * 0.2;
-        console.log(tickCeiling, maxValue, maxCeilDiff, increment, increment20);
+
         if(maxCeilDiff < increment20) {
             tempTotal += increment;
             yTickArrayTemp.push(tempTotal);
