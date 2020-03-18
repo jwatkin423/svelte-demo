@@ -187,6 +187,14 @@ window.ontouchend = function(e) {
 let width = 1280;
 let screenSize = window.innerWidth; 
 
+$: hideMobileMenu(width);
+
+function hideMobileMenu(width) {
+    if (width > 768) {
+        showHamburger = false;
+    }
+}
+
 $: setChart(width);
 
 function setChart() {

@@ -119,6 +119,7 @@ function formatNumber(num) {
         }
 
         if (chartType === 'soldUnits' || chartType === 'newUnits' || chartType === 'ucUnits') {
+            origNum = parseInt(origNum);
             if (origNum < 0 ) {
                 num = origNum.toString().replace(/\-/, '');
             } else {
