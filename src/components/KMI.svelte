@@ -117,16 +117,22 @@ function formatNumber(num) {
             }
         }
 
-        if (origNum < 0 ) {
-            num = num.toString().replace(/\-/, '');
-            num =  dollar + num;
-        } else {
-            num = num.toString();
-            num = dollar + num;
-        }
-    }
+        if (chartType === 'soldUnits' || chartType === 'newUnits' || chartType === 'ucUnits') {
+            if (origNum < 0 ) {
+                num = origNum.toString().replace(/\-/, '');
+                console.log(num, origNum);
+            } else {
+                num = origNum.toString();
+            }
 
-    return num;
+            num = num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+
+    
+    return dollar + num.toString().replace(/\-/, '');
+    }
+    
+    return dollar + num;    
 }
 
 function formatMonth(period) {
@@ -274,11 +280,11 @@ function formatLastPeriod(period) {
                     {/if}
                     <td>
                         {#if chngPercent !== 'NA' && chngPercent != 0}
-                            {#if change > 0}
-                                {chngPercent}
+                            {#if change >= 0}
+                                {chngPercent}%
                                 <ChangeArrows change={change} />
                             {:else}
-                                ({chngPercent}%)
+                                ({chngPercent.toString().replace(/\-/, '')}%)
                                 <ChangeArrows change={change} />
                             {/if}
                         {:else if chngPercent == 0}
@@ -318,7 +324,7 @@ function formatLastPeriod(period) {
                                     {percentMnthChange}%
                                     <ChangeArrows change={mthChange} />
                                 {:else}
-                                    ({percentMnthChange}%)
+                                    ({percentMnthChange.toString().replace(/\-/, '')}%)
                                     <ChangeArrows change={mthChange} />
                                 {/if}
                             {:else if percentMnthChange == 0}
@@ -343,7 +349,7 @@ function formatLastPeriod(period) {
                                     {percentYtdChange}%
                                     <ChangeArrows change={ytdChange} />
                                 {:else}
-                                    ({percentYtdChange}%)
+                                    ({percentYtdChange.toString().replace(/\-/, '')}%)
                                     <ChangeArrows change={ytdChange} />
                                 {/if}
                             {:else if percentYtdChange == 0}
