@@ -131,7 +131,7 @@ function areaValueSelected() {
             aVsSelected = params
         }
 
-        if (type === initialAreaType && typeof(aVsSelected) !== 'array') {
+        if (type === initialAreaType && typeof(aVsSelected) !== 'object') {
             if (aVsSelected.toLowerCase === 'all') {
                 let areaItemEls = document.querySelectorAll('.' + idClass);
                     areaItemEls.forEach((el) => {
@@ -146,7 +146,7 @@ function areaValueSelected() {
                     document.querySelector('input.all-' + idClass).checked = true;
                 }
 
-                if (typeof(aVsSelected) === 'array') {
+                if (typeof(aVsSelected) === 'object') {
                     aVsSelected.forEach((avS) => {
                         let tempSel = avS.toLowerCase().replace(/ /g, '_').replace(/,/g, '_');
 
@@ -158,6 +158,7 @@ function areaValueSelected() {
                         }
                     });
                 } else {
+                    
                     let tempSel = aVsSelected.toLowerCase().replace(/ /g, '_').replace(/,/g, '_');
 
                     let id = idClass + '-' + tempSel;
