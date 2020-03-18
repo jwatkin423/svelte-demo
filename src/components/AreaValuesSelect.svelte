@@ -132,6 +132,7 @@ function areaValueSelected() {
         }
 
         if (type === initialAreaType && typeof(aVsSelected) !== 'object') {
+
             if (aVsSelected.toLowerCase === 'all') {
                 let areaItemEls = document.querySelectorAll('.' + idClass);
                     areaItemEls.forEach((el) => {
@@ -139,27 +140,18 @@ function areaValueSelected() {
                 });
 
                 document.querySelector('.all-' + idClass).checked = true;
-            } else {
-                let avItems = document.querySelectorAll('.ng.' + idClass);
+            }
 
-                if (aVsSelected.length == avItems.length) {
-                    document.querySelector('input.all-' + idClass).checked = true;
-                }
+        } else {
+            let avItems = document.querySelectorAll('.ng.' + idClass);
 
-                if (typeof(aVsSelected) === 'object') {
-                    aVsSelected.forEach((avS) => {
-                        let tempSel = avS.toLowerCase().replace(/ /g, '_').replace(/,/g, '_');
+            if (aVsSelected.length == avItems.length) {
+                document.querySelector('input.all-' + idClass).checked = true;
+            }
 
-                        let id = idClass + '-' + tempSel;
-                        let tempInput = document.getElementById(id);
-
-                        if (tempInput) {
-                            tempInput = document.getElementById(id).checked = true;
-                        }
-                    });
-                } else {
-                    
-                    let tempSel = aVsSelected.toLowerCase().replace(/ /g, '_').replace(/,/g, '_');
+            if (typeof(aVsSelected) === 'object') {
+                aVsSelected.forEach((avS) => {
+                    let tempSel = avS.toLowerCase().replace(/ /g, '_').replace(/,/g, '_');
 
                     let id = idClass + '-' + tempSel;
                     let tempInput = document.getElementById(id);
@@ -167,12 +159,21 @@ function areaValueSelected() {
                     if (tempInput) {
                         tempInput = document.getElementById(id).checked = true;
                     }
-                }
+                });
+            } else {
                 
+                let tempSel = aVsSelected.toLowerCase().replace(/ /g, '_').replace(/,/g, '_');
+
+                let id = idClass + '-' + tempSel;
+                let tempInput = document.getElementById(id);
+
+                if (tempInput) {
+                    tempInput = document.getElementById(id).checked = true;
+                }
             }
             
-        } 
-
+        }
+            
         if (type === 'ALL' && initialAreaType == 'ALL') {
             let areaItemEls = document.querySelectorAll('.' + idClass);
             areaItemEls.forEach((el) => {
