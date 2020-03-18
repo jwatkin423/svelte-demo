@@ -254,39 +254,6 @@ export function tickMarks(maxValue) {
 
     } 
     
-    // 10M to < 100M
-    else if(maxValue >= 100000 && maxValue < 1000000) {
-        tickCeiling = Math.ceil(maxValue / 100000) * 100000;
-        
-        increment = 100000;
-
-        if (tickCeiling >= 500000) {
-            increment = 100000;
-        }
-
-        if (tickCeiling >= 900000 ) {
-            increment = 200000;
-        }
-
-        let tempTotal = 0;
-        for (var i = 0; tempTotal < tickCeiling; i++) {
-            tempTotal += increment;
-            yTickArrayTemp.push(tempTotal);
-        }
-        
-        maxCeilDiff = (tickCeiling - maxValue);
-        increment20 = increment * 0.2;
-        
-
-        if(maxCeilDiff < increment20) {
-            tempTotal += increment;
-            yTickArrayTemp.push(tempTotal);
-        }    
-        
-
-
-    } 
-    
     // 100M to < 1B
     else if(maxValue >= 100000000 && maxValue < 1000000000) {
         tickCeiling = Math.ceil(maxValue / 100000000) * 100000000;
