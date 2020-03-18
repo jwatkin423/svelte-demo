@@ -62,9 +62,14 @@ export function tickMarks(maxValue) {
         tickCeiling = parseInt(maxValue + 1);
         newInterval = 1;
 
+        if (tickCeiling == 10) {
+            newInterval = 2;
+        }
+        
+
         let tempTotal = 0;
         for (var i = 0; tempTotal < tickCeiling; i++) {
-            tempTotal = i;
+            tempTotal += newInterval;
             yTickArrayTemp.push(tempTotal);
         }
 
