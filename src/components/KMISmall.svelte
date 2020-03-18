@@ -120,7 +120,6 @@ function formatNumber(num) {
         if (chartType === 'soldUnits' || chartType === 'newUnits' || chartType === 'ucUnits') {
             if (origNum < 0 ) {
                 num = origNum.toString().replace(/\-/, '');
-                console.log(num, origNum);
             } else {
                 num = origNum.toString();
             }
@@ -316,8 +315,10 @@ function formatLastPeriod(period) {
                         <td class='td-mnth-ytd'>{formatNumber(data[2])}</td>
                         {#if mthChange >= 0}
                             <td class='td-mnth-ytd'>{formatNumber(mthChange)} <ChangeArrows change={mthChange} /></td>
-                        {:else}
-                            <td class='td-mnth-ytd'>({formatNumber(mthChange)}%) <ChangeArrows change={mthChange} /></td>
+                        {:else if (mthChange < 0) }
+                            <td class='td-mnth-ytd'>({formatNumber(mthChange)}) <ChangeArrows change={mthChange} /></td>
+                        {:else }
+                            0        
                         {/if}
                         <td class='td-mnth-ytd percent-change'>
                             {#if percentMnthChange !== 'NA' && percentMnthChange != 0}
@@ -339,10 +340,12 @@ function formatLastPeriod(period) {
                         <td class='td-mnth-ytd'>YTD</td>
                         <td class='td-mnth-ytd'>{formatNumber(data[1])}</td>
                         <td class='td-mnth-ytd'>{formatNumber(data[3])}</td>
-                        {#if ytdChange >= 0}
+                        {#if ytdChange > 0}
                             <td class='td-mnth-ytd'>{formatNumber(ytdChange)} <ChangeArrows change={ytdChange} /></td>
-                        {:else}
+                        {:else if (ytdChange < 0) }
                             <td class='td-mnth-ytd'>({formatNumber(ytdChange)}) <ChangeArrows change={ytdChange} /></td>
+                        {:else }
+                            0    
                         {/if}
                         <td class='td-mnth-ytd percent-change'>
                             {#if percentYtdChange !== 'NA' && percentYtdChange != 0}
