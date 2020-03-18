@@ -618,11 +618,11 @@ onMount(() => {
                         searchParam={params.timePeriodValue}/>
             </div>
         <div class="search-button-wrapper">
-            <div class="search-button-themed first-search-button-themed">
-            <div class="label">
-                <button on:click|preventDefault on:click={clearAll} class="menu-button search-menu-button first-search-button-themed">Reset</button>
-            </div>
-            </div>
+            <!-- <div class="search-button-themed first-search-button-themed">
+                <div class="label">
+                    <button on:click|preventDefault on:click={clearAll} class="menu-button search-menu-button first-search-button-themed">Reset</button>
+                </div>
+            </div> -->
             <div class="search-button-themed">
                 <div class="label">
                     <button 
