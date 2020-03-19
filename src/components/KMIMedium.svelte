@@ -94,22 +94,25 @@ function formatNumber(num) {
 
     if (num && num !== 'NA') {
 
+        // Billions
         if (Math.abs(num) >= 1000000000) {
 			num /= 1000000000;
 			num = Number(Math.round(num + 'e' + 1) + 'e-1').toFixed(1);
             num = num + "B";
         }
+        // millions
         else if(Math.abs(num) >= 1000000 && Math.abs(num) < 1000000000) {
 			num /= 1000000;
 			num = Number(Math.round(num + 'e' + 1) + 'e-1').toFixed(1);
             num = num + "M";
         } 
         else if (Math.abs(num) >= 1000 & Math.abs(num) < 1000000) {
-			num /= 1000;
-			num = Number(Math.round(num + 'e' + 1) + 'e-1');
+			num = parseInt(num / 1000);
             num = num + "K";
         }
-
+        else if (Math.abs(num) < 1000 && chartType !== 'spOpRatio') {
+            num = parseInt(num);
+        }
 
         if (chartType !== 'fsldMsi' && chartType !== 'spOpRatio') {
 
