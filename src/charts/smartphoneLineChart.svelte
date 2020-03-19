@@ -417,7 +417,7 @@ afterUpdate(() => {
 	<svg xmlns="http://www.w3.org/2000/svg">
 
 		<!-- y axis -->
-		{#each d3Ticks as tick, i}
+		{#each yTicks as tick, i}
 			<g class="tick y-axis tick-{tick}" transform="translate(10, {yScale(tick)})">
 				<line x1="30" x2="{line + 15}"></line>
 				<text class='axis-tick-mark' dx="0" y="3">{tick >= 100 ? formatTick(tick) : dollar + '' + tick}</text>
