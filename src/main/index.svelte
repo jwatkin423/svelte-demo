@@ -420,7 +420,8 @@ function formatChartTitle(title) {
 						showDollar={dollar}
 						yPoints={yT} 
 						mappedPoints={mappedPoints} 
-						reportYear={year}/>
+						reportYear={year}
+						chartType={barData.key}/>
 				</div>
 				{/if}
 				{#if screenSize > 768 && screenSize <= 1024}
@@ -433,7 +434,8 @@ function formatChartTitle(title) {
 							showDollar={dollar}
 							yPoints={yT} 
 							mappedPoints={mappedPoints} 
-							reportYear={year}/>
+							reportYear={year}
+							chartType={barData.key}/>
 					</div>
 				{/if}
 				{#if screenSize > 480 && screenSize <= 768}
@@ -446,7 +448,8 @@ function formatChartTitle(title) {
 							showDollar={dollar}
 							yPoints={yT} 
 							mappedPoints={mappedPoints} 
-							reportYear={year}/>
+							reportYear={year}
+							chartType={barData.key}/>
 					</div>
 				{/if}
 				{#if screenSize <= 480}
@@ -459,7 +462,8 @@ function formatChartTitle(title) {
 							showDollar={dollar}
 							yPoints={yT} 
 							mappedPoints={mappedPoints} 
-							reportYear={year}/>
+							reportYear={year}
+							chartType={barData.key}/>
 					</div>
 				{/if}
 				
