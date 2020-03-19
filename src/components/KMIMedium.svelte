@@ -119,6 +119,8 @@ function formatNumber(num) {
             if (origNum.toString().indexOf('.')) {
                 num = num.toString().replace(/\.[0-9]{1}$/, '');
             }
+        } else if (chartType === 'fsldMsi') {
+            num = origNum;
         }
 
         if (chartType === 'soldUnits' || chartType === 'newUnits' || chartType === 'ucUnits') {
