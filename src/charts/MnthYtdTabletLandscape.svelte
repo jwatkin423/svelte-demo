@@ -220,17 +220,17 @@ function formatPointText(num) {
 
         if (num >= 1000000000) {
 			num /= 1000000000;
-			num = Number(Math.floor(num + 'e' + 1) + 'e-1').toFixed(1);
+			num = Number(Math.floor(num + 'e' + 1) + 'e-1').toFixed(0);
             num = num + "B";
         }
         else if(num >= 1000000 && num < 1000000000) {
 			num /= 1000000;
-			num = Number(Math.floor(num + 'e' + 1) + 'e-1').toFixed(1);
+			num = Number(Math.floor(num + 'e' + 1) + 'e-1').toFixed(0);
             num = num + "M";
         } 
         else if (num >= 1000 & num < 1000000) {
 			num /= 1000;
-			num = Number(Math.floor(num + 'e' + 1) + 'e-1');
+			num = Number(Math.floor(num + 'e' + 1) + 'e-1').toFixed(0);
             num = num + "K";
         }
     }
