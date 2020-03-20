@@ -41,9 +41,10 @@ function setStatus(type) {
         case 'soldUnits':
         case 'soldAvgPriceSquareFt':
         case 'spOpRatio':
-        case 'fsldMsi':
             status = 'Sold'
             break;
+        case 'fsldMsi':
+            status = 'Active';
         default:
             status = 'Sold';
             break;
