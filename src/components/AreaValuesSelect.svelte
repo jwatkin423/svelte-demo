@@ -122,9 +122,14 @@ function areaValueSelected() {
             aVsSelected = areaValueParams.split(',').map((i) => {
                 return decodeURI(i);
             });
-
-            if (aVsSelected.length === 1) {
+            
+            if (aVsSelected.length === 1 && type === initialAreaType) {
                 aVsSelected = aVsSelected[0];
+                let id = idClass + "-" + aVsSelected.toLowerCase().replace(/ /g, '_').replace(/,/g, '_');
+                let tempInput = document.getElementById(id);
+                if (tempInput) {
+                    tempInput.checked = true;
+                }
             }
 
         } else {
