@@ -45,6 +45,7 @@ function setStatus(type) {
             break;
         case 'fsldMsi':
             status = 'Active';
+            break;
         default:
             status = 'Sold';
             break;
