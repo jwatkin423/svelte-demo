@@ -4,6 +4,7 @@ import {faCircle} from '@fortawesome/free-solid-svg-icons';
 import Icon from "./Icon.svelte";
 
 export let searchParams;
+export let chartType;
 let areaValues = '';
 let areaValueCf = '';
 let propertyTypesCf = '';
@@ -13,8 +14,9 @@ $: propertyTypesCf = propertyTypes.replace(/\,/g, ', ');
 
 let rawareaValues = 'ALL';
 let areaType = '';
+let status = '';
 
-$: status = 'Sold';
+$: status = setStatus(chartType);
 $: areaType = searchParams.areaType ? searchParams.areaType : '';
 $: rawareaValues = searchParams.areaValuesDisplayText ? searchParams.areaValuesDisplayText : '';
 $: areaValues = rawareaValues ? decodeURI(rawareaValues) : 'ALL';
@@ -25,6 +27,30 @@ $: areaVformatted = areaValueCf.length > 22 ? areaValueCf.substr(0, 22) + '...' 
 let icon = [faCircle];
 
 let width = 1280;
+
+function setStatus(type) {
+    switch(type) {
+        case 'newUnits':
+            status = 'New';
+            break;
+        case 'ucUnits':
+            status = 'Pending';
+            break;
+        case 'soldMedian':
+        case 'avgDom':
+        case 'soldUnits':
+        case 'soldAvgPriceSquareFt':
+        case 'spOpRatio':
+        case 'fsldMsi':
+            status = 'Sold'
+            break;
+        default:
+            status = 'Sold';
+            break;
+    }
+
+    return status;
+}
 
 </script>
 
