@@ -29,6 +29,7 @@ let data;
 let logo_url = false;
 let key = false;
 let mobileKey = false;
+let searchable = false;
 
 function getKey(event) {
 	key = event.detail.text;
@@ -60,11 +61,11 @@ onMount(() => {
 	.then(data => {
 		isLoading = false;
 		pageData = data;
-
 		if  (pageData.logo_url) {
 			logo_url = baseUrl + '/' + pageData.logo_url;
 		}
 		title = pageData.title;
+		searchable = pageData.searchable;
 		// fill the store’
 		chartData.set(pageData);
 	})
@@ -135,7 +136,8 @@ onMount(() => {
 				on:passKey={getKey} 
 				searchParams={urlParams} 
 				baseSearchUrl={baseUrl}
-				mlsId={pageData.mlsId}/>
+				mlsId={pageData.mlsId}
+				searchable={searchable}/>
 			
 			<Index ddsData={pageData} mobileKey={key} searchType={urlParams.search}/>
 			

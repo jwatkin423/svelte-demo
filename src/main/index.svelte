@@ -48,7 +48,12 @@ let barChartData = '';
 let yT = [];
 let mappedPoints;
 let mPoints;
+
+let mappedPointsTwo;
+let mPointsTwo;
+
 $: mappedPoints = mPoints;
+$: mappedPointsTwo = mPointsTwo;
 
 $: barData = barChartData;
 $: yT = [...yTicks];
@@ -65,7 +70,7 @@ $: key = barData.key;
 // show/hide the doolar symbol
 $: setDollarSymbol(key);
 function setDollarSymbol(key) {
-	if (key === 'soldMedian' || key === 'soldAvgPriceSquareFt') {
+	if (key === 'soldMedian' || key === 'soldAvgPriceSquareFt' || key === 'saleMedianSoldMedian') {
 		dollar = true;
 	} else {
 		dollar = false;
@@ -115,27 +120,50 @@ function drawChart(event, initial = 0) {
 
 	if (key !== 'error_code') {
 		const setData = ddsData.chartData[key].data;
-		let dt = setData.map((d) => {return d});
-		
-		rpadL = setData.length == 13 ? -20 : 20;
+		let dt = [];
+		let dtTwo = [];
+
+		if (key === 'saleMedianSoldMedian') {
+			dt = setData.map((d) => { return d[0]; });
+			dtTwo = setData.map((d) => { return d[1]; });
+
+			mPoints = setData.map( (el, i) => {
+				el[0] /= 1;
+				return {y: el[0], x: i};
+			});
+
+			mPointsTwo = setData.map( (el, i) => {
+				el[1] /= 1;
+				return {y: el[1], x: i};
+			});
+		}
+
+		else if (key !== '' && key !== 'saleMedianSoldMedian') {
+			dt = setData.map((d) => {return d});
+
+			mPoints = setData.map( (el, i) => {
+				el /= 1;
+				return {y: el, x: i};
+			});
+
+		} 
+
+		rpadL = setData.length == 13 ? -20 : 20;	
 		rpadM = setData.length == 13 ? 0 : 30;
 		rpadS = setData.length == 13 ? 0 : 20;
 
 		barChartData = {
 			data: dt,
+			dataTwo: dtTwo,
 			key: key,
 			label: ddsData.chartData[key].label,
-			p_color: p_color
+			p_color: p_color,
+			s_color: s_color
 		};
-
-		chartTitle = ddsData.chartData[key].label;
 		
-		mPoints = setData.map( (el, i) => {
-					el /= 1;
-				return {y: el, x: i};
-		});
+		chartTitle = ddsData.chartData[key].label;
 
-		yTicks = processPoints(setData);
+		yTicks = processPoints(dt);
 	}
 	
 	
@@ -363,7 +391,8 @@ function formatChartTitle(title) {
 						p_color={p_color} 
 						s_color={s_color} 
 						yPoints={yT} 
-						mappedPoints={mappedPoints} 
+						mappedPoints={mappedPoints}
+						mappedPointsTwo={mappedPointsTwo} 
 						showDollar={dollar}
 						reportYear={year}
 						rightPadding={rpadL}
