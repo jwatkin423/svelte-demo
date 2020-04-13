@@ -10,7 +10,6 @@ import { resetChart } from '../helpers/chartreset';
 export let reportPeriod;
 export let reportYear;
 // chart data prop
-export let data = [];
 export let yPoints;
 
 // y Tick marks
@@ -18,10 +17,11 @@ $: yTicks = yPoints;
 
 // primary color prop
 export let p_color = false;
-export let s_color;
+export let s_color = false;
 
 // mapped points
 export let mappedPoints = [];
+export let mappedPointsTwo = [];
 
 // show dollar in tool tip
 export let showDollar;
@@ -52,24 +52,6 @@ let lowerDomain = 0;
 let upperDomain = 0;
 let d3Ticks = [];
 
-// $: buildYtickMarks(mappedPoints);
-
-// function buildYtickMarks(mappedPoints) {
-// 	let ticksDomain = [];
-
-// 	mappedPoints.forEach((v, i) => {
-// 		ticksDomain = [...ticksDomain, v.y];
-// 	}); 
-
-// 	if (ticksDomain.length > 0) {
-// 		upperDomain = Math.max.apply(Math, ticksDomain);
-// 		d3Ticks = d3TicksScale.domain([0, upperDomain]).nice().ticks();
-// 		yScale = scaleLinear()
-// 		.domain([Math.min.apply(null, d3Ticks), Math.max.apply(null, d3Ticks)])
-// 		.range([height - padding.bottom, padding.top]);
-// 	}
-// }
-
 // initializing x scale
 $: xScale = scaleLinear()
 	.domain([0, xTicks.length])
@@ -87,6 +69,7 @@ let path;
 
 // primary color
 $: primary_fill_color = p_color ? p_color : '#019184';
+$: secondary_fill_color = s_color ? s_color : '#DDDDDD';
 
 // report period for the x axis
 $: xTicks = reportPeriod;
@@ -101,9 +84,32 @@ $: chartData = mappedPoints.map((mp, i) => {
 	return {y:s, x:t};
 });
 
+// chart data mapped
+$: chartData = mappedPoints.map((mp) => {
+	let t = mp.x;
+	let s = mp.y;
+	return {y:s, x:t};
+});
+
+// chart data mapped
+$: chartDataTwo = mappedPointsTwo.map((mp, i) => {
+
+	if (chartType === 'saleMedianSoldMedian') {
+		let t = mp.x;
+		let s = mp.y;
+		
+		return {y:s, x:t};
+	} else {
+		mappedPointsTwo = [];
+		pathTwo = false;
+		chartDataTwo = false;
+	}
+	
+});
+
 // chart line
 $: path = `M${chartData.map(mp => `${xScale(mp.x)},${yScale(mp.y)}`).join('L')}`;
-// $: path2 = `M${chartData.map(mp => `${xScale(mp.x)},${yScale(mp.y)}`).join('L')}`;
+$: pathTwo = mappedPointsTwo.length > 0 ? `M${chartDataTwo.map(mp => `${xScale(mp.x)},${yScale(mp.y)}`).join('L')}` : [];
 
 // set the inner width of the chart
 $: innerWidth = width;
@@ -186,7 +192,7 @@ $: ttReportPeriodData = reportPeriod.map((rp) => {
 	return fullMonth + ' ' + currentYear;
 });
 
-function showToolTip(i, leftX, topY, point) {
+function showToolTip(i, leftX, topY, point, dataType) {
 	desc = document.getElementById('desc');
 	desc.classList.add("enabled");
 	desc.classList.add("active");
@@ -206,10 +212,12 @@ function showToolTip(i, leftX, topY, point) {
 		unitsSuffix = '%';
 	} else if (chartType === 'fsldMsi')  {
 		unitsSuffix = 'months';
+	} else if (chartType === 'saleMedianSoldMedian') {
+		unitsSuffix = "(" + dataType + ")";
 	}
 
 	units = py + ' ' + unitsSuffix;
-	
+
 	if (showDollar) {
 		units = dollar + py;
 	}
@@ -232,7 +240,6 @@ function formatText(tick) {
 
 		newDate = tickSplits.month;
 	}
-	
 
 	return newDate;
 }
@@ -263,18 +270,6 @@ function hideToolTip() {
 	desc.classList.remove("active");
 }
 
-afterUpdate(() => {
-	let cleared = 0;
-
-    clearData.subscribe(value => {
-        cleared = value;
-    });
-    
-    if (cleared == 1) {
-        resetChart();
-    }
-});
-
 </script>
 
 <style>
@@ -284,6 +279,7 @@ afterUpdate(() => {
 		display: flex;
 		height: 436px;
 		margin-left: 10px;
+		/* max-width: 748px; */
 	}
 
 	svg {
@@ -393,6 +389,10 @@ afterUpdate(() => {
 		border-top: 10px solid rgb(179, 179, 179);
 	}
 
+	.x-axis .tick text {
+ 		font-size: 9px;
+	}		
+
  	@media only screen and (max-width: 450px) {
 		.description.active {
 			font-size: 10px;
@@ -412,63 +412,74 @@ afterUpdate(() => {
 
 {#if path.length > 1}
 
-<div class="chart" bind:clientWidth={width} bind:clientHeight={height}>
-	<svg xmlns="http://www.w3.org/2000/svg">
+	<div class="chart" bind:clientWidth={width} bind:clientHeight={height}>
+		<svg xmlns="http://www.w3.org/2000/svg">
 
-		<!-- y axis -->
-		{#each yTicks as tick, i}
-			<g class="tick y-axis tick-{tick}" transform="translate(20, {yScale(tick)})">
-				<line x1="30" x2="{line}"></line>
-				<text class='axis-tick-mark' dx="0" y="3">{tick >= 100 ? formatTick(tick) : dollar + '' + tick}</text>
-			</g>
-		{/each}
-		<!-- </g> -->
-
-		<!-- x axis -->
-		<g class="axis x-axis" transform="translate(0,0)">
-			{#each xTicks as tick, i}
-				<g class="tick tick-{ tick }" transform="translate({xScale(i) + 20},{height - 40})" >
-					
-                    {#if !tick.includes('<br>') && i !== (xTicks.length - 1) }
-						<line class="small-tick" y1="10" y2="20" x1="0" x2="0"></line>
-					{:else if (tick.includes('<br>') && i !== (xTicks.length - 1))}
-						<line y1="10" y2="-86%" x1="0" x2="0"></line>
-						<text class='axis-tick-mark' dx=0 y="25">{formatText(tick)}</text>
-					{/if}
-					{#if i === (xTicks.length - 1) }
-						<line y1="10" y2="-86%" x1="0" x2="0"></line>
-						<text class='axis-tick-mark' dx=0 y="25">{formatText(tick)}</text>
-					{/if}	
+			<!-- y axis -->
+			{#each yTicks as tick, i}
+				<g class="tick y-axis tick-{tick}" transform="translate(20, {yScale(tick)})">
+					<line x1="30" x2="{line}"></line>
+					<text class='axis-tick-mark' dx="0" y="3">{tick >= 100 ? formatTick(tick) : dollar + '' + tick}</text>
 				</g>
 			{/each}
+			<!-- </g> -->
 
-			{#each xTicks as tick, i}
-				<g class="tick tick-{ tick }" transform="translate({xScale(i) + 20},{height - 30})">
-                    {#if (tick.includes('<br>') && i !== (xTicks.length - 1))}
-						<text class='axis-tick-mark' dx=0 y="25">{formatYear(tick)}</text>
-					{/if}
-					{#if i === (xTicks.length - 1) }
-						<text class='axis-tick-mark' dx=0 y="25">{formatLastTickYear(tick)}</text>
-					{/if}	
-				</g>
-			{/each}
-			<g transform="translate(20, 0)">
-				<!-- data -->
-				<path class="path-line" d={path} stroke={primary_fill_color}></path>
-
-				<!-- set the circles for the data points -->
-				{#each chartData as point, i}
-					<circle class="enabled" class:heyo cx='{xScale(point.x)}' cy='{yScale(point.y)}' r='{r}' fill={primary_fill_color}
-					on:mouseover={(e) => {showToolTip(i, e.pageX, e.clientY, point) }} 
-					on:mouseleave={hideToolTip}/>
+			<!-- x axis -->
+			<g class="axis x-axis" transform="translate(0,0)">
+				{#each xTicks as tick, i}
+					<g class="tick tick-{ tick }" transform="translate({xScale(i) + 20},{height - 40})" >
+						
+						{#if !tick.includes('<br>') && i !== (xTicks.length - 1) }
+							<line class="small-tick" y1="10" y2="20" x1="0" x2="0"></line>
+						{:else if (tick.includes('<br>') && i !== (xTicks.length - 1))}
+							<line y1="10" y2="-86%" x1="0" x2="0"></line>
+							<text class='axis-tick-mark' dx=0 y="25">{formatText(tick)}</text>
+						{/if}
+						{#if i === (xTicks.length - 1) }
+							<line y1="10" y2="-86%" x1="0" x2="0"></line>
+							<text class='axis-tick-mark' dx=0 y="25">{formatText(tick)}</text>
+						{/if}	
+					</g>
 				{/each}
+
+				{#each xTicks as tick, i}
+					<g class="tick tick-{ tick }" transform="translate({xScale(i) + 20},{height - 30})">
+						{#if (tick.includes('<br>') && i !== (xTicks.length - 1))}
+							<text dx=0 y="25">{formatYear(tick)}</text>
+						{/if}
+						{#if i === (xTicks.length - 1) }
+							<text class='axis-tick-mark' dx=0 y="25">{formatLastTickYear(tick)}</text>
+						{/if}	
+					</g>
+				{/each}
+				<g transform="translate(20, 0)">
+					<!-- data -->
+					<path class="path-line" d={path} stroke={primary_fill_color}></path>
+
+					<!-- set the circles for the data points -->
+					{#each chartData as point, i}
+						<circle class="enabled" class:heyo cx='{xScale(point.x)}' cy='{yScale(point.y)}' r='{r}' fill={primary_fill_color}
+						on:mouseover={(e) => {showToolTip(i, e.pageX, e.clientY, point, 'sold') }}  
+						on:mouseleave={hideToolTip}/>
+					{/each}
+
+					{#if chartType === 'saleMedianSoldMedian'}
+						<path class="path-line" d={pathTwo} stroke={secondary_fill_color}></path>
+
+						{#each chartDataTwo as point, i}
+						<circle class="enabled" class:heyo cx='{xScale(point.x)}' cy='{yScale(point.y)}' r='{r}' fill={secondary_fill_color}
+						on:mouseover={(e) => {showToolTip(i, e.pageX, e.clientY, point, 'sale') }} 
+						on:mouseleave={hideToolTip}/>
+						{chartDataTwo = []}
+						{/each}
+
+					{/if}
+
+				</g>
 			</g>
-		</g>
-        
-	</svg>
-</div>
-
-
+			
+		</svg>
+	</div>
 
 {:else}
 	<h3>Still processing the data ... </h3>

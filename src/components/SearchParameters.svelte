@@ -10,7 +10,7 @@ let areaValueCf = '';
 let propertyTypesCf = '';
 $: timePeriodValue = searchParams.timePeriodValue;
 $: propertyTypes = searchParams.propertyTypeDisplayText ? decodeURI(searchParams.propertyTypeDisplayText) : 'ALL';
-$: propertyTypesCf = propertyTypes.replace(/\,/g, ', ');
+$: propertyTypesCf = decodeURI(propertyTypes).replace(/\,/g, ', ');
 
 let rawareaValues = 'ALL';
 let areaType = '';
@@ -21,7 +21,6 @@ $: areaType = searchParams.areaType ? searchParams.areaType : '';
 $: rawareaValues = searchParams.areaValuesDisplayText ? searchParams.areaValuesDisplayText : '';
 $: areaValues = rawareaValues ? decodeURI(rawareaValues) : 'ALL';
 $: areaValueCf = areaValues.replace(/\,/g, ', ');
-$: areaVformatted = areaValueCf.length > 22 ? areaValueCf.substr(0, 22) + '...' : areaValueCf;
 
 // icons for nav bar
 let icon = [faCircle];

@@ -10,7 +10,6 @@ import { resetChart } from '../helpers/chartreset';
 export let reportPeriod;
 export let reportYear;
 // chart data prop
-export let data = [];
 export let yPoints;
 
 // y Tick marks
@@ -18,10 +17,11 @@ $: yTicks = yPoints;
 
 // primary color prop
 export let p_color = false;
-export let s_color;
+export let s_color = false;
 
 // mapped points
 export let mappedPoints = [];
+export let mappedPointsTwo = [];
 
 // show dollar in tool tip
 export let showDollar;
@@ -57,24 +57,6 @@ let lowerDomain = 0;
 let upperDomain = 0;
 let d3Ticks = [];
 
-// $: buildYtickMarks(mappedPoints);
-
-// function buildYtickMarks(mappedPoints) {
-// 	let ticksDomain = [];
-
-// 	mappedPoints.forEach((v, i) => {
-// 		ticksDomain = [...ticksDomain, v.y];
-// 	}); 
-
-// 	if (ticksDomain.length > 0) {
-// 		upperDomain = Math.max.apply(Math, ticksDomain);
-// 		d3Ticks = d3TicksScale.domain([0, upperDomain]).nice().ticks();
-// 		yScale = scaleLinear()
-// 		.domain([Math.min.apply(null, d3Ticks), Math.max.apply(null, d3Ticks)])
-// 		.range([height - padding.bottom, padding.top]);
-// 	}
-// }
-
 // initializing x scale
 $: xScale = scaleLinear()
 	.domain([0, xTicks.length])
@@ -86,41 +68,46 @@ $: yScale = scaleLinear()
 	.range([height - padding.bottom, padding.top]);
 
 // chart data key/value pair
-let chartData;
+let chartData = [];
+let chartDataTwo = [];
 let path;
+let pathTwo = false;
 
 // primary color
 $: primary_fill_color = p_color ? p_color : '#019184';
+$: secondary_fill_color = s_color ? s_color : '#DDDDDD';
 
 // report period for the x axis
 $: xTicks = reportPeriod;
 
 let r = 4;
 
-$: setR(width);
-
-function setR() {
-
-	if (window.innerWidth >= 1024) {
-		r = 4;
-	} else if (window.innerWidth < 1024 && window.innerWidth >= 768) {
-		r = 3;
-	} else {
-		r = 2;
-	}
-}
-
 // chart data mapped
-$: chartData = mappedPoints.map((mp, i) => {
+$: chartData = mappedPoints.map((mp) => {
 	let t = mp.x;
 	let s = mp.y;
-
 	return {y:s, x:t};
+});
+
+// chart data mapped
+$: chartDataTwo = mappedPointsTwo.map((mp, i) => {
+
+	if (chartType === 'saleMedianSoldMedian') {
+		let t = mp.x;
+		let s = mp.y;
+		
+		return {y:s, x:t};
+	} else {
+		mappedPointsTwo = [];
+		pathTwo = false;
+		chartDataTwo = false;
+	}
 });
 
 // chart line
 $: path = `M${chartData.map(mp => `${xScale(mp.x)},${yScale(mp.y)}`).join('L')}`;
-// $: path2 = `M${chartData.map(mp => `${xScale(mp.x)},${yScale(mp.y)}`).join('L')}`;
+$: pathTwo = mappedPointsTwo.length > 0 ? `M${chartDataTwo.map(mp => `${xScale(mp.x)},${yScale(mp.y)}`).join('L')}` : [];
+
 
 // set the inner width of the chart
 $: innerWidth = width;
@@ -204,7 +191,7 @@ $: ttReportPeriodData = reportPeriod.map((rp) => {
 	return fullMonth + ' ' + currentYear;
 });
 
-function showToolTip(i, leftX, topY, point) {
+function showToolTip(i, leftX, topY, point, dataType) {
 	desc = document.getElementById('desc');
 	desc.classList.add("enabled");
 	desc.classList.add("active");
@@ -224,6 +211,8 @@ function showToolTip(i, leftX, topY, point) {
 		unitsSuffix = '%';
 	} else if (chartType === 'fsldMsi')  {
 		unitsSuffix = 'months';
+	} else if (chartType === 'saleMedianSoldMedian') {
+		unitsSuffix = "(" + dataType + ")";
 	}
 
 	units = py + ' ' + unitsSuffix;
@@ -475,13 +464,27 @@ afterUpdate(() => {
 			<g transform="translate(20, 0)">
 				<!-- data -->
 				<path class="path-line" d={path} stroke={primary_fill_color}></path>
-
+				
 				<!-- set the circles for the data points -->
 				{#each chartData as point, i}
 					<circle class="enabled" class:heyo cx='{xScale(point.x)}' cy='{yScale(point.y)}' r='{r}' fill={primary_fill_color}
-					on:mouseover={(e) => {showToolTip(i, e.pageX, e.clientY, point) }} 
+					on:mouseover={(e) => {showToolTip(i, e.pageX, e.clientY, point, 'sold') }} 
 					on:mouseleave={hideToolTip}/>
 				{/each}
+
+				<!-- Second Path Line and Circles-->
+				{#if chartType === 'saleMedianSoldMedian'}
+					<path class="path-line" d={pathTwo} stroke={secondary_fill_color}></path>
+			   
+					{#each chartDataTwo as point, i}
+					<circle class="enabled" class:heyo cx='{xScale(point.x)}' cy='{yScale(point.y)}' r='{r}' fill={secondary_fill_color}
+					on:mouseover={(e) => {showToolTip(i, e.pageX, e.clientY, point, 'sale') }} 
+					on:mouseleave={hideToolTip}/>
+					{chartDataTwo = []}
+				{/each}
+				{/if}
+
+				
 			</g>
 		</g>
         
