@@ -386,7 +386,32 @@ function formatChartTitle(title) {
 			{#if searchType !== 'mnth-ytd'}
 				{#if screenSize > 1024}
 					<Linechart 
-						data={barData.data} 
+						reportPeriod={reportPeriod} 
+						p_color={p_color} 
+						s_color={s_color} 
+						yPoints={yT} 
+						mappedPoints={mappedPoints}
+						mappedPointsTwo={mappedPointsTwo}
+						showDollar={dollar}
+						reportYear={year}
+						rightPadding={rpadL}
+						chartType={barData.key}/>
+				{/if}
+				{#if screenSize <= 1024 && screenSize >768}
+					<TabletLandScapeChart 
+						reportPeriod={reportPeriod} 
+						p_color={p_color} 
+						s_color={s_color} 
+						yPoints={yT} 
+						mappedPoints={mappedPoints}
+						mappedPointsTwo={mappedPointsTwo}
+						showDollar={dollar}
+						reportYear={year}
+						rightPadding={rpadM}
+						chartType={barData.key}/>
+				{/if}
+				{#if screenSize <= 768 && screenSize > 480}
+					<TabletPortraitChart 
 						reportPeriod={reportPeriod} 
 						p_color={p_color} 
 						s_color={s_color} 
@@ -395,43 +420,17 @@ function formatChartTitle(title) {
 						mappedPointsTwo={mappedPointsTwo} 
 						showDollar={dollar}
 						reportYear={year}
-						rightPadding={rpadL}
-						chartType={barData.key}/>
-				{/if}
-				{#if screenSize <= 1024 && screenSize >768}
-					<TabletLandScapeChart 
-						data={barData.data} 
-						reportPeriod={reportPeriod} 
-						p_color={p_color} 
-						s_color={s_color} 
-						yPoints={yT} 
-						mappedPoints={mappedPoints} 
-						showDollar={dollar}
-						reportYear={year}
-						rightPadding={rpadM}
-						chartType={barData.key}/>
-				{/if}
-				{#if screenSize <= 768 && screenSize > 480}
-					<TabletPortraitChart 
-						data={barData.data} 
-						reportPeriod={reportPeriod} 
-						p_color={p_color} 
-						s_color={s_color} 
-						yPoints={yT} 
-						mappedPoints={mappedPoints} 
-						showDollar={dollar}
-						reportYear={year}
 						rightPadding={rpadM}
 						chartType={barData.key}/>
 				{/if}
 				{#if screenSize <= 480}
 					<SmartPhoneChart 
-						data={barData.data} 
 						reportPeriod={reportPeriod} 
 						p_color={p_color} 
 						s_color={s_color} 
 						yPoints={yT} 
-						mappedPoints={mappedPoints} 
+						mappedPoints={mappedPoints}
+						mappedPointsTwo={mappedPointsTwo}
 						showDollar={dollar}
 						reportYear={year}
 						rightPadding={rpadS}
