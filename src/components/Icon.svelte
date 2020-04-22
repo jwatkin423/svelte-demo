@@ -75,6 +75,7 @@ function setCustomColor(customColor, svgId) {
     margin-left: 0 !important;
     margin-bottom: 0px !important;
     width: 16px !important;
+    padding-bottom: 3px;
   }
 
   .chng-up-small {
@@ -85,6 +86,7 @@ function setCustomColor(customColor, svgId) {
     margin-left: 0 !important;
     margin-bottom: 0px !important;
     width: 16px !important;
+    padding-bottom: 3px;
   }
 
   .chng-dn {
@@ -125,6 +127,7 @@ function setCustomColor(customColor, svgId) {
     margin-left: 0 !important;
     margin-bottom: 0px !important;
     width: 16px !important;
+    padding-bottom: 3px;
   }
 
   .chng-up-ytd-small {
@@ -135,6 +138,7 @@ function setCustomColor(customColor, svgId) {
     margin-left: 0 !important;
     margin-bottom: 0px !important;
     width: 10px !important;
+    padding-bottom: 3px;
   }
 
   .chng-up-ytd {
@@ -145,6 +149,7 @@ function setCustomColor(customColor, svgId) {
     margin-left: 0 !important;
     margin-bottom: 0px !important;
     width: 8px !important;
+    padding-bottom: 3px;
   }
 
   .chng-dn-ytd {
