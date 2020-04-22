@@ -14,7 +14,7 @@ export let yPoints;
 
 // y Tick marks
 $: yTicks = yPoints;
-
+$: tickWidth(yPoints);
 // primary color prop
 export let p_color = false;
 export let s_color = false;
@@ -38,7 +38,7 @@ export let chartType;
 let padding = { 
 	top: 35, 
 	right: 50, 
-	bottom: 40, 
+	bottom: 35, 
 	left: 30 
 };
 
@@ -60,7 +60,18 @@ let d3Ticks = [];
 // initializing x scale
 $: xScale = scaleLinear()
 	.domain([0, xTicks.length])
-	.range([padding.left, width  - rightPadding]);
+	.range([60, width - (rightPadding - rangeWidth(width))]);
+
+function rangeWidth(width) {
+
+	if (width > 786 && width <= 905 && xTicks.length == 13) {
+		return 5;
+	} else if (width <= 786 && xTicks.length == 13) {
+		return -5;
+	}
+
+	return 10;
+}
 
 // initializing y scale
 $: yScale = scaleLinear()
@@ -115,9 +126,14 @@ $: innerWidth = width;
 $: textWidth = innerWidth / xTicks.length;
 
 let lineHeight = -height;
-let line = width - padding.right;
-$: line = (width * .96);
+let line = width;
+$: line = width  - (rightPadding < 0 ? (rightPadding * -1) - 10 : rightPadding);
 
+function formatLine(line) {
+	return line + 'px';
+}
+
+// $: console.log(line, width);
 
 // format ticks
 function formatTick(tick) {
@@ -141,8 +157,44 @@ function formatTick(tick) {
 	if (showDollar) {
 		tick = dollar + tick;
 	}
-
+	
 	return tick;
+}
+
+let currentTickLength = 30;
+function tickWidth(ticks) {
+	
+	if (ticks.length > 0) {
+
+		let lastTick = ticks[ticks.length - 1];
+		if (lastTick >= 1000) {
+
+			let lastTickLength = formatTick(lastTick).length;
+
+			if (showDollar) {
+				lastTickLength++;
+			}
+
+			lastTickLength = (lastTickLength / 2) + 37;
+
+			currentTickLength = lastTickLength;
+
+			return lastTickLength + 'px';
+		}
+
+		else if (lastTick < 1000 && lastTick >= 100) {
+			currentTickLength = (15/2)+ 30;
+		}
+
+		else if (lastTick < 100 && lastTick >= 10){
+			currentTickLength = (10 / 2) + 30;
+		} else {
+			currentTickLength = 30;
+		}
+		
+	}
+
+	return currentTickLength + 'px';
 }
 
 function formatPlotPoint(point) {
@@ -305,14 +357,25 @@ afterUpdate(() => {
 		width: 100%;
 	}
 
-		.tick text {
+	.tick text {
 		fill: #CCCCCC;
 		font-family: Helvetica, Arial;
 		font-size: 9px;
+		
 	}
 
 	.tick line {
 		stroke: #CCCCCC;
+	}
+
+	/* x axis tick mark */
+	.axis-tick-mark {
+		text-anchor: middle;
+	}
+
+	/* y axis tick mark */
+	.y-axis-tick-mark {
+		text-anchor: end;
 	}
 
 	.y-axis.tick-0 text {
@@ -321,7 +384,6 @@ afterUpdate(() => {
 
 	.tick.tick-0 text {
 		fill: #000000 !important;
-		text-anchor: start;
 		white-space: normal !important;
 	}
 
@@ -374,7 +436,7 @@ afterUpdate(() => {
 		vertical-align: middle;
 	}
 
-	 p#date-hover {
+	p#date-hover {
 		margin-top: 8px;
 		margin-bottom: 0 !important;
 	}
@@ -416,7 +478,7 @@ afterUpdate(() => {
 			 height: calc(100% - 60px);
 		 }
 	 }
-	
+
 </style>
 
 {#if path.length > 1}
@@ -426,42 +488,52 @@ afterUpdate(() => {
 
 		<!-- y axis -->
 		{#each yTicks as tick, i}
-			<g class="tick y-axis tick-{tick}" transform="translate(20, {yScale(tick)})">
-				<line x1="30" x2="{line}"></line>
-				<text class='axis-tick-mark' dx="0" y="3">{tick >= 100 ? formatTick(tick) : dollar + '' + tick}</text>
+			<g class="tick y-axis tick-{tick}" transform="translate(0, {yScale(tick)})">
+				<text class='y-axis-tick-mark' x="{currentTickLength}" dx="0" y="3">{tick >= 100 ? formatTick(tick) : dollar + '' + tick}</text>
 			</g>
 		{/each}
-		<!-- </g> -->
+
+		<!-- y axis -->
+		{#each yTicks as tick, i}
+			<g class="tick y-axis tick-{tick}" transform="translate(0, {yScale(tick)})">
+				<line x1="50" x2={formatLine(line)}></line>
+			</g>
+		{/each}
 
 		<!-- x axis -->
-		<g class="axis x-axis" transform="translate(0,0)">
+		<!-- <g class="axis x-axis"> -->
 			{#each xTicks as tick, i}
-				<g class="tick tick-{ tick }" transform="translate({xScale(i) + 20},{height - 40})" >
+				<!-- <g class="tick tick-{ tick }" transform="translate({xScale(i)},{height - 40})" > -->
+				<g class="tick tick-{ tick }" transform="translate(0,0)">
 					
                     {#if !tick.includes('<br>') && i !== (xTicks.length - 1) }
-						<line class="small-tick" y1="0" y2="10" x1="0" x2="0"></line>
+						<line class="small-tick" y1="{height - 25}" y2="{height - 35}" x1="{xScale(i)}px" x2="{xScale(i)}px"></line>
 					{:else if (tick.includes('<br>') && i !== (xTicks.length - 1))}
-						<line y1="0" y2="-88%" x1="0" x2="0"></line>
-						<text class='axis-tick-mark' dx=0 y="16">{formatText(tick)}</text>
+						<!-- <line y1="5px" y2="-88%" x1="0" x2="0"></line> -->
+						<line y1="25px" y2="{height - 35}px" x1="{xScale(i)}px" x2="{xScale(i)}px"></line>
+						<text class='axis-tick-mark' dx=0 y="{height - 20}px" x="{xScale(i)}px">{formatText(tick)}</text>
 					{/if}
 					{#if i === (xTicks.length - 1) }
-						<line y1="0" y2="-88%" x1="0" x2="0"></line>
-						<text class='axis-tick-mark' dx=0 y="16">{formatText(tick)}</text>
-					{/if}	
+						<!-- <line y1="5px" y2="-88%" x1="0" x2="0"></line>-->
+						<line y1="25px" y2="{height - 35}px" x1="{xScale(i)}px" x2="{xScale(i)}px"></line>
+						<text class='axis-tick-mark' dx=0 y="{height - 20}px" x="{xScale(i)}px">{formatText(tick)}</text>
+					{/if}
 				</g>
 			{/each}
 
 			{#each xTicks as tick, i}
-				<g class="tick tick-{ tick }" transform="translate({xScale(i) + 20},{height - 30})">
+				<!-- <g class="tick tick-{ tick }" transform="translate({xScale(i)},{height - 30})"> -->
+				<g class="tick tick-{ tick }">
                     {#if (tick.includes('<br>') && i !== (xTicks.length - 1))}
-						<text class='axis-tick-mark' dx=0 y="16">{formatYear(tick)}</text>
+						<text class='axis-tick-mark' dx=0 y="{height - 10}px" x="{xScale(i)}px">{formatYear(tick)}</text>
 					{/if}
 					{#if i === (xTicks.length - 1) }
-						<text class='axis-tick-mark' dx=0 y="16">{formatLastTickYear(tick)}</text>
+						<text class='axis-tick-mark' dx=0 y="{height - 10}px" x="{xScale(i)}px">{formatLastTickYear(tick)}</text>
 					{/if}	
 				</g>
 			{/each}
-			<g transform="translate(20, 0)">
+
+			<g transform="translate(0, 0)">
 				<!-- data -->
 				<path class="path-line" d={path} stroke={primary_fill_color}></path>
 				
@@ -486,7 +558,7 @@ afterUpdate(() => {
 
 				
 			</g>
-		</g>
+		<!-- </g> -->
         
 	</svg>
 </div>
