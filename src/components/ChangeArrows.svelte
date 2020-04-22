@@ -12,6 +12,7 @@ export let change;
         margin-left: 0 !important;
         margin-bottom: 0px !important;
         width: 10px !important;
+        padding-bottom: 3px;
     }
 
     .chng-dn-small {
