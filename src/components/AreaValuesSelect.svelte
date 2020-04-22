@@ -22,7 +22,7 @@ $: dataKeys = Object.keys(areaValueData);
 let data = [];
 $: data = Object.keys(areaValueData).map((i) => areaValueData[dataKeys[i]]);
 
-let anchorKeys = [];
+// let anchorKeys = [];
 
 let searchAreaValues = [];
 
@@ -38,7 +38,7 @@ temp = Object.keys(areaValueData).forEach((key) => {
     return aV;
 });
 
-
+/*
 $: anchorKeys = dataKeys.map((key, i) => {
     if (key.toLowerCase() === 'a' || key === 'b' || key === 'c' && (tempKey !== 1)){
         tempKey = i;
@@ -107,7 +107,7 @@ $: anchorKeys = dataKeys.map((key, i) => {
 
     return {group: -1, index: -1, groupId: '-1'};
 });
-
+*/
 let aVsSelected;
 let aVEls;
 let areaTypeSelected;
@@ -192,6 +192,7 @@ function areaValueSelected() {
 let groupCountUnchecked = 0;
 
 let tempId = -1;
+/*
 function setAnchorId(i) {
     let id = '';
     if (anchorKeys.length > 0 && tempId != i) {
@@ -205,7 +206,7 @@ function setAnchorId(i) {
     return id;
     }
 }
-
+*/
 let currentAV = '';
 function currentAVType(thisEl) {
     let parentType = thisEl.dataset.parent;
@@ -547,7 +548,8 @@ onMount(() => {
             </div>
         </div>
         {#each areaValueData[item] as menuItem}
-            <div class="sub-menu-area-group" id="{setAnchorId(i)}">
+            <!-- <div class="sub-menu-area-group" id="{setAnchorId(i)}"> -->
+            <div class="sub-menu-area-group">
                 <div class="sub-menu-item" >
                     <div 
                         class='option-wrapper area-wrapper div-area-input-select-item div-{idClass} ml-60' 
