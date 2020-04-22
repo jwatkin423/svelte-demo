@@ -21,6 +21,7 @@ import KMISmall from '../components/KMISmall.svelte';
 import SmartPhoneChart from '../charts/smartphoneLineChart.svelte';
 import TabletPortraitChart from '../charts/tabletPortraitLineChart.svelte';
 import TabletLandScapeChart from '../charts/tabletLandscapeLineChart.svelte';
+import Datatable from '../tables/Table.svelte';
 
 /* 
 object from 
@@ -65,7 +66,9 @@ let rpadS;
 
 let dollar = false;
 let key = '';
-$: key = barData.key;
+let currentKey = '';
+// $: key = barData.key;
+
 
 // show/hide the doolar symbol
 $: setDollarSymbol(key);
@@ -148,7 +151,7 @@ function drawChart(event, initial = 0) {
 
 		} 
 
-		rpadL = setData.length == 13 ? -20 : 20;	
+		rpadL = setData.length == 13 ? -30 : 20;
 		rpadM = setData.length == 13 ? 0 : 30;
 		rpadS = setData.length == 13 ? 0 : 20;
 
@@ -160,7 +163,7 @@ function drawChart(event, initial = 0) {
 			p_color: p_color,
 			s_color: s_color
 		};
-		
+		currentKey = key;
 		chartTitle = ddsData.chartData[key].label;
 
 		yTicks = processPoints(dt);
@@ -195,7 +198,7 @@ function formatChartTitle(title) {
 		display: block;
 		margin-left: 10px;
 		margin-right: 10px;
-		max-height: 685px;
+		/* max-height: 685px; */
      }
 	
 	.content-inner-wrapper {
@@ -222,6 +225,11 @@ function formatChartTitle(title) {
 		max-height: 560px;
 		flex: 1 1 auto;
 		flex-basis: 100%;
+	}
+
+	.tabular-wrapper {
+		margin-top: 10px;
+		margin-left: 10px;
 	}
 
 	/* chart title */
@@ -336,6 +344,7 @@ function formatChartTitle(title) {
 			<h3 class="chart-title-h3">{chartTitle}</h3>
 	</div>
 		<div class="content-inner-wrapper">
+
 			<div class="kmi-wrapper">
 				{#if screenSize > 1024}
 					<KMI 
@@ -485,7 +494,7 @@ function formatChartTitle(title) {
 						<MnthYtdSmall 
 							data={barData.data} 
 							reportPeriod={reportPeriod} 
-							p_color={p_color} 
+							p_color={p_color}
 							s_color={s_color} 
 							showDollar={dollar}
 							yPoints={yT} 
@@ -496,8 +505,10 @@ function formatChartTitle(title) {
 				{/if}
 				
 			{/if}	
-			
-		</div>
+			<div class="tabular-wrapper">
+				<Datatable {p_color} {chartData} {reportPeriod} key={currentKey} {keys} />
+			</div>
+		</div> <!-- content-inner-wrapper -->
 </div>
 
 {:else}
