@@ -102,6 +102,33 @@ onMount(() => {
 
 });
 
+// convert month to int
+let months = {
+    'Jan': 1,
+    'Feb': 2,
+    'Mar': 3,
+    'Apr': 4,
+    'May': 5,
+    'Jun': 6,
+    'Jul': 7,
+    'Aug': 8,
+    'Sep': 9,
+    'Oct': 10,
+    'Nov': 11,
+    'Dec': 12
+};
+// comvert the date to a unix timestamp
+// to make the sorting work properly for
+// datatables
+function unixTimeStamp(d) {
+    let date_chunks = d.split(" ");
+    let month = months[date_chunks[0]]
+    let newDate = '01/' + month + "/20" + date_chunks[1];
+    let unixTimeStamp = new Date(newDate).getTime() / 1000;
+
+    return unixTimeStamp;
+}
+
 </script>
 
 <style>
@@ -114,6 +141,7 @@ onMount(() => {
     th {
         font-size: 10px;
         color: white;
+        text-align: right;
     }
 
     .time-period-th {
@@ -147,7 +175,9 @@ onMount(() => {
         background-color: #FFFFFF;
     }
 
-
+    .datetime-sort {
+        display: none;
+    }
 
 </style>
 
@@ -169,7 +199,7 @@ onMount(() => {
             <tbody>
             {#each allData as row,i}
                 <tr>
-                    <td align="right">{row.currentDate}</td>
+                    <td align="right" data-order='{unixTimeStamp(row.currentDate)}'>{row.currentDate}</td>
                     {#each row.report_row_data as data}
                         <td class="{data.key}" align="right">
                             <div class:active={data.key === key} class="td-value {data.key}">{data.value}</div>
