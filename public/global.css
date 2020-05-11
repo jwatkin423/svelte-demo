@@ -95,26 +95,46 @@ button:focus {
 }
 
 table.dataTable thead .sorting:before { 
-	content: url('../images/sort_both.png'); 
+	content: url('../images/sort_carrots.png'); 
+	vertical-align: middle;
+	display: table-cell;
+	width: 10px;
+	line-height: 36px;
 	float: right;
 }
 
 table.dataTable thead .sorting_asc:before { 
-	content: url('../images/sort_asc.png');
+	content: url('../images/sort_carrots.png');
+	vertical-align: middle;
+	display: table-cell;
+	width: 10px;
+	line-height: 36px;
 	float: right;
 }
 
 table.dataTable thead .sorting_desc:before { 
-	content: url('../images/sort_desc.png'); 
+	content: url('../images/sort_carrots.png'); 
+	vertical-align: middle;
+	display: table-cell;
+	width: 10px;
+	line-height: 36px;
 	float: right;
 }
 
 table.dataTable thead .sorting_asc_disabled:before { 
-	content: url('../images/sort_asc_disabled.png'); 
+	content: url('../images/sort_carrots.png'); 
+	vertical-align: middle;
+	display: table-cell;
+	width: 10px;
+	line-height: 36px;
 	float: right;
 }
 
 table.dataTable thead .sorting_desc_disabled:before { 
-	content: url('../images/sort_desc_disabled.png'); 
+	content: url('../images/sort_carrots.png'); 
+	vertical-align: middle;
+	display: table-cell;
+	width: 10px;
+	line-height: 36px;
 	float: right;
 }
