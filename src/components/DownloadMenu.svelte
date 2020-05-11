@@ -77,7 +77,7 @@ function validateForm() {
 <style>
 
     .menu-wrapper {
-        width: 375px;
+        width: 430px;
         display: inline-block;
         background-color: white;
         z-index: 9;
@@ -136,14 +136,14 @@ function validateForm() {
 
     .option-wrapper:nth-child(even) {
         position: relative;
-        float: left;
+        float: right;
         text-align: left;
         width: 50%;
     }
 
     .option-wrapper:nth-child(odd) {
         position: relative;
-        float: right;
+        float: left;
         text-align: left;
         width: 50%;
     }
@@ -204,6 +204,12 @@ function validateForm() {
         margin-right: 15px;
     }
 
+    .form-content {
+        margin-bottom: 10px;
+        height: 100%;
+        display: inline-block;
+    }
+
     @media only screen and (max-width: 480px) {
         .menu-wrapper {
             top: 55px;
@@ -225,20 +231,22 @@ function validateForm() {
         </div>
                 <div class="option-wrapper pull-left all-option">
                     <input class="input-select" id='all-dl' type="checkbox" data-type="all" name="all" value="all" on:change={toggleAll}>
-                    <label class='all-label'>MARKET AREA TRENDS</label>
+                    <label class='all-label'>ALL</label>
                 </div>
             <form id="pdf-download" action='{url}' method="POST">
-                {#each options as option}
-                    <div class="option-wrapper">
-                    <input
-                        class="input-select dl-item"
-                        type="checkbox"
-                        name="matReports[]"
-                        value="{option.value}"
-                        on:change={validateForm}>
-                    <label>{option.label}</label>
-                    </div>
-                {/each}    
+                <div class="form-content">
+                    {#each options as option}
+                        <div class="option-wrapper">
+                        <input
+                            class="input-select dl-item"
+                            type="checkbox"
+                            name="matReports[]"
+                            value="{option.value}"
+                            on:change={validateForm}>
+                        <label>{option.label}</label>
+                        </div>
+                    {/each}    
+                </div>
             <div class="pull-right done-btn">
                 <button on:click|preventDefault on:click={closeMenu} class="sub-menu-btn" >Cancel</button>
                 <button on:click|preventDefault on:click={submitForm} id='submit-button' class="sub-menu-btn" disabled={disabled} type="submit">Download</button>
