@@ -81,8 +81,8 @@ onMount(() => {
 <style>
 
 	main {
-        width: 1280px;
-        height: 1024px;
+        width: 1280;
+        height: 100%;
 		margin: auto;
         background-color: #F2F2F2;
     }
