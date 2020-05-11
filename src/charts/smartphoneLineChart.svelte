@@ -94,10 +94,10 @@ $: chartData = mappedPoints.map((mp) => {
 // chart data mapped
 $: chartDataTwo = mappedPointsTwo.map((mp, i) => {
 
-	if (chartType === 'saleMedianSoldMedian') {
+	if (chartType === 'saleMedianSoldMedian' || chartType === 'supplyDemand') {
 		let t = mp.x;
 		let s = mp.y;
-		
+		console
 		return {y:s, x:t};
 	} else {
 		mappedPointsTwo = [];
@@ -419,7 +419,7 @@ afterUpdate(() => {
 		<!-- y axis -->
 		{#each yTicks as tick, i}
 			<g class="tick y-axis tick-{tick}" transform="translate(10, {yScale(tick)})">
-				<line x1="30" x2="{line + 15}"></line>
+				<line x1="25" x2="{line + 15}"></line>
 				<text class='axis-tick-mark' dx="0" y="3">{tick >= 100 ? formatTick(tick) : dollar + '' + tick}</text>
 			</g>
 		{/each}
@@ -464,7 +464,7 @@ afterUpdate(() => {
 					on:mouseleave={hideToolTip}/>
 				{/each}
 
-				{#if chartType === 'saleMedianSoldMedian'}
+				{#if chartType === 'saleMedianSoldMedian' || chartType === 'supplyDemand'}
 						<path class="path-line" d={pathTwo} stroke={secondary_fill_color}></path>
 
 						{#each chartDataTwo as point, i}

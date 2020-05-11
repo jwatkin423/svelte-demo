@@ -94,7 +94,7 @@ $: chartData = mappedPoints.map((mp) => {
 // chart data mapped
 $: chartDataTwo = mappedPointsTwo.map((mp, i) => {
 
-	if (chartType === 'saleMedianSoldMedian') {
+	if (chartType === 'saleMedianSoldMedian' || chartType === 'supplyDemand') {
 		let t = mp.x;
 		let s = mp.y;
 		
@@ -118,7 +118,7 @@ $: textWidth = innerWidth / xTicks.length;
 
 let lineHeight = -height;
 let line = width;
-$: line = width - 35;
+$: line = width - (width > 650 ? 40 : 30);
 
 // format ticks
 function formatTick(tick) {
@@ -418,7 +418,7 @@ function hideToolTip() {
 			<!-- y axis -->
 			{#each yTicks as tick, i}
 				<g class="tick y-axis tick-{tick}" transform="translate(20, {yScale(tick)})">
-					<line x1="30" x2="{line}"></line>
+					<line x1="25" x2="{line}"></line>
 					<text class='axis-tick-mark' dx="0" y="3">{tick >= 100 ? formatTick(tick) : dollar + '' + tick}</text>
 				</g>
 			{/each}
@@ -463,7 +463,7 @@ function hideToolTip() {
 						on:mouseleave={hideToolTip}/>
 					{/each}
 
-					{#if chartType === 'saleMedianSoldMedian'}
+					{#if chartType === 'saleMedianSoldMedian' || chartType === 'supplyDemand'}
 						<path class="path-line" d={pathTwo} stroke={secondary_fill_color}></path>
 
 						{#each chartDataTwo as point, i}

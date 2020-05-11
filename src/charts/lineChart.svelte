@@ -103,7 +103,7 @@ $: chartData = mappedPoints.map((mp) => {
 // chart data mapped
 $: chartDataTwo = mappedPointsTwo.map((mp, i) => {
 
-	if (chartType === 'saleMedianSoldMedian') {
+	if (chartType === 'saleMedianSoldMedian' || chartType === 'supplyDemand') {
 		let t = mp.x;
 		let s = mp.y;
 		
@@ -343,7 +343,7 @@ afterUpdate(() => {
 		display: block;
 		height: 576px;
 		margin-left: 10px;
-		max-width: 1048px;
+		max-width: 1068px;
 	}
 
 	svg {
@@ -522,7 +522,6 @@ afterUpdate(() => {
 			{/each}
 
 			{#each xTicks as tick, i}
-				<!-- <g class="tick tick-{ tick }" transform="translate({xScale(i)},{height - 30})"> -->
 				<g class="tick tick-{ tick }">
                     {#if (tick.includes('<br>') && i !== (xTicks.length - 1))}
 						<text class='axis-tick-mark' dx=0 y="{height - 10}px" x="{xScale(i)}px">{formatYear(tick)}</text>
@@ -540,20 +539,20 @@ afterUpdate(() => {
 				<!-- set the circles for the data points -->
 				{#each chartData as point, i}
 					<circle class="enabled" class:heyo cx='{xScale(point.x)}' cy='{yScale(point.y)}' r='{r}' fill={primary_fill_color}
-					on:mouseover={(e) => {showToolTip(i, e.pageX, e.clientY, point, 'sold') }} 
+					on:mouseover={(e) => {showToolTip(i, e.pageX, e.clientY, point, 'sale') }}
 					on:mouseleave={hideToolTip}/>
 				{/each}
 
 				<!-- Second Path Line and Circles-->
-				{#if chartType === 'saleMedianSoldMedian'}
+				{#if chartType === 'saleMedianSoldMedian' || chartType === 'supplyDemand'}
 					<path class="path-line" d={pathTwo} stroke={secondary_fill_color}></path>
 			   
 					{#each chartDataTwo as point, i}
-					<circle class="enabled" class:heyo cx='{xScale(point.x)}' cy='{yScale(point.y)}' r='{r}' fill={secondary_fill_color}
-					on:mouseover={(e) => {showToolTip(i, e.pageX, e.clientY, point, 'sale') }} 
-					on:mouseleave={hideToolTip}/>
-					{chartDataTwo = []}
-				{/each}
+						<circle class="enabled" class:heyo cx='{xScale(point.x)}' cy='{yScale(point.y)}' r='{r}' fill={secondary_fill_color}
+						on:mouseover={(e) => {showToolTip(i, e.pageX, e.clientY, point, 'sold') }} 
+						on:mouseleave={hideToolTip}/>
+						{chartDataTwo = []}
+					{/each}
 				{/if}
 
 				
