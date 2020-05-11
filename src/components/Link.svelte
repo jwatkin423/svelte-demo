@@ -25,9 +25,9 @@ keys.map((key, i) =>{
 	let cg = data[key].group;
 	if (!groups[cg]) {
 		groups[cg] = [];
-		groups[cg].push({'key': data[key].key, 'label': data[key].label});
+		groups[cg].push({'key': data[key].key, 'label': data[key].link});
 	} else if (groups[cg]) {
-		groups[cg].push({'key': data[key].key, 'label': data[key].label});
+		groups[cg].push({'key': data[key].key, 'label': data[key].link});
 	}
 });
 
@@ -71,7 +71,7 @@ groups = groups.filter((el) => {
 		font-size: 20px;
 		color: #ffffff;
 	}
-	
+
 	@media only screen and (max-width: 1024px) {
 		li.td-list-par {
 			height: 30px;
