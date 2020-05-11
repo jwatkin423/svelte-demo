@@ -14,7 +14,6 @@ import { tickMarks } from '../utils/_utils';
 import { onMount } from 'svelte';
 import Linechart from '../charts/lineChart.svelte';
 import chartStore from '../utils/chart-store';
-import Table  from '../components/Table.svelte';
 import KMI from '../components/KMI.svelte';
 import KMIMedium from '../components/KMIMedium.svelte';
 import KMISmall from '../components/KMISmall.svelte';
@@ -35,7 +34,7 @@ let keys = ddsData.keys;
 let reportPeriod = ddsData.reportPeriod;
 let rpTest = ddsData.reportPeriod;
 let p_color = typeof(ddsData.p_color) === undefined ? '#019184' : ddsData.p_color;
-let s_color = ddsData.s_color;
+let s_color = typeof(ddsData.s_color) === undefined ? '#666666' : ddsData.s_color;
 let chartData = ddsData.chartData;
 let disclaimer = ddsData.strDisclaimer;
 export let mobileKey = 'has not been set';
@@ -141,7 +140,22 @@ function drawChart(event, initial = 0) {
 			});
 		}
 
-		else if (key !== '' && key !== 'saleMedianSoldMedian') {
+		else if (key === 'supplyDemand') {
+			dt = setData.map((d) => { return d[0]; });
+			dtTwo = setData.map((d) => { return d[1]; });
+
+			mPoints = setData.map( (el, i) => {
+				el[0] /= 1;
+				return {y: el[0], x: i};
+			});
+
+			mPointsTwo = setData.map( (el, i) => {
+				el[1] /= 1;
+				return {y: el[1], x: i};
+			});
+		}
+
+		else if (key !== '' && key !== 'saleMedianSoldMedian' && key !== 'supplyDemand') {
 			dt = setData.map((d) => {return d});
 
 			mPoints = setData.map( (el, i) => {
@@ -210,7 +224,7 @@ function formatChartTitle(title) {
 	.kmi-wrapper {
 		margin-bottom: 10px;
 		display: flex;
-		flex-direction: column;
+		/* flex-direction: column; */
 		height: 60px;
 		background-color: #ffffff;
 		margin-left: 10px;
@@ -261,7 +275,7 @@ function formatChartTitle(title) {
 		padding-bottom: 0;
 		margin-top: 0;
 		margin-bottom: 0;
-		padding-left: 5px;
+		padding-left: 0;
 	}
 
      .sidebar-title-area {
@@ -300,7 +314,7 @@ function formatChartTitle(title) {
 		}
 	}
 
-	@media only screen and (max-width: 768px) {
+	@media only screen and (max-width: 1024px) {
  		.td-sidebar, .sidebar-buffer, .sidebar-menu-links, .sidebar-menu-title, .sidebar-title-area {
 			 display: none;
 		}
@@ -312,17 +326,19 @@ function formatChartTitle(title) {
 		.kmi-wrapper {
 			margin-left: 0px;
 		}
+
+		.tabular-wrapper {
+			margin-left: 0px;
+		}
  	}
 
-    @media only screen and (max-width: 768px) {
+    @media only screen and (max-width: 1024px) {
 		.content-inner-wrapper {
 			margin-left: 0 !important;
 		}
 	}
 
  </style>
-
-
 
 {#if "soldUnits" in ddsData.chartData}
 
@@ -348,29 +364,20 @@ function formatChartTitle(title) {
 			<div class="kmi-wrapper">
 				{#if screenSize > 1024}
 					<KMI 
-					data={barData.data} 
+					data={barData.data}
+					dataTwo={barData.dataTwo}
 					year={year} 
 					reportPeriod={reportPeriod}  
 					searchType={searchType} 
-					p_color={p_color} 
-					s_color={s_color}
+					{p_color} 
+					{s_color}
 					showDollar={dollar}
 					chartType={barData.key}/>
 				{/if}
-				{#if screenSize <= 1024 && screenSize >768}
-					<KMIMedium 
-					data={barData.data} 
-					year={year} 
-					reportPeriod={reportPeriod}  
-					searchType={searchType} 
-					p_color={p_color} 
-					s_color={s_color}
-					showDollar={dollar}
-					chartType={barData.key}/>
-				{/if}
-				{#if screenSize <= 768 && screenSize > 480}
+				{#if screenSize <= 1024 && screenSize > 480}
 					<KMIMedium
 					data={barData.data} 
+					dataTwo={barData.dataTwo}
 					year={year} 
 					reportPeriod={reportPeriod}  
 					searchType={searchType} 
@@ -381,7 +388,8 @@ function formatChartTitle(title) {
 				{/if}
 				{#if screenSize <= 480}
 					<KMISmall 
-					data={barData.data} 
+					data={barData.data}
+					dataTwo={barData.dataTwo}
 					year={year} 
 					reportPeriod={reportPeriod}  
 					searchType={searchType} 
@@ -390,6 +398,7 @@ function formatChartTitle(title) {
 					showDollar={dollar}
 					chartType={barData.key}/>
 				{/if}
+				
 			</div>
 			
 			{#if searchType !== 'mnth-ytd'}
@@ -506,7 +515,7 @@ function formatChartTitle(title) {
 				
 			{/if}	
 			<div class="tabular-wrapper">
-				<Datatable {p_color} {chartData} {reportPeriod} key={currentKey} {keys} />
+				<Datatable {p_color} {chartData} {reportPeriod} key={currentKey} {keys}/>
 			</div>
 		</div> <!-- content-inner-wrapper -->
 </div>
