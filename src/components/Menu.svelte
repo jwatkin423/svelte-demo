@@ -339,6 +339,8 @@ function buildSearchParams() {
         }
 
         let querySrting = 'mlsId=' + mlsId + '&search=' + search + '&timePeriod=' + timePeriod + '&timePeriodValue=' + timePeriodValue + '&areaType=' + areaType + '&areaValueList=' + areaValueSelected + '&propertyTypeList=' + propertySelected + '&areaValuesDisplayText=' + areaValuesDisplayText +'&propertyTypeDisplayText=' + propertyTypeDisplayText;
+        querySrting += '&search_enable_flag=MQ==';
+
         let newUrl = url + pathname + '?' + encodeURI(querySrting);
         // newUrl = newUrl.replace('http://localhost:5000', 'http://staging.jw');
         // newUrl = newUrl.replace('http://staging.jw', 'http://localhost:5000');
