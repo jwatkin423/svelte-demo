@@ -45,7 +45,7 @@ const d = chartData.subscribe(cData  => {
 
 $: keys = tempData.keys;
 $: options = keys.map((t) => {
-    let label = tempData.chartData[t].label;
+    let label = tempData.chartData[t].link;
     let dlKey = tempData.chartData[t].key;
     return {'value': dlKey, 'label':label};
 });
@@ -351,7 +351,7 @@ let resizeImg;
         height: 75px;
     }
 
-    @media only screen and (min-width: 769px) {
+    @media only screen and (min-width: 1025px) {
         .ham-menu {
             display:none;
         }
