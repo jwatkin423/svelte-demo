@@ -14,6 +14,7 @@ export let key;
 export let keys = [];
 export let reportPeriod = [];
 export let p_color;
+
 let currentKey = '';
 $: currentKey = key;
 
@@ -82,6 +83,19 @@ function hexAToRGBA(hex,opacity){
     return result;
 }
 
+function smvsm(value, col) {
+    let sale = value[0];
+    let sold = value[1];
+
+    if (col === 1) {
+        return formatValues(sale, 'saleMedianSoldMedian');
+    } else if (col === 2) {
+        return formatValues(sold, 'saleMedianSoldMedian');
+    } else {
+        return formatValues(sale - sold, 'saleMedianSoldMedian');
+    }
+}
+
 onMount(() => {
     // set the table header colors
     let thEls = document.querySelectorAll('th');
@@ -129,6 +143,43 @@ function unixTimeStamp(d) {
     return unixTimeStamp;
 }
 
+function setDollarSymbol(key) {
+
+    let dollar = '';
+
+	if (key === 'soldMedian' || key === 'soldAvgPriceSquareFt' || key === 'saleMedianSoldMedian' || key === 'avgSalePrice') {
+		dollar = '$';
+	} else {
+		dollar = '';
+	}
+    
+    return dollar;
+
+}
+
+// format table values
+function formatValues(value, key) {
+
+    if (value > 0) {
+        let val = value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        let newVal = val;
+	
+        newVal = setDollarSymbol(key) + val;
+
+        return newVal;
+    } else {
+        let val = value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",").replace(/\-/, '');
+        let newVal = val;
+	
+        newVal = '(' + setDollarSymbol(key) + val + ')';
+
+        return newVal;
+    }
+
+}
+
+let src = '/images/sort_carrots.png';
+
 </script>
 
 <style>
@@ -136,20 +187,30 @@ function unixTimeStamp(d) {
     .table-wrapper{
         padding: 5px;
         background-color: white;
+        overflow-x: scroll;
+    }
+
+    table {
+        border-collapse: collapse;
+        min-width: 1040px;
     }
 
     th {
         font-size: 10px;
         color: white;
-        text-align: right;
+        padding: 0;
+    }
+
+    td > div {
+        vertical-align: middle;
     }
 
     .time-period-th {
-        /* width: 44px; */
+        width: 45px !important;
     }
 
     .column-th {
-        /* width: 83px; */
+        width: 75px;
     }
 
     td {
@@ -158,6 +219,7 @@ function unixTimeStamp(d) {
         line-height: 20px;
         height: 20px;
         color: #333333;
+        padding: 0;
     }
 
     .active {
@@ -179,6 +241,22 @@ function unixTimeStamp(d) {
         display: none;
     }
 
+    .th-div-header {
+        width: 75%;
+        text-align: right;
+        vertical-align: middle;
+        display: table-cell;
+        height: 36px;
+    }
+
+    .time-th-div-header {
+        width: 70%;
+        text-align: right;
+        vertical-align: middle;
+        display: table-cell;
+        height: 36px;
+    }
+
 </style>
 
 {#if data.length > 0}
@@ -187,13 +265,17 @@ function unixTimeStamp(d) {
         <table id="datatable" bind:this={tableElement} class="order-column" style="width: 100%;">
             <thead>
                 <tr>
-                    <th class="time-period-th">Time Period</th>
+                    <th class="time-period-th"><div class="time-th-div-header">Time Period</div>
+                    </th>
                 {#each row_headers as row_header, i}
-                    <th class="column-th" id="{keys[i]}">{row_header}</th>
+                       {#if row_header !== 'Median For Sale vs Median Sold' && row_header !== 'Median Sold Price' && row_header !== 'Median For Sale Price'}
+                            <th class="column-th" id="{keys[i]}"><div class="th-div-header">{row_header}</div></th>
+                        {:else if row_header === 'Median For Sale vs Median Sold'}
+                            <th class="column-th" id="{keys[i]}-sale"><div class="th-div-header">Median For Sale Price</div></th>
+                            <th class="column-th" id="{keys[i]}-sold"><div class="th-div-header">Median Sold Price</div></th>
+                            <th class="column-th" id="{keys[i]}-delta"><div class="th-div-header">Median For Sale vs Sold</div></th>
+                        {/if}
                 {/each}
-                    <!-- <th class="column-th">Supply & Demmand1</th>
-                    <th class="column-th">Average Sales Price2</th>
-                    <th class="column-th">Expired Listings3</th> -->
                 </tr>
             </thead>
             <tbody>
@@ -201,9 +283,28 @@ function unixTimeStamp(d) {
                 <tr>
                     <td align="right" data-order='{unixTimeStamp(row.currentDate)}'>{row.currentDate}</td>
                     {#each row.report_row_data as data}
-                        <td class="{data.key}" align="right">
-                            <div class:active={data.key === key} class="td-value {data.key}">{data.value}</div>
-                        </td>
+
+                       {#if data.key !== 'saleMedianSoldMedian' && data.key !== 'soldMedian' && data.key !== 'forSaleMedian'}
+                            {#if data.key === 'supplyDemand'}    
+                                <td class="{data.key}" align="right">
+                                    <div class:active={data.key === key} class="td-value {data.key}">{formatValues(data.value[0], data.key)}/{formatValues(data.value[1], data.key)}</div>
+                                </td>
+                            {:else}
+                                <td class="{data.key}" align="right">
+                                    <div class:active={data.key === key} class="td-value {data.key}">{formatValues(data.value, data.key)}</div>
+                                </td>
+                            {/if}
+                        {:else if data.key === 'saleMedianSoldMedian'}
+                            <td class="{data.key}" align="right">
+                                <div class:active={data.key === key} class="td-value forSaleMedian {data.key}">{smvsm(data.value, 1)}</div>
+                            </td>
+                            <td class="{data.key}" align="right">
+                                <div class:active={data.key === key} class="td-value soldMedian {data.key}">{smvsm(data.value, 2)}</div>
+                            </td>
+                            <td class="{data.key}" align="right">
+                                <div class:active={data.key === key} class="td-value {data.key}">{smvsm(data.value, 3)}</div>
+                            </td>
+                        {/if}
                     {/each}    
                 </tr>
             {/each}
