@@ -14,6 +14,7 @@ export let yPoints;
 
 // y Tick marks
 $: yTicks = yPoints;
+$: tickWidth(yPoints);
 
 // primary color prop
 export let p_color = false;
@@ -118,7 +119,11 @@ $: textWidth = innerWidth / xTicks.length;
 
 let lineHeight = -height;
 let line = width;
-$: line = width - (width > 650 ? 40 : 30);
+$: line = width - (width > 650 ? 15 : 5);
+
+function formatLine(line) {
+	return line + 'px';
+}
 
 // format ticks
 function formatTick(tick) {
@@ -144,6 +149,56 @@ function formatTick(tick) {
 	}
 
 	return tick;
+}
+
+let currentTickLength = 20;
+function tickWidth(ticks) {
+	
+	if (ticks.length > 0) {
+
+		let lastTick = ticks[ticks.length - 1];
+		if (lastTick >= 100000) {
+			let lastTickLength = formatTick(lastTick).length;
+
+			if (showDollar) {
+				lastTickLength++;
+			}
+
+			lastTickLength = (lastTickLength / 2) + 25;
+
+			currentTickLength = lastTickLength;
+			console.log(currentTickLength);
+			return currentTickLength + 'px';
+
+		}
+		else if (lastTick >= 1000) {
+
+			let lastTickLength = formatTick(lastTick).length;
+
+			if (showDollar) {
+				lastTickLength++;
+			}
+
+			lastTickLength = (lastTickLength / 2) + 20;
+
+			currentTickLength = lastTickLength;
+			console.log(currentTickLength);
+			return currentTickLength + 'px';
+		}
+
+		else if (lastTick < 1000 && lastTick >= 100) {
+			currentTickLength = (15/2)+ 25;
+		}
+
+		else if (lastTick < 100 && lastTick >= 10){
+			currentTickLength = (10 / 2) + 30;
+		} else {
+			currentTickLength = 25;
+		}
+		
+	}
+
+	return currentTickLength + 'px';
 }
 
 function formatPlotPoint(point) {
@@ -314,6 +369,16 @@ afterUpdate(() => {
 		stroke: #CCCCCC;
 	}
 
+	/* x axis tick mark */
+	.axis-tick-mark {
+		text-anchor: middle;
+	}
+
+	/* y axis tick mark */
+	.y-axis-tick-mark {
+		text-anchor: end;
+	}
+
 	.y-axis.tick-0 text {
 		fill: #666666;
 	}
@@ -417,13 +482,33 @@ afterUpdate(() => {
 	<svg xmlns="http://www.w3.org/2000/svg">
 
 		<!-- y axis -->
-		{#each yTicks as tick, i}
+		<!-- {#each yTicks as tick, i}
 			<g class="tick y-axis tick-{tick}" transform="translate(10, {yScale(tick)})">
 				<line x1="25" x2="{line + 15}"></line>
 				<text class='axis-tick-mark' dx="0" y="3">{tick >= 100 ? formatTick(tick) : dollar + '' + tick}</text>
 			</g>
-		{/each}
+		{/each} -->
 		<!-- </g> -->
+
+		<!-- y axis -->
+		{#each yTicks as tick, i}
+			{#if i > 0}
+				<g class="tick y-axis tick-{tick}" transform="translate(0, {yScale(tick)})">
+					<text class='y-axis-tick-mark' x="{currentTickLength}" dx="0" y="3">{tick >= 100 ? formatTick(tick) : dollar + '' + tick}</text>
+				</g>
+			{:else}
+				<g class="tick y-axis tick-{tick}" transform="translate(0, {yScale(tick)})">
+					<text class='y-axis-tick-mark' x="20" dx="0" y="3">{tick >= 100 ? formatTick(tick) : dollar + '' + tick}</text>
+				</g>
+			{/if}
+		{/each}
+
+		<!-- y axis -->
+		{#each yTicks as tick, i}
+			<g class="tick y-axis tick-{tick}" transform="translate(0, {yScale(tick)})">
+				<line x1="30" x2={formatLine(line)}></line>
+			</g>
+		{/each}
 
 		<!-- x axis -->
 		<g class="axis x-axis" transform="translate(0,0)">

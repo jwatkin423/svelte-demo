@@ -47,7 +47,12 @@ allData = reportPeriod.map((rp, i) => {
     let res = '';
     if (rp.includes('<br>')) {
         res = rp.split('<br>');
-        currentYear = res[1].substr(-2);
+        if (res[1] !== '1970') {
+            currentYear = res[1].substr(-2);
+        } else {
+            currentYear = currentYear;
+        }
+
         currentDate = res[0] + ' ' + currentYear;
     } else {
         currentDate = rp + ' ' + currentYear;
@@ -98,7 +103,7 @@ function smvsm(value, col) {
 
 onMount(() => {
     // set the table header colors
-    let thEls = document.querySelectorAll('th');
+    let thEls = document.querySelectorAll('.data-table-header');
     thEls.forEach((element) => {
         element.style.backgroundColor = p_color;
     });
@@ -243,7 +248,7 @@ let src = '/images/sort_carrots.png';
 
     .th-div-header {
         width: 75%;
-        text-align: right;
+        text-align: middle;
         vertical-align: middle;
         display: table-cell;
         height: 36px;
@@ -265,15 +270,15 @@ let src = '/images/sort_carrots.png';
         <table id="datatable" bind:this={tableElement} class="order-column" style="width: 100%;">
             <thead>
                 <tr>
-                    <th class="time-period-th"><div class="time-th-div-header">Time Period</div>
+                    <th class="time-period-th data-table-header"><div class="time-th-div-header">Time Period</div>
                     </th>
                 {#each row_headers as row_header, i}
                        {#if row_header !== 'Median For Sale vs Median Sold' && row_header !== 'Median Sold Price' && row_header !== 'Median For Sale Price'}
-                            <th class="column-th" id="{keys[i]}"><div class="th-div-header">{row_header}</div></th>
+                            <th class="column-th data-table-header" id="{keys[i]}"><div class="th-div-header">{row_header}</div></th>
                         {:else if row_header === 'Median For Sale vs Median Sold'}
-                            <th class="column-th" id="{keys[i]}-sale"><div class="th-div-header">Median For Sale Price</div></th>
-                            <th class="column-th" id="{keys[i]}-sold"><div class="th-div-header">Median Sold Price</div></th>
-                            <th class="column-th" id="{keys[i]}-delta"><div class="th-div-header">Median For Sale vs Sold</div></th>
+                            <th class="column-th data-table-header" id="{keys[i]}-sale"><div class="th-div-header">Median For Sale Price</div></th>
+                            <th class="column-th data-table-header" id="{keys[i]}-sold"><div class="th-div-header">Median Sold Price</div></th>
+                            <th class="column-th data-table-header" id="{keys[i]}-delta"><div class="th-div-header">Median For Sale vs Sold</div></th>
                         {/if}
                 {/each}
                 </tr>

@@ -355,6 +355,7 @@ function buildSearchParams() {
         
         let newUrl = url + pathname + '?' + encodeURI(querySrting);
         // newUrl = newUrl.replace('http://localhost:5000', 'http://staging.jw');
+        newUrl = newUrl.replace('http://staging.jw', 'http://localhost:5000');
 
         location.replace(newUrl);
         // console.log(newUrl);

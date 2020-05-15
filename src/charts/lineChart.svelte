@@ -15,6 +15,7 @@ export let yPoints;
 // y Tick marks
 $: yTicks = yPoints;
 $: tickWidth(yPoints);
+
 // primary color prop
 export let p_color = false;
 export let s_color = false;

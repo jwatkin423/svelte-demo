@@ -14,6 +14,7 @@ export let yPoints;
 
 // y Tick marks
 $: yTicks = yPoints;
+$: tickWidth(yPoints);
 
 // primary color prop
 export let p_color = false;
@@ -118,7 +119,11 @@ $: textWidth = innerWidth / xTicks.length;
 
 let lineHeight = -height;
 let line = width;
-$: line = width - (width > 650 ? 40 : 30);
+$: line = width - (width > 650 ? 20 : 10);
+
+function formatLine(line) {
+	return line + 'px';
+}
 
 // format ticks
 function formatTick(tick) {
@@ -152,6 +157,42 @@ function formatPlotPoint(point) {
     }
 
 	return point;
+}
+
+let currentTickLength = 25;
+function tickWidth(ticks) {
+	
+	if (ticks.length > 0) {
+
+		let lastTick = ticks[ticks.length - 1];
+		if (lastTick >= 1000) {
+
+			let lastTickLength = formatTick(lastTick).length;
+
+			if (showDollar) {
+				lastTickLength++;
+			}
+
+			lastTickLength = (lastTickLength / 2) + 27;
+
+			currentTickLength = lastTickLength;
+
+			return lastTickLength + 'px';
+		}
+
+		else if (lastTick < 1000 && lastTick >= 100) {
+			currentTickLength = (15/2)+ 20;
+		}
+
+		else if (lastTick < 100 && lastTick >= 10){
+			currentTickLength = (10 / 2) + 20;
+		} else {
+			currentTickLength = 25;
+		}
+		
+	}
+
+	return currentTickLength + 'px';
 }
 
 let tickSplits;
@@ -303,6 +344,16 @@ function hideToolTip() {
 		stroke: #CCCCCC;
 	}
 
+	/* x axis tick mark */
+	.axis-tick-mark {
+		text-anchor: middle;
+	}
+
+	/* y axis tick mark */
+	.y-axis-tick-mark {
+		text-anchor: end;
+	}
+
 	.y-axis.tick-0 text {
 		fill: #666666;
 	}
@@ -402,7 +453,7 @@ function hideToolTip() {
 		}
  	} 
 
-	 @media only screen and (max-width: 768px) {
+	 @media only screen and (max-width: 1024px) {
 		 .chart {
 			 margin-left: 0px !important;
 		 }
@@ -416,13 +467,27 @@ function hideToolTip() {
 		<svg xmlns="http://www.w3.org/2000/svg">
 
 			<!-- y axis -->
-			{#each yTicks as tick, i}
+			<!-- {#each yTicks as tick, i}
 				<g class="tick y-axis tick-{tick}" transform="translate(20, {yScale(tick)})">
 					<line x1="25" x2="{line}"></line>
 					<text class='axis-tick-mark' dx="0" y="3">{tick >= 100 ? formatTick(tick) : dollar + '' + tick}</text>
 				</g>
-			{/each}
+			{/each} -->
 			<!-- </g> -->
+
+			<!-- y axis -->
+			{#each yTicks as tick, i}
+				<g class="tick y-axis tick-{tick}" transform="translate(0, {yScale(tick)})">
+					<text class='y-axis-tick-mark' x="{currentTickLength}" dx="0" y="3">{tick >= 100 ? formatTick(tick) : dollar + '' + tick}</text>
+				</g>
+			{/each}
+
+			<!-- y axis -->
+			{#each yTicks as tick, i}
+				<g class="tick y-axis tick-{tick}" transform="translate(0, {yScale(tick)})">
+					<line x1="40" x2={formatLine(line)}></line>
+				</g>
+			{/each}
 
 			<!-- x axis -->
 			<g class="axis x-axis" transform="translate(0,0)">
@@ -433,11 +498,11 @@ function hideToolTip() {
 							<line class="small-tick" y1="10" y2="20" x1="0" x2="0"></line>
 						{:else if (tick.includes('<br>') && i !== (xTicks.length - 1))}
 							<line y1="10" y2="-86%" x1="0" x2="0"></line>
-							<text class='axis-tick-mark' dx=0 y="25">{formatText(tick)}</text>
+							<text class='axis-tick-mark' dx=0 y="20">{formatText(tick)}</text>
 						{/if}
 						{#if i === (xTicks.length - 1) }
 							<line y1="10" y2="-86%" x1="0" x2="0"></line>
-							<text class='axis-tick-mark' dx=0 y="25">{formatText(tick)}</text>
+							<text class='axis-tick-mark' dx=0 y="20">{formatText(tick)}</text>
 						{/if}	
 					</g>
 				{/each}
@@ -445,10 +510,10 @@ function hideToolTip() {
 				{#each xTicks as tick, i}
 					<g class="tick tick-{ tick }" transform="translate({xScale(i) + 20},{height - 30})">
 						{#if (tick.includes('<br>') && i !== (xTicks.length - 1))}
-							<text dx=0 y="25">{formatYear(tick)}</text>
+							<text dx=0 y="20">{formatYear(tick)}</text>
 						{/if}
 						{#if i === (xTicks.length - 1) }
-							<text class='axis-tick-mark' dx=0 y="25">{formatLastTickYear(tick)}</text>
+							<text class='axis-tick-mark' dx=0 y="20">{formatLastTickYear(tick)}</text>
 						{/if}	
 					</g>
 				{/each}
