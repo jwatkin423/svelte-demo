@@ -165,6 +165,7 @@ window.onclick = function(e) {
     }
 }
 
+// remove active filters
 function removeActiveFilters() {
     let prtyBtn = document.getElementById('btn-property');
     let areaBtn = document.getElementById('btn-area');
@@ -175,10 +176,10 @@ function removeActiveFilters() {
         areaBtn.style.removeProperty('color');
         timeBtn.style.removeProperty('color');
     }
-
-    
+   
 }
 
+// close pop-ups on iPad
 window.ontouchend = function(e) {
     if (!e.target.matches('circle.enabled')) {
         closeOpenHovers();
@@ -207,6 +208,8 @@ let showSmallClass = false;
 
 $: showSmallLogo(width);
 
+// show small logo on screen sizes
+// below 480 PX
 function showSmallLogo(width) {
 
     if (width > 480) {
