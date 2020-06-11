@@ -362,8 +362,7 @@ function formatChartTitle(title) {
 		<div class="content-inner-wrapper">
 
 			<div class="kmi-wrapper">
-				{#if screenSize > 1024}
-					<KMI 
+				<KMI 
 					data={barData.data}
 					dataTwo={barData.dataTwo}
 					year={year} 
@@ -373,32 +372,6 @@ function formatChartTitle(title) {
 					{s_color}
 					showDollar={dollar}
 					chartType={barData.key}/>
-				{/if}
-				{#if screenSize <= 1024 && screenSize > 480}
-					<KMIMedium
-					data={barData.data} 
-					dataTwo={barData.dataTwo}
-					year={year} 
-					reportPeriod={reportPeriod}  
-					searchType={searchType} 
-					p_color={p_color} 
-					s_color={s_color}
-					showDollar={dollar}
-					chartType={barData.key}/>
-				{/if}
-				{#if screenSize <= 480}
-					<KMISmall 
-					data={barData.data}
-					dataTwo={barData.dataTwo}
-					year={year} 
-					reportPeriod={reportPeriod}  
-					searchType={searchType} 
-					p_color={p_color} 
-					s_color={s_color}
-					showDollar={dollar}
-					chartType={barData.key}/>
-				{/if}
-				
 			</div>
 			
 			{#if searchType !== 'mnth-ytd'}
