@@ -13,6 +13,7 @@ import MnthYtdTabletLandscape from '../charts/MnthYtdTabletLandscape.svelte';
 import { tickMarks } from '../utils/_utils';
 import { onMount } from 'svelte';
 import Linechart from '../charts/lineChart.svelte';
+import LinechartV2 from '../charts/lineChartV2.svelte';
 import chartStore from '../utils/chart-store';
 import KMI from '../components/KMI.svelte';
 import KMIMedium from '../components/KMIMedium.svelte';
@@ -21,6 +22,7 @@ import SmartPhoneChart from '../charts/smartphoneLineChart.svelte';
 import TabletPortraitChart from '../charts/tabletPortraitLineChart.svelte';
 import TabletLandScapeChart from '../charts/tabletLandscapeLineChart.svelte';
 import Datatable from '../tables/Table.svelte';
+import MnthYtdMedian from '../charts/MnthYtdMedian.svelte';
 
 /* 
 object from 
@@ -46,6 +48,7 @@ let chartTitle = '';
 let barData = '';
 let barChartData = '';
 let yT = [];
+
 let mappedPoints;
 let mPoints;
 
@@ -54,6 +57,16 @@ let mPointsTwo;
 
 $: mappedPoints = mPoints;
 $: mappedPointsTwo = mPointsTwo;
+
+let mappedPointsThree;
+let mPointsThree;
+
+$: mappedPointsThree = mPointsThree;
+
+let mappedPointsFour;
+let mPointsFour;
+
+$: mappedPointsFour = mPointsFour;
 
 $: barData = barChartData;
 $: yT = [...yTicks];
@@ -66,21 +79,28 @@ let rpadS;
 let dollar = false;
 let key = '';
 let currentKey = '';
-// $: key = barData.key;
 
+// set kmi ID
+let kmi = '';
 
 // show/hide the doolar symbol
-$: setDollarSymbol(key);
+// $: setDollarSymbol(key);
 function setDollarSymbol(key) {
-	if (key === 'soldMedian' || key === 'soldAvgPriceSquareFt' || key === 'saleMedianSoldMedian') {
+	if (key === 'soldMedian' 
+		|| key === 'soldAvgPriceSquareFt' 
+		|| key === 'saleMedianSoldMedian'
+		|| key === 'avgSalePrice'
+		|| key === 'forSaleMedian'
+		|| key === 'soldMedian'
+		|| key === 'soldMedian')
+		 {
 		dollar = true;
 	} else {
 		dollar = false;
 	}
-	
 }
 
-let screenSize = window.innerWidth; 
+let screenSize = window.innerWidth;
 
 $: setChart(width);
 
@@ -101,6 +121,7 @@ function setKey (key) {
 	if (key) {
 		drawChart(key, 1);
 	}
+	setDollarSymbol(key);
 }
 
 // set the key to draw the chart
@@ -115,29 +136,39 @@ function drawChart(event, initial = 0) {
 	} else {
 		key = event.detail.text;
 	}
-
+	
 	if (key !== '' && key !== 'error_code') {
 		document.getElementById('m-' + key).click();
 	}
 
 	if (key !== 'error_code') {
 		const setData = ddsData.chartData[key].data;
+
 		let dt = [];
 		let dtTwo = [];
-
-		if (key === 'saleMedianSoldMedian') {
-			dt = setData.map((d) => { return d[0]; });
-			dtTwo = setData.map((d) => { return d[1]; });
+		
+		if (key === 'saleMedianSoldMedian' && searchType !== 'mnth-ytd') {
+			dt = setData.map((d) => { return d[0]/1; });
+			dtTwo = setData.map((d) => { return d[1]/1; });
 
 			mPoints = setData.map( (el, i) => {
-				el[0] /= 1;
 				return {y: el[0], x: i};
 			});
 
 			mPointsTwo = setData.map( (el, i) => {
-				el[1] /= 1;
 				return {y: el[1], x: i};
 			});
+		}
+
+		if (key === 'saleMedianSoldMedian' && searchType === 'mnth-ytd') {
+			dt = setData.map((d) => {
+					return (d[0] / 1) - (d[1] / 1); 
+				});
+
+			mPoints = dt.map( (el, i) => {
+				return {y: el[0], x: i};
+			});
+
 		}
 
 		else if (key === 'supplyDemand') {
@@ -156,13 +187,12 @@ function drawChart(event, initial = 0) {
 		}
 
 		else if (key !== '' && key !== 'saleMedianSoldMedian' && key !== 'supplyDemand') {
-			dt = setData.map((d) => {return d});
+			dt = setData.map((d) => {return d /=1; });
 
 			mPoints = setData.map( (el, i) => {
 				el /= 1;
 				return {y: el, x: i};
 			});
-
 		} 
 
 		rpadL = setData.length == 13 ? -30 : 20;
@@ -180,15 +210,27 @@ function drawChart(event, initial = 0) {
 		currentKey = key;
 		chartTitle = ddsData.chartData[key].label;
 
-		yTicks = processPoints(dt);
+		if (key !== 'saleMedianSoldMedian') {
+			yTicks = processPoints(dt);
+		} else {
+			yTicks = processDeltaPoints(dt, dtTwo);
+		}
+		
 	}
-	
 	
 }
 
+// process the points
 function processPoints (data) {
 	let maxValue = Math.max.apply(null, data);
 	return tickMarks(maxValue);
+}
+
+function processDeltaPoints(data) {
+	let maxValue = Math.max.apply(null, data);
+	let minValue = Math.min.apply(null, data);
+
+	return tickMarksDeltas(maxValue, minValue);
 }
 
 let width = 1280;
@@ -208,7 +250,7 @@ function formatChartTitle(title) {
 
      /* main content area */
      .content-area {
-		max-width: 1280px;
+		/* max-width: 1280px; */
 		display: block;
 		margin-left: 10px;
 		margin-right: 10px;
@@ -230,12 +272,46 @@ function formatChartTitle(title) {
 		margin-left: 10px;
 	}
 
+	.kmi-wrapper-double {
+		margin-bottom: 10px;
+		display: flex;
+		/* flex-direction: column; */
+		height: 80px;
+		background-color: #f2f2f2;
+		margin-left: 10px;
+	}
+
+	.kmi-div {
+		width: 50%;
+		background-color: #ffffff;
+	}
+
+	.kmi-div-left {
+		margin-right: 5px;
+		display: flex;
+	}
+
+	.kmi-div-right {
+		margin-left: 5px;
+		display: flex;
+	}
+
 	.chart-wrapper {
 		display: flex;
 		margin-left: 10px;
 		flex-direction: column;
 		background-color: #ffffff;
 		height: 100%;
+		/* max-height: 560px; */
+		flex: 1 1 auto;
+		flex-basis: 100%;
+	}
+
+	.chart-wrapper-blank {
+		width: 1068px;
+		display: flex;
+		margin-left: 10px;
+     	height: 100%;
 		max-height: 560px;
 		flex: 1 1 auto;
 		flex-basis: 100%;
@@ -340,6 +416,7 @@ function formatChartTitle(title) {
 
  </style>
 
+<!-- DATA DISPLAY SECTION -->
 {#if "soldUnits" in ddsData.chartData}
 
 	<div class="content-area" bind:clientHeight={height} bind:clientWidth={width}>
@@ -360,33 +437,91 @@ function formatChartTitle(title) {
 			<h3 class="chart-title-h3">{chartTitle}</h3>
 	</div>
 		<div class="content-inner-wrapper">
-
+			{#if searchType !== 'mnth-ytd'}
 			<div class="kmi-wrapper">
 				<KMI 
 					data={barData.data}
 					dataTwo={barData.dataTwo}
-					year={year} 
-					reportPeriod={reportPeriod}  
-					searchType={searchType} 
-					{p_color} 
+					year={year}
+					reportPeriod={reportPeriod}
+					searchType={searchType}
+					{p_color}
 					{s_color}
 					showDollar={dollar}
-					chartType={barData.key}/>
+					chartType={barData.key} 
+				/>
 			</div>
-			
+			{:else if (currentKey !== 'supplyDemand') && searchType === 'mnth-ytd'}
+				<div class="kmi-wrapper">
+					<KMI 
+						data={barData.data}
+						dataTwo={barData.dataTwo}
+						year={year} 
+						reportPeriod={reportPeriod}  
+						searchType={searchType} 
+						{p_color} 
+						{s_color}
+						showDollar={dollar}
+						chartType={barData.key}
+						/>
+				</div>
+			{:else}
+				<div class="kmi-wrapper-double">
+					<div class="kmi-div kmi-div-left">
+						<KMI 
+							data={barData.data}
+							year={year} 
+							reportPeriod={reportPeriod}  
+							searchType={searchType} 
+							{p_color} 
+							{s_color}
+							showDollar={dollar}
+							chartType={barData.key}
+							kmi={'left'}
+						/>
+					</div>
+					<div class="kmi-div kmi-div-right">
+						<KMI 
+							data={barData.dataTwo}
+							year={year} 
+							reportPeriod={reportPeriod}  
+							searchType={searchType} 
+							{p_color} 
+							{s_color}
+							showDollar={dollar}
+							chartType={barData.key}
+							kmi={'right'}
+						/>
+					</div>
+				</div>
+			{/if}
+			<!-- Line Charts -->
 			{#if searchType !== 'mnth-ytd'}
 				{#if screenSize > 1024}
-					<Linechart 
+					<!-- <Linechart 
 						reportPeriod={reportPeriod} 
 						p_color={p_color} 
 						s_color={s_color} 
 						yPoints={yT} 
-						mappedPoints={mappedPoints}
-						mappedPointsTwo={mappedPointsTwo}
+						mappedPoints={mPoints}
+						mappedPointsTwo={mPointsTwo}
 						showDollar={dollar}
 						reportYear={year}
 						rightPadding={rpadL}
-						chartType={barData.key}/>
+						chartType={barData.key}/> -->
+					<LinechartV2
+						data={barData.data}
+						dataTwo={barData.dataTwo}
+						reportPeriod={reportPeriod} 
+						reportYear={year}
+						p_color={p_color} 
+						s_color={s_color} 
+						yPoints={yT} 
+						mappedPoints={mPoints}
+						mappedPointsTwo={mPointsTwo}
+						showDollar={dollar}
+						chartType={barData.key} 
+						{screenSize} />	
 				{/if}
 				{#if screenSize <= 1024 && screenSize >768}
 					<TabletLandScapeChart 
@@ -430,22 +565,44 @@ function formatChartTitle(title) {
 				
 			{:else}	
 				{#if screenSize > 1024}
-					<div class="chart-wrapper">
-					<MnthYtd 
-						data={barData.data} 
-						reportPeriod={reportPeriod} 
-						p_color={p_color} 
-						s_color={s_color} 
-						showDollar={dollar}
-						yPoints={yT} 
-						mappedPoints={mappedPoints} 
-						reportYear={year}
-						chartType={barData.key}/>
-				</div>
+					{#if currentKey !== 'supplyDemand' && currentKey !== 'saleMedianSoldMedian'}
+						<div class="chart-wrapper">
+							<MnthYtdMedian 
+								data={barData.data}
+								reportPeriod={reportPeriod}
+								{p_color} 
+								{s_color} 
+								showDollar={dollar}
+								{screenSize}/>
+						</div>
+					{:else if currentKey === 'saleMedianSoldMedian'}	
+						<div class="chart-wrapper">
+							<MnthYtdMedian
+								data={barData.data}
+								reportPeriod={reportPeriod}
+								{p_color} 
+								{s_color} 
+								showDollar={dollar}
+								{screenSize}/>
+						</div>
+					{:else}
+						<div class="chart-wrapper-blank">
+							<MnthYtd 
+								data={barData.data}
+								dataTwo={barData.dataTwo}
+								reportPeriod={reportPeriod}
+								{p_color} 
+								{s_color} 
+								showDollar={dollar}
+								yPoints={yT} 
+								reportYear={year}
+								chartType={barData.key}/>
+						</div>
+					{/if}	
 				{/if}
 				{#if screenSize > 768 && screenSize <= 1024}
 					<div class="chart-wrapper">
-						<MnthYtdTabletLandscape
+						<MnthYtdTabletPortrait 
 							data={barData.data} 
 							reportPeriod={reportPeriod} 
 							p_color={p_color} 
