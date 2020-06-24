@@ -1,18 +1,12 @@
 <script>
 import { scaleLinear } from 'd3-scale';
+import * as d3 from 'd3';
 import { onMount, afterUpdate } from 'svelte';
 import clearData from '../helpers/clear-chart';
 import { resetChart } from '../helpers/chartreset';
 
-export let data = '';
+export let data = [];
 export let reportPeriod = [];
-export let reportYear;
-export let yData = '';
-export let yPoints;
-export let chartType = '';
-
-// y Tick marks
-$: yTicks = yPoints;
 
 // primary color prop
 export let p_color = false;
@@ -24,389 +18,313 @@ let secondary_fill_color = '';
 $: primary_fill_color = p_color ? p_color : '#019184';
 $: secondary_fill_color = s_color ? s_color :' #666666';
 
-export let mappedPoints = [];
-
 export let showDollar;
+$: console.log(showDollar);
+let dollar = '';
 $: dollar = showDollar ? '$' : '';
+
+const barWdith = 40;
+const barDistanceSetOne = .2;
+const barDistanceSetTwo = .65;
 
 let points = [];
 $: points = [...data];
-
+$: drawChart(points);
+let margin = { top: 20, right: 15, bottom: 29, left: 25 };
+let width = 420 - margin.left - margin.right;
+let height = 436 - margin.top - margin.bottom;
+	
+$: console.log(width);
 let xTicks = [];
-
 let tmpDate;
-$: xTicks = reportPeriod.map((r, i) => {
-	if (i == 0 || i == 2) {
-		tmpDate = r;
-	} else {
-		tmpDate = 'ytd';
+
+// draw the chart
+function drawChart() {
+	
+	// x ticks for the mnth ytd chart
+	xTicks[0] = reportPeriod[0];
+	xTicks[1] = 'YTD';
+
+	// svg for d3
+	let svg = d3.select(".median-chart")
+			.attr("width",width+margin.left+margin.right)
+			.attr("height",height+margin.top+margin.bottom);
+
+	// ensures the highest tick mark value is greater than
+	// the highest value in the dataset
+	let maxHeight = d3.max(data,function(d){return Math.abs(d) * 1.1});
+	
+	// determine the min point 
+	// for the y scale (0 or negative)
+	let min = 0;
+	if (d3.min(points) < 0 ) {
+		min = -maxHeight;
 	}
 
-	return tmpDate;
-});
+	// setup y scale
+	let yScale = d3.scaleLinear()
+					.domain([maxHeight, min])
+					.nice(8)
+					.range([0, height]);
 
-let tempValue;
-$: swapXTicksElements(xTicks);
+	// grid lines for the chart
+	let linesYaxis = d3.axisLeft(yScale)
+		.ticks(8)
+		.tickFormat("");
 
-function swapXTicksElements(xTicks) {
-	tempValue = xTicks[2];
-	xTicks[2] = xTicks[1];
-	xTicks[1] = tempValue;
-}
+	// add grid lines
+	svg.append("g")
+		.attr("class", "grid")
+		.attr("transform", "translate(0, " + margin.top + ")")
+		.call(linesYaxis)
+		.select('.domain').remove();
 
-let tempPoint;
-let pointOne;
-$: swapPointsElements(points);
+	d3.selectAll("line").attr("x1", "60").attr("x2", width);
 
-function swapPointsElements(points) {
-	tempPoint = points[2];
-	points[2] = points[1];
-	points[1] =  tempPoint;
-}
+	//add y axis
+	let yAxis = d3.axisLeft(yScale)
+		.ticks(8)
+		.tickSize(-width + margin.right)
+		.tickFormat(function(d) {
+			return formatYvalue(d);
+		});
 
-// chart and misc dimensions
-const padding = { top: 20, right: 15, bottom: 29, left: 25 };
-let width = 420;
-let height = 436;
-let textWidth = 488;
+	svg.append("g")
+		.attr('class', "med-axis-tick-mark")
+		.attr("x", "0")
+		.attr("x1", "0")
+		.attr("x2", "0")
+		.attr("transform", "translate(0, " + margin.top + ")")
+		.call(yAxis).attr("dx", "0")
+		.select('.domain').remove();
 
-// X and Y scale initialize
-let xScale = scaleLinear();
-let yScale = scaleLinear();
-let d3TicksScale = scaleLinear();
-let lowerDomain = 0;
-let upperDomain = 0;
-let d3Ticks = [];
+		// set the y axis to 30 pixles out
+		d3.selectAll("text").attr("x", "30");
+	  
 
-// $: buildYtickMarks(mappedPoints);
-
-// function buildYtickMarks(mappedPoints) {
-// 	let ticksDomain = [];
-// 	if (mappedPoints.length > 0) {
+	let bars = svg.selectAll("rect").data(data).enter().append("rect");
+	bars.attr("x",function(d,i) {
+		if (i === 0) {
+				return (width * barDistanceSetOne) + 10;
+		}
+		if (i === 1) {
+				return (width * barDistanceSetOne) + 60;
+		}
+		if (i == 2) {
+				return (width * barDistanceSetTwo) + 10;
+		}	
+		if (i == 3) {
+				return (width * barDistanceSetTwo) + 60;
+		}
+	})
+	.attr("y",function(d) {
+		if (min < 0) {
+			if(d < 0) {
+				return height/2 + margin.top;
+			}
+			else{
+				return yScale(d) + margin.top; 
+			}
+		} else {
+			return yScale(d) + margin.top;
+		}
 		
-// 		mappedPoints.forEach((v, i) => {
-// 			ticksDomain = [...ticksDomain, v.y];
-// 		}); 
+	})//for bottom to top
+	.attr("width", barWdith)
+	.attr("height", function(d) {
+		if (min < 0) {
+			return height/2 -yScale(Math.abs(d));
+		}
+    	return height -yScale(Math.abs(d));
+		
+	});
 
-// 		if (ticksDomain.length > 0) {
-// 			upperDomain = Math.max.apply(Math, ticksDomain);
-// 			d3Ticks = d3TicksScale.domain([0, upperDomain]).nice().ticks();
-// 			yScale = scaleLinear()
-// 			.domain([0, Math.max.apply(null, d3Ticks)])
-// 			.range([height - padding.bottom, padding.top]);
-// 		}
-// 	}
-// }
-
-// initializing x scale
-$: xScale = scaleLinear()
-	.domain([0, xTicks.length])
-	.range([0, width]);
-
-// initializing y scale
-$: yScale = scaleLinear()
-	.domain([0, Math.max.apply(null, yTicks)])
-	.range([height - padding.bottom, padding.top]);
-
-
-// set the inner width of the chart
-$: innerWidth = width - (padding.left + padding.right);
-// set the text width
-$: textWidth = innerWidth / (xTicks.length / 2);
-const barWidth = 30;
-
-let tickSplits = '';
-export let monthYear = '';
-let month;
-$:month = monthYear.month;
-
-let year;
-$:year = monthYear.year;
-function formatText(tick) {
+	bars.attr("fill",function(d, i) {
+		if(i===0 || i === 2){
+			return primary_fill_color;
+		}
+		else{
+			return secondary_fill_color;
+		}
+	});
 	
-	let res = tick.split("<br>");
-	tickSplits = {
-		"month": res[0],
-		"year": res[1]
-	};
+	//add tag to every bar
+	let tags = svg.selectAll().data(data).enter().append("text").text(function(d) {
+		return formatTags(d);
+	})
+	.attr("x", function(d,i){
+		if (i == 0) {
+			return (width * barDistanceSetOne) + 25;
+		}
+		if (i == 1) {
+			return (width * barDistanceSetOne) + 80;
+		}
+		if (i == 2) {
+			return (width * barDistanceSetTwo) + 30;
+		}	
+		if (i == 3) {
+			return (width * barDistanceSetTwo) + 80;
+		}
+	})
+	.attr("y",function(d, i) {
+		if (d >= 0) {
+			return yScale(d) + margin.top - 5;
+		} else {
+			return height - yScale(Math.abs(d)) + margin.top + 15;
+		}
+	})
+	.attr('class', 'tags');
 
-	return tickSplits.month;
+	// add the x axis
+	let xAxis = svg.selectAll().data(xTicks).enter().append("text").text(function (d,i) {
+		if (i === 0) {
+			let chunks = d.split('<br>');
+			return chunks[0];
+		} else {
+			return d;
+		}
+	})
+	.attr("x", function(d, i) {
+		if (i === 0) {
+			return (width * barDistanceSetOne) + 55;
+		} else if(i === 1){			
+			return (width * barDistanceSetTwo) + 55;
+		}
+	})
+	.attr("class", "xaxis-ticks")
+	.attr("y", height + (margin.bottom / 2) + margin.top);
+
+	// add styles to the 0 tick and corresponding
+	// grid line
+	let lines = svg.selectAll('.grid .tick line')
+		.each(function(d) {
+			if (d == 0) {
+				d3.select(this).attr("class", "line-0");
+			}
+		});
+
+	let yTicksText = svg.selectAll('.med-axis-tick-mark .tick text')
+		.each(function(d) {
+			if (d == 0) {
+				d3.select(this).attr("class", "text-0").style("fill", "#666666");
+			} else {
+				d3.select(this).attr("class", "non-zero");
+			}
+		});
+
 }
 
-function formatYear(tick) {
-	let res = tick.split("<br>");
-	tickSplits = {
-		"month": res[0],
-		"year": res[1]
-	};
+// format y value ticks
+function formatYvalue(d) {
+	let val = Math.abs(d);
 
-	return tickSplits.year.replace('20', "'");
-}
+	let flag = 0;
+	let yValue = '';
 
-function formatLastTick(tick) {
-	return tick;
-}
+	if(d < 0) {
+		flag = 1;
+	}
 
+	if (val < 1000) {
+		yValue = val;
+	}
 
-function formatLastTickYear(tick) {
-	return reportYear.replace('20', " '");
-}
+	// if the val gte 1,000 and lt 1,000,000
+	if(val >= 1000 && val < 1000000) {
+		val /= 1000;
+		yValue = val.toString();
+		yValue = dollar + yValue + 'K';
+	}
 
-// format ticks
-function formatTick(tick) {
+	// if the val gte 1,000,000 and lt 1,000,000,000
+	if(val >= 1000000 && val < 1000000000) {
+		val /= 1000000;
+		yValue = val.toString();
+		yValue = dollar + yValue + 'M';
+	}
+
+	// if the val gte 1,000,000,000 and lt 1,000,000,000,000
+	if(val >= 1000000000 && val < 1000000000000) {
+		val /= 1000000000;
+		yValue = val.toString();
+		yValue = dollar + yValue + 'B';
+	}
 	
-	if (tick >= 1000 && tick < 100000)  {
-		tick = (tick / 1000).toFixed(0);
-		tick += 'K';
+	if(flag) {
+		yValue = "(" + yValue + ")";
 	}
 
-	if (tick >= 100000 && tick < 1000000) {
-		tick = tick / 1000;
-		tick += 'K';
-	}
-
-	if (tick >= 1000000) {
-		tick = (tick / 1000000);
-		tick = Math.floor(tick);
-		tick += 'M';
-	}
-
-	if (showDollar) {
-		tick = dollar + tick;
-	}
-
-	return tick;
+	return yValue;
 }
 
-function formatPoint(point, strtPos = 90, tCount = 0) {
-	let len = point.length;
+// format the bar values
+function formatTags(d) {
+	let val = Math.abs(d);
 
-	let mv = 0;
-	let mvOne = 0;
-	let mvTwo = 0;
+	let flag = 0;
+	let yValue = '';
+
+	if(d < 0) {
+		flag = 1;
+	}
+
+	if (val < 1000) {
+		yValue = val;
+	}
+
+	// if the val gte 1,000 and lt 1,000,000
+	if(val >= 1000 && val < 1000000) {
+		val /= 1000;
+		val = val.toFixed(0);
+		yValue = val.toString();
+		yValue = dollar + yValue + 'K';
+	}
+
+	// if the val gte 1,000,000 and lt 1,000,000,000
+	if(val >= 1000000 && val < 1000000000) {
+		val /= 1000000;
+		val = val.toFixed(0);
+		yValue = val.toString();
+		yValue = dollar + yValue + 'M';
+	}
+
+	// if the val gte 1,000,000,000 and lt 1,000,000,000,000
+	if(val >= 1000000000 && val < 1000000000000) {
+		val /= 1000000000;
+		val = val.toFixed(0);
+		yValue = val.toString();
+		yValue = dollar + yValue + 'B';
+	}
 	
-	if (len == 1) {
-		mvTwo = -12;
+	if(flag) {
+		yValue = "(" + yValue + ")";
 	}
 
-	if (len >= 2 && len < 4) {
-		mvOne = 1;
-		mvTwo = -7;
-	}
-
-	if (len >= 4 && len < 6) {
-		mvOne = 4;
-		mvTwo = -4;
-	}
-
-	if (len >= 6) {
-		mvOne = 6;
-		mvTwo = -10;
-	}
-
-	if (tCount == 0 || tCount == 2) {
-		mv = mvOne;
-	} else if (tCount == 3) {
-		mv = mvTwo - 7;
-	} else {
-		mv = mvTwo;
-	}
-
-	return strtPos - (len + mv);
-}
-
-function formatPointText(num) {
-
-	if (num) {
-		num = num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    }
-
-    return dollar + num;
+	return yValue;
 }
 
 afterUpdate(() => {
-	let cleared = 0;
-
-    clearData.subscribe(value => {
-        cleared = value;
-    });
-
-    if (cleared == 1) {
-        resetChart();
-    }
+	if(points.length > 0) {
+		d3.selectAll(".median-chart > *").remove();	
+		drawChart();
+	}
 });
 
 </script>
 
 <style>
-	
 	.chart {
 		margin-top: 0px;
 		background-color: #ffffff;
 		display: block;
-		height: 436px;
-		width: 500px;
-        margin: auto;
-	}
-
-	svg {
-		position: relative;
-		width: 100%;
-		height: 100%;
-		display: block;
-		margin-left: auto;
-		margin-right: auto;
-	}
-
-	.tick {
-		font-family: Helvetica, Arial;
-		font-size: 14px;
-	}
-
-	.tick line {
-		stroke: #CCCCCC;
-	}
-
-	.tick text {
-		fill: #666666;
-		text-anchor: start;
-		white-space: unset !important;
-		font-size: 10px;
-	}
-
-	.y-axis .tick text {
-		fill: #CCCCCC;
-		text-anchor: start;
-		white-space: unset !important;
-		font-size: 10px;
-	}
-
-	.point-group text {
-		text-anchor: middle;
-		white-space: unset !important;
-		font-size: 10px;
-	}
-
-	.tick.tick-0 line {
-		stroke: #666666 !important;
-	}
-
-	.tick.tick-0 text {
-		fill: #666666 !important;
-	}
-
-	.point-text {
-        fill: #666666;
-    }
-
-	.test {
-		display: flex;
-		width: 100%;
-		background-color: #ffffff;
-		margin-left: 10px;
+		/* height: 436px; */
+		/* width: 420px; */
+		margin: auto;
 	}
 
 </style>
 
-{#if yTicks.length > 0}
 
-<div class="chart" bind:clientWidth={width} bind:clientHeight={height}>
-	<svg>
-
-	<g class="axis y-axis" transform="translate(0,{padding.top})">
-		{#each yTicks as tick, i}
-			<g class="tick tick-{tick}" transform="translate(5, {yScale(tick) - padding.bottom + 10})">
-				<line x1="35px" x2="95%"></line>
-				<text class="axis-tick-mark" dx="0" y="3">{tick >= 100 ? formatTick(tick) : dollar + '' + tick}</text>
-			</g>
-		{/each}
-	</g>
-	{#each points as point, i}
-		{#if i == 0}
-			<rect
-				x="130px"
-				y="{yScale(point)}"
-				width="{barWidth}"
-				height="{height - padding.bottom - yScale(point)}"
-				fill={primary_fill_color}
-			></rect>
-		{/if}
-		{#if i == 1}
-			<rect
-				x="170px"
-				y="{yScale(point)}"
-				width="{barWidth}"
-				height="{height - padding.bottom - yScale(point)}"
-				fill={secondary_fill_color}
-			></rect>
-		{/if}
-		{#if i == 2}
-			<rect
-				x="328px"
-				y="{yScale(point)}"
-				width="{barWidth}"
-				height="{height - padding.bottom - yScale(point)}"
-				fill={primary_fill_color}
-			></rect>
-		{/if}
-		{#if i == 3}
-			<rect
-				x="368px"
-				y="{yScale(point)}"
-				width="{barWidth}"
-				height="{height - padding.bottom  -  yScale(point)}"
-				fill={secondary_fill_color}
-			></rect>
-		{/if}		
-	{/each}
-
-	{#each xTicks as tick, i}
-		<g class="tick" transform="translate({xScale(i)},{height - 10})">
-			{#if i == 0}
-				<text class="axis-tick-mark" x="155px">{formatText(tick)}</text>
-			{/if}	
-			{#if i == 2}
-				<text class="axis-tick-mark" x="100px">{tick.toUpperCase()}</text>
-			{/if}
-		</g>
-	{/each}
-
-	{#each points as point, i}
-		<g class="point-group">
-			{#if i == 0}
-				<text
-					class="point-text" 
-					x="145px"
-					y="{yScale(point) - 5}"
-					height="{height}"
-					>{formatPointText(point)}</text>
-			{/if}
-			{#if i == 1}
-				<text 
-					class="point-text"
-					x="185px"
-					y="{yScale(point) - 5}"
-					height="{height - padding.bottom - yScale(point)}"
-					>{formatPointText(point)}</text>
-			{/if}
-			{#if i == 2}
-				<text 
-					class="point-text"
-					x="343px"
-					y="{yScale(point) - 5}"
-					height="{height - padding.bottom - yScale(point)}"
-					>{formatPointText(point)}</text>
-			{/if}	
-			{#if i == 3}
-				<text 
-					class="point-text"
-					x="383px"
-					y="{yScale(point) -5}"
-					height="{height - padding.bottom - yScale(point)}"
-					>{formatPointText(point)}</text>
-			{/if}
-		</g>
-	{/each}
-	</svg>
+<div class="chart">
+	<svg class="median-chart border-violet"></svg>
 </div>
-{/if}
