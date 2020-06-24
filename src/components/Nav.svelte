@@ -467,7 +467,7 @@ let resizeImg;
                         on:click={toggleShowDownload}
                         href="."
                         class="dropbtn">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 16"><title>Asset 1</title><g id="Layer_2" data-name="Layer 2"><g id="Layer_1-2" data-name="Layer 1"><path d="M19.35,6a7.49,7.49,0,0,0-14-2A6,6,0,0,0,6,16H19a5,5,0,0,0,.35-10ZM17,9l-5,5L7,9h3V5h4V9Z"/></g></g></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 16"><title>Download</title><g id="Layer_2" data-name="Layer 2"><g id="Layer_1-2" data-name="Layer 1"><path d="M19.35,6a7.49,7.49,0,0,0-14-2A6,6,0,0,0,6,16H19a5,5,0,0,0,.35-10ZM17,9l-5,5L7,9h3V5h4V9Z"/></g></g></svg>
                     </a>
                 </div>
                 <div class:showDownload="{showDownload === true}" class="download-menu">
