@@ -47,6 +47,8 @@ export let secondary_fill_color;
         display: flex;
         flex-wrap: wrap;
         max-width: 750px;
+        margin-left: auto;
+        margin-right: auto;
     }
 
     /* data kmi rows */
@@ -63,6 +65,8 @@ export let secondary_fill_color;
         color: #666666;
         text-align: center;
         margin-top: 2px;
+        width: 20%;
+        max-width: 150px;
     }
 
     /* div "body" cells */
@@ -73,7 +77,9 @@ export let secondary_fill_color;
         font-size: 16px;
         font-weight: 600;
         color: #666666;
-        vertical-align: unset;   
+        vertical-align: unset;
+        width: 20%;
+        max-width: 150px;
     }
 </style>
 

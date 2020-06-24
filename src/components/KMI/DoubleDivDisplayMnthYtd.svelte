@@ -33,6 +33,9 @@ export let ytdChange;
 // change percent
 export let percentYtdChange;
 
+export let kmi;
+
+
 // Colors:
 // primary fill color
 export let primary_fill_color;
@@ -59,10 +62,12 @@ export let secondary_fill_color;
         line-height: 10px;
         font-size: 10px;
         font-weight: 800;
-        width: 150px;
         color: #666666;
         text-align: center;
-        margin-top: 2px;
+        margin-top: 10px;
+        width: 20%;
+        max-width: 100px;
+
     }
 
     /* div "body" cells */
@@ -72,17 +77,41 @@ export let secondary_fill_color;
         line-height: 16px;
         font-size: 16px;
         font-weight: 600;
-        width: 150px;
         color: #666666;
         vertical-align: unset;   
+        width: 20%;
+        max-width: 100px;
+        margin-top: 4px;
+    }
+
+    .for-sale-sold {
+        margin-top: 5px;
+        text-align: left;
+    }
+
+    .span-for-sale-sold {
+        margin-left: 5px;
+    }
+
+    .span-rp-ytd {
+        float: right;
     }
 </style>
 
+
 <!-- KMI HEADER-->
 <div class="kmi-row">
-    <div class="div-header"></div>
-    <div class="div-header">{rpOne}</div>
-    <div class="div-header">{rpTwo}</div>
+    <div class="div-header for-sale-sold">
+        <span class="span-for-sale-sold">
+            {#if kmi === 'left'}
+                FOR SALE
+            {:else}
+                SOLD
+            {/if}
+        </span>
+    </div>
+    <div class="div-header"><i><Icon customColor={primary_fill_color} class="year-small-ml-0" tempId="line-one-{kmi}" icon={icon[2]} /></i> {rpOne}</div>
+    <div class="div-header"><i><Icon customColor={secondary_fill_color} class="year-small-ml-0" tempId="line-two-{kmi}" icon={icon[2]} /></i> {rpTwo}</div>
     <div class="div-header">Change</div>
     <div class="div-header">% Change</div>
 </div>
@@ -90,10 +119,7 @@ export let secondary_fill_color;
 <!-- KMI ROW ONE-->
 <div class="kmi-row kmi-data-row">
     <div class="div-cell">
-        <i>
-            <Icon customColor={primary_fill_color} class="year" tempId="line-one" icon={icon[2]} />
-        </i>
-        {monthDate}
+        <span class="span-rp-ytd">{monthDate}</span>
     </div>
     <div class="div-cell">{initMonth}</div>
     <div class="div-cell">{lastMonth}</div>
@@ -123,12 +149,7 @@ export let secondary_fill_color;
 
 <!-- KMI ROW TWO -->
 <div class="kmi-row kmi-data-row">
-    <div class="div-cell">
-        <i>
-            <Icon customColor={secondary_fill_color} class="year" tempId="line-two" icon={icon[2]} />
-        </i>
-        YTD
-    </div>
+    <div class="div-cell"><span class="span-rp-ytd">YTD</span></div>
     <div class="div-cell">{initMonthTwo}</div>
     <div class="div-cell">{lastMonthTwo}</div>
     <div class="div-cell">
@@ -154,3 +175,7 @@ export let secondary_fill_color;
         {/if}
     </div>
 </div>
+
+
+
+

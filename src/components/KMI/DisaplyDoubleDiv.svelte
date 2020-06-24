@@ -28,7 +28,6 @@ export let changeTwo;
 export let chngPercentTwo;
 
 // Colors:
-
 // primary fill color
 export let primary_fill_color;
 // seondary fill color
