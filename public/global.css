@@ -138,3 +138,57 @@ table.dataTable thead .sorting_desc_disabled:before {
 	line-height: 36px;
 	float: right;
 }
+
+/**
+Median For Sale vs Median Sold
+**/
+
+/*  */
+.tags {
+	fill: #666666;
+	text-anchor: middle;
+	white-space: unset !important;
+	font-size: 10px;
+}
+
+.non-zero  {
+	fill: #CCCCCC;
+	text-anchor: end;
+	white-space: unset !important;
+	font-size: 10px;
+}
+
+.med-axis-tick-mark > .tick > line  {
+	stroke: none;
+	stroke-width: 0;
+}
+
+.tick > line {
+	stroke: #CCCCCC;
+	stroke-width: 1px;
+}
+
+.xaxis-ticks{
+	font-size: 10px;
+	fill: #666666 !important;
+	text-anchor: middle;
+}
+
+.line-0 {
+	stroke: #666666 !important;
+	stroke-width: 1px;
+}
+
+.tick-0 {
+	stroke: #666666 !important;
+}
+
+.border-violet {
+	border: 1px solid violet;
+}
+
+.x-axis-ticks > .tick > text, .x-axis-ticks-two > .tick > text {
+	font-size: 10px;
+	fill: #666666;
+
+}
