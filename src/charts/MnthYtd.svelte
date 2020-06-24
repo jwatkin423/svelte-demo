@@ -5,9 +5,10 @@ import clearData from '../helpers/clear-chart';
 import { resetChart } from '../helpers/chartreset';
 
 export let data = '';
+export let dataTwo = '';
 export let reportPeriod = [];
 export let reportYear;
-export let yData = '';
+// export let yData = '';
 export let yPoints;
 export let chartType = '';
 // y Tick marks
@@ -23,13 +24,16 @@ let secondary_fill_color = '';
 $: primary_fill_color = p_color ? p_color : '#019184';
 $: secondary_fill_color = s_color ? s_color :' #666666';
 
-export let mappedPoints = [];
-
 export let showDollar;
 $: dollar = showDollar ? '$' : '';
 
 let points = [];
 $: points = [...data];
+
+let pointsTwo = [];
+$: pointsTwo = [...dataTwo];
+
+let pointsDelta = [];
 
 let xTicks = [];
 
@@ -76,30 +80,9 @@ $: bdTwo = width < 488 ? 30 : 10;
 // X and Y scale initialize
 let xScale = scaleLinear();
 let yScale = scaleLinear();
-let d3TicksScale = scaleLinear();
 let lowerDomain = 0;
 let upperDomain = 0;
-let d3Ticks = [];
 
-// $: buildYtickMarks(mappedPoints);
-
-// function buildYtickMarks(mappedPoints) {
-// 	let ticksDomain = [];
-// 	if (mappedPoints.length > 0) {
-		
-// 		mappedPoints.forEach((v, i) => {
-// 			ticksDomain = [...ticksDomain, v.y];
-// 		}); 
-
-// 		if (ticksDomain.length > 0) {
-// 			upperDomain = Math.max.apply(Math, ticksDomain);
-// 			d3Ticks = d3TicksScale.domain([0, upperDomain]).nice().ticks();
-// 			yScale = scaleLinear()
-// 			.domain([0, Math.max.apply(null, d3Ticks)])
-// 			.range([height - padding.bottom, padding.top]);
-// 		}
-// 	}
-// }
 
 // initializing x scale
 $: xScale = scaleLinear()
@@ -108,8 +91,8 @@ $: xScale = scaleLinear()
 
 // initializing y scale
 $: yScale = scaleLinear()
-	.domain([0, Math.max.apply(null, yTicks)])
-	.range([height - padding.bottom, padding.top]);
+		.domain([Math.min.apply(null, yTicks), Math.max.apply(null, yTicks)])
+		.range([height - padding.bottom, padding.top]);
 
 // set the inner width of the chart
 $: innerWidth = width - (padding.left + padding.right);
@@ -237,6 +220,16 @@ afterUpdate(() => {
     }
 });
 
+function yPos(point, i) {
+
+	if(point >= 0) {
+		return yScale(point);
+	} else {
+		return padding.top;
+	}
+
+}
+
 </script>
 
 <style>
@@ -248,6 +241,22 @@ afterUpdate(() => {
 		height: 474px;
 		width: 488px;
 		margin: auto;
+	}
+
+	.chart-left {
+		height: 474px;
+		width: calc(50% - 5px);
+		margin-right: 5px;
+		float: left;
+		background-color: #ffffff;
+	}
+
+	.chart-right {
+		height: 474px;
+		width: calc(50% - 5px);
+		margin-left: 5px;
+		float: right;
+		background-color: #ffffff;
 	}
 
 	svg {
@@ -312,103 +321,433 @@ afterUpdate(() => {
 </style>
 
 {#if yTicks.length > 0}
+	{#if chartType !== 'supplyDemand' && chartType !== 'saleMedianSoldMedian'}
+		<div class="chart" bind:clientWidth={width} bind:clientHeight={height}>
+			<svg>
 
-<div class="chart" bind:clientWidth={width} bind:clientHeight={height}>
-	<svg>
-
-	<g class="axis y-axis" transform="translate(0,{padding.top})">
-		{#each yTicks as tick, i}
-			<g class="tick tick-{tick}" transform="translate(5, {yScale(tick) - padding.bottom + 10})">
-				<line x1="35px" x2="95%"></line>
-				<text class="axis-tick-mark" dx="0" y="3">{tick >= 100 ? formatTick(tick) : dollar + '' + tick}</text>
+			<!-- y tick marks -->
+			<g class="axis y-axis" transform="translate(0,{padding.top})">
+				{#each yTicks as tick, i}
+					<g class="tick tick-{tick}" transform="translate(5, {yScale(tick) - padding.bottom + 10})">
+						<line x1="35px" x2="95%"></line>
+						<text class="axis-tick-mark" dx="0" y="3">{tick >= 100 ? formatTick(tick) : dollar + '' + tick}</text>
+					</g>
+				{/each}
 			</g>
-		{/each}
-	</g>
-	{#each points as point, i}
-		{#if i == 0}
-			<rect
-				x="110px"
-				y="{yScale(point)}"
-				width="{barWidth}"
-				height="{height - padding.bottom - yScale(point)}"
-				fill={primary_fill_color}
-			></rect>
-		{/if}
-		{#if i == 1}
-			<rect
-				x="160px"
-				y="{yScale(point)}"
-				width="{barWidth}"
-				height="{height - padding.bottom - yScale(point)}"
-				fill={secondary_fill_color}
-			></rect>
-		{/if}
-		{#if i == 2}
-			<rect
-				x="328px"
-				y="{yScale(point)}"
-				width="{barWidth}"
-				height="{height - padding.bottom - yScale(point)}"
-				fill={primary_fill_color}
-			></rect>
-		{/if}
-		{#if i == 3}
-			<rect
-				x="378px"
-				y="{yScale(point)}"
-				width="{barWidth}"
-				height="{height - padding.bottom  -  yScale(point)}"
-				fill={secondary_fill_color}
-			></rect>
-		{/if}		
-	{/each}
 
-	{#each xTicks as tick, i}
-		<g class="tick" transform="translate({xScale(i)},{height - 10})">
-			{#if i == 0}
-				<text class="axis-tick-mark" x="145px">{formatText(tick)}</text>
-			{/if}	
-			{#if i == 2}
-				<text class="axis-tick-mark" x="120px">{tick.toUpperCase()}</text>
-			{/if}
-		</g>
-	{/each}
-	{#each points as point, i}
-		<g class="point-group">
-			{#if i == 0}
-				<text
-					class="point-text"
-					x="130px"			
-					y="{yScale(point) - 5}"
-					height="{height}"
-					>{formatPointText(point)}</text>
-			{/if}
-			{#if i == 1}
-				<text 
-					class="point-text"
-					x="180px"
-					y="{yScale(point) - 5}"
-					height="{height - padding.bottom - yScale(point)}"
-					>{formatPointText(point)}</text>
-			{/if}
-			{#if i == 2}
-				<text
-					class="point-text" 
-					x="348px"
-					y="{yScale(point) - 5}"
-					height="{height - padding.bottom - yScale(point)}"
-					>{formatPointText(point)}</text>
-			{/if}	
-			{#if i == 3}
-				<text 
-					class="point-text"
-					x="398px"
-					y="{yScale(point) -5}"
-					height="{height - padding.bottom - yScale(point)}"
-					>{formatPointText(point)}</text>
-			{/if}
-		</g>
-	{/each}
-	</svg>
-</div>
+			<!-- data bars -->
+			{#each points as point, i}
+				{#if i == 0}
+					<rect
+						x="110px"
+						y="{yScale(point)}"
+						width="{barWidth}"
+						height="{height - padding.bottom - yScale(point)}"
+						fill={primary_fill_color}
+					></rect>
+				{/if}
+				{#if i == 1}
+					<rect
+						x="160px"
+						y="{yScale(point)}"
+						width="{barWidth}"
+						height="{height - padding.bottom - yScale(point)}"
+						fill={secondary_fill_color}
+					></rect>
+				{/if}
+				{#if i == 2}
+					<rect
+						x="328px"
+						y="{yScale(point)}"
+						width="{barWidth}"
+						height="{height - padding.bottom - yScale(point)}"
+						fill={primary_fill_color}
+					></rect>
+				{/if}
+				{#if i == 3}
+					<rect
+						x="378px"
+						y="{yScale(point)}"
+						width="{barWidth}"
+						height="{height - padding.bottom  -  yScale(point)}"
+						fill={secondary_fill_color}
+					></rect>
+				{/if}		
+			{/each}
+
+			<!-- x tick marks -->
+			{#each xTicks as tick, i}
+				<g class="tick" transform="translate({xScale(i)},{height - 10})">
+					{#if i == 0}
+						<text class="axis-tick-mark" x="145px">{formatText(tick)}</text>
+					{/if}	
+					{#if i == 2}
+						<text class="axis-tick-mark" x="120px">{tick.toUpperCase()}</text>
+					{/if}
+				</g>
+			{/each}
+
+			<!-- data points above bars -->
+			{#each points as point, i}
+				<g class="point-group">
+					{#if i == 0}
+						<text
+							class="point-text"
+							x="130px"			
+							y="{yScale(point) - 5}"
+							height="{height}"
+							>{formatPointText(point)}</text>
+					{/if}
+					{#if i == 1}
+						<text 
+							class="point-text"
+							x="180px"
+							y="{yScale(point) - 5}"
+							height="{height - padding.bottom - yScale(point)}"
+							>{formatPointText(point)}</text>
+					{/if}
+					{#if i == 2}
+						<text
+							class="point-text" 
+							x="348px"
+							y="{yScale(point) - 5}"
+							height="{height - padding.bottom - yScale(point)}"
+							>{formatPointText(point)}</text>
+					{/if}	
+					{#if i == 3}
+						<text 
+							class="point-text"
+							x="398px"
+							y="{yScale(point) -5}"
+							height="{height - padding.bottom - yScale(point)}"
+							>{formatPointText(point)}</text>
+					{/if}
+				</g>
+			{/each}
+			</svg>
+		</div>
+	{:else if chartType === 'supplyDemand'}	
+		<div class="chart-left">
+			<div class="chart" bind:clientWidth={width} bind:clientHeight={height}>
+				<svg>
+					<g class="axis y-axis" transform="translate(0,{padding.top})">
+						{#each yTicks as tick, i}
+							<g class="tick tick-{tick}" transform="translate(5, {yScale(tick) - padding.bottom + 10})">
+								<line x1="35px" x2="95%"></line>
+								<text class="axis-tick-mark" dx="0" y="3">{tick >= 100 ? formatTick(tick) : dollar + '' + tick}</text>
+							</g>
+						{/each}
+					</g>
+
+					<!-- data bars -->
+					{#each points as point, i}
+						{#if i == 0}
+							<rect
+								x="110px"
+								y="{yScale(point)}"
+								width="{barWidth}"
+								height="{height - padding.bottom - yScale(point)}"
+								fill={primary_fill_color}
+							></rect>
+						{/if}
+						{#if i == 1}
+							<rect
+								x="160px"
+								y="{yScale(point)}"
+								width="{barWidth}"
+								height="{height - padding.bottom - yScale(point)}"
+								fill={secondary_fill_color}
+							></rect>
+						{/if}
+						{#if i == 2}
+							<rect
+								x="328px"
+								y="{yScale(point)}"
+								width="{barWidth}"
+								height="{height - padding.bottom - yScale(point)}"
+								fill={primary_fill_color}
+							></rect>
+						{/if}
+						{#if i == 3}
+							<rect
+								x="378px"
+								y="{yScale(point)}"
+								width="{barWidth}"
+								height="{height - padding.bottom  -  yScale(point)}"
+								fill={secondary_fill_color}
+							></rect>
+						{/if}		
+					{/each}
+
+					<!-- x tick marks -->
+					{#each xTicks as tick, i}
+						<g class="tick" transform="translate({xScale(i)},{height - 10})">
+							{#if i == 0}
+								<text class="axis-tick-mark" x="145px">{formatText(tick)}</text>
+							{/if}	
+							{#if i == 2}
+								<text class="axis-tick-mark" x="120px">{tick.toUpperCase()}</text>
+							{/if}
+						</g>
+					{/each}
+
+					<!-- data points above bars -->
+					{#each points as point, i}
+						<g class="point-group">
+							{#if i == 0}
+								<text
+									class="point-text"
+									x="130px"			
+									y="{yScale(point) - 5}"
+									height="{height}"
+									>{formatPointText(point)}</text>
+							{/if}
+							{#if i == 1}
+								<text 
+									class="point-text"
+									x="180px"
+									y="{yScale(point) - 5}"
+									height="{height - padding.bottom - yScale(point)}"
+									>{formatPointText(point)}</text>
+							{/if}
+							{#if i == 2}
+								<text
+									class="point-text" 
+									x="348px"
+									y="{yScale(point) - 5}"
+									height="{height - padding.bottom - yScale(point)}"
+									>{formatPointText(point)}</text>
+							{/if}	
+							{#if i == 3}
+								<text 
+									class="point-text"
+									x="398px"
+									y="{yScale(point) -5}"
+									height="{height - padding.bottom - yScale(point)}"
+									>{formatPointText(point)}</text>
+							{/if}
+						</g>
+					{/each}
+				</svg>
+			</div>
+		</div>
+
+		<div class="chart-right">
+			<div class="chart" bind:clientWidth={width} bind:clientHeight={height}>
+				<svg>
+					<g class="axis y-axis" transform="translate(0,{padding.top})">
+						{#each yTicks as tick, i}
+							<g class="tick tick-{tick}" transform="translate(5, {yScale(tick) - padding.bottom + 10})">
+								<line x1="35px" x2="95%"></line>
+								<text class="axis-tick-mark" dx="0" y="3">{tick >= 100 ? formatTick(tick) : dollar + '' + tick}</text>
+							</g>
+						{/each}
+					</g>
+
+					<!-- data bars -->
+					{#each pointsTwo as point, i}
+						{#if i == 0}
+							<rect
+								x="110px"
+								y="{yScale(point)}"
+								width="{barWidth}"
+								height="{height - padding.bottom - yScale(point)}"
+								fill={primary_fill_color}
+							></rect>
+						{/if}
+						{#if i == 1}
+							<rect
+								x="160px"
+								y="{yScale(point)}"
+								width="{barWidth}"
+								height="{height - padding.bottom - yScale(point)}"
+								fill={secondary_fill_color}
+							></rect>
+						{/if}
+						{#if i == 2}
+							<rect
+								x="328px"
+								y="{yScale(point)}"
+								width="{barWidth}"
+								height="{height - padding.bottom - yScale(point)}"
+								fill={primary_fill_color}
+							></rect>
+						{/if}
+						{#if i == 3}
+							<rect
+								x="378px"
+								y="{yScale(point)}"
+								width="{barWidth}"
+								height="{height - padding.bottom  -  yScale(point)}"
+								fill={secondary_fill_color}
+							></rect>
+						{/if}		
+					{/each}
+
+					<!-- x tick marks -->
+					{#each xTicks as tick, i}
+						<g class="tick" transform="translate({xScale(i)},{height - 10})">
+							{#if i == 0}
+								<text class="axis-tick-mark" x="145px">{formatText(tick)}</text>
+							{/if}	
+							{#if i == 2}
+								<text class="axis-tick-mark" x="120px">{tick.toUpperCase()}</text>
+							{/if}
+						</g>
+					{/each}
+
+					<!-- data points above bars -->
+					{#each pointsTwo as point, i}
+						<g class="point-group">
+							{#if i == 0}
+								<text
+									class="point-text"
+									x="130px"			
+									y="{yScale(point) - 5}"
+									height="{height}"
+									>{formatPointText(point)}</text>
+							{/if}
+							{#if i == 1}
+								<text 
+									class="point-text"
+									x="180px"
+									y="{yScale(point) - 5}"
+									height="{height - padding.bottom - yScale(point)}"
+									>{formatPointText(point)}</text>
+							{/if}
+							{#if i == 2}
+								<text
+									class="point-text" 
+									x="348px"
+									y="{yScale(point) - 5}"
+									height="{height - padding.bottom - yScale(point)}"
+									>{formatPointText(point)}</text>
+							{/if}	
+							{#if i == 3}
+								<text 
+									class="point-text"
+									x="398px"
+									y="{yScale(point) -5}"
+									height="{height - padding.bottom - yScale(point)}"
+									>{formatPointText(point)}</text>
+							{/if}
+						</g>
+					{/each}
+				</svg>
+			</div>	
+		</div>
+	{:else if chartType === 'saleMedianSoldMedian'}	
+	<div class="chart" bind:clientWidth={width} bind:clientHeight={height}>
+			<svg>
+
+			<!-- y tick marks -->
+			<g class="axis y-axis" transform="translate(0,{padding.top})">
+				{#each yTicks as tick, i}
+					{#if tick >= 0}
+					<g class="tick tick-{tick}" transform="translate(5, {yScale(tick) - padding.bottom + 10})">
+						<line x1="35px" x2="95%"></line>
+						<text class="axis-tick-mark" dx="0" y="3">{tick >= 100 ? formatTick(tick) : dollar + '' + tick}</text>
+					</g>
+					{:else}
+						<g class="tick tick-{tick}" transform="translate(5, {yScale((tick)) - padding.bottom + 10})">
+							<line x1="35px" x2="95%"></line>
+							<text class="axis-tick-mark" dx="0" y="3">{tick <= -100 ? formatTick(tick) : dollar + '' + tick}</text>
+						</g>
+					{/if}
+				{/each}
+			</g>
+
+			<!-- data bars -->
+			{#each points as point, i}
+
+				{#if i == 0}
+					<rect
+						x="110px"
+						y="{yPos(point)}"
+						width="{barWidth}"
+						height="{height - padding.bottom - yScale(point)}"
+						fill={primary_fill_color}
+					></rect>
+				{/if}
+				{#if i == 1}
+					<rect
+						x="160px"
+						y="{yScale(point)}"
+						width="{barWidth}"
+						height="{height - padding.bottom - yScale(point)}"
+						fill={secondary_fill_color}
+					></rect>
+				{/if}
+				{#if i == 2}
+					<rect
+						x="328px"
+						y="{yScale(point)}"
+						width="{barWidth}"
+						height="{height - padding.bottom - yScale(point)}"
+						fill={primary_fill_color}
+					></rect>
+				{/if}
+				{#if i == 3}
+					<rect
+						x="378px"
+						y="{yScale(point)}"
+						width="{barWidth}"
+						height="{height - padding.bottom  -  yScale(point)}"
+						fill={secondary_fill_color}
+					></rect>
+				{/if}		
+			{/each}
+
+			<!-- x tick marks -->
+			{#each xTicks as tick, i}
+				<g class="tick" transform="translate({xScale(i)},{height - 10})">
+					{#if i == 0}
+						<text class="axis-tick-mark" x="145px">{formatText(tick)}</text>
+					{/if}	
+					{#if i == 2}
+						<text class="axis-tick-mark" x="120px">{tick.toUpperCase()}</text>
+					{/if}
+				</g>
+			{/each}
+
+			<!-- data points above bars -->
+			{#each points as point, i}
+				<g class="point-group">
+					{#if i == 0}
+						<text
+							class="point-text"
+							x="130px"			
+							y="{yScale(point) - 5}"
+							height="{height}"
+							>{formatPointText(point)}</text>
+					{/if}
+					{#if i == 1}
+						<text 
+							class="point-text"
+							x="180px"
+							y="{yScale(point) - 5}"
+							height="{height - padding.bottom - yScale(point)}"
+							>{formatPointText(point)}</text>
+					{/if}
+					{#if i == 2}
+						<text
+							class="point-text" 
+							x="348px"
+							y="{yScale(point) - 5}"
+							height="{height - padding.bottom - yScale(point)}"
+							>{formatPointText(point)}</text>
+					{/if}	
+					{#if i == 3}
+						<text 
+							class="point-text"
+							x="398px"
+							y="{yScale(point) -5}"
+							height="{height - padding.bottom - yScale(point)}"
+							>{formatPointText(point)}</text>
+					{/if}
+				</g>
+			{/each}
+			</svg>
+		</div>
+	{/if}
 {/if}
