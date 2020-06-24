@@ -301,9 +301,7 @@ function buildSearchParams() {
     if (!allArea) {
         areaValueItems = document.querySelectorAll('input[data-parent="' + areaType + '"]:checked');
     }
-    console.log(propertyItems.length);
-    console.log(areaValueItems.length);
-    console.log(allArea);
+    
     if ((propertyItems.length > 0 && areaValueItems.length > 0) || (propertyItems.length > 0 && allArea)) {
 
         propertyItems.forEach((propEl) => {
@@ -517,24 +515,18 @@ onMount(() => {
         padding-bottom: 0;
     }
 
-    .first-search-button-themed {
-        margin-right: 20px;
-    }
-    
     .menu-button {
         text-align: left;
     }
 
-    @media only screen and (max-width: 1024px) {
-        form {
-            width: 460px;
-            margin-left: auto;
-            margin-right: auto;
-        }
+    form {
+        width: 460px;
+        margin-left: auto;
+        margin-right: auto;
+    }
 
-        .themed {
-            margin-left: 0 !important;
-        }
+    .themed {
+        margin-left: 0 !important;
     }
 
 </style>
