@@ -4,7 +4,6 @@ import { onMount } from 'svelte';
 export let icon;
 export let tempId = 'default';
 export let customColor = '';
-
 let path = [];
 let classes = "";
 let viewBox = "";
@@ -167,9 +166,15 @@ function setCustomColor(customColor, svgId) {
     margin-right: 2px;
   }
 
-.year-small {
+  .year-small {
     font-size: 8px !important;
     margin-right: 2px;
+  }
+
+  .year-small-ml-0 {
+    font-size: 8px !important;
+    margin-right: 2px;
+    margin-left: 0 !important;
   }
 
   .search-menu-button, .dropdown-menu-button {
