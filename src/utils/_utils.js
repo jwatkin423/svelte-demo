@@ -1,6 +1,3 @@
-import { tick } from "svelte";
-import { max } from "d3";
-
 export function tickMarks(maxValue) {
     let tickCeiling;
     let yTickArrayTemp = [];
