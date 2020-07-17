@@ -20,17 +20,47 @@ $: currentKey = key;
 
 $: setActiveCol(currentKey);
 
+let group = '';
+
 export function setActiveCol(key) {
     
     let els = document.querySelectorAll('div.td-value');
     els.forEach((el) => {
+        let className = el.className;
         let res = el.className.split(" ");
-
+        let regex = /group\-[1-9]*/g
+        
+        // set he active column
         if (res.indexOf(key) !== -1) {
             let bgColor = hexAToRGBA(p_color, 15);
             el.style.backgroundColor = bgColor;
+            group = className.match(regex);
+            group = group[0];
         } else {
             el.style.backgroundColor = '';
+        }
+    });
+
+    // display/hide tds in the same/different group respectively
+    let tdCells =  document.querySelectorAll('td.td-cell');
+    tdCells.forEach((el) => {
+
+        let res = el.className.split(" ");
+        if (res.indexOf(group) !== -1) {
+            el.style.display = 'table-cell';
+        } else {
+            el.style.display = 'none';
+        }
+    });
+
+    // display/hide ths in the same/different group respectively
+    let columnHeaders = document.querySelectorAll('th.column-th');
+    columnHeaders.forEach((thEl) => {
+        let classNames = thEl.className.split(" ");
+        if (classNames.indexOf(group) !== -1) {
+            thEl.style.display = 'table-cell';
+        } else {
+            thEl.style.display = 'none';
         }
     });
 }
@@ -57,10 +87,13 @@ allData = reportPeriod.map((rp, i) => {
     } else {
         currentDate = rp + ' ' + currentYear;
     }
+    
     let currentKey = '';
+    
+    // map rows
     data.forEach((element, t) => {
         report_row_data[t] = [];
-        report_row_data[t] = {'value': element[1].data[i], 'key': keys[t]};
+        report_row_data[t] = {'value': element[1].data[i], 'key': keys[t], group: element[1].group};
     });
     
     return {
@@ -72,7 +105,7 @@ allData = reportPeriod.map((rp, i) => {
 // build the row headers
 let row_headers = [];
 row_headers = data.map((report, i) => {
-    return report[1].label;
+    return {'label':report[1].label, 'group': report[1].group};
 });
 
 
@@ -204,20 +237,14 @@ let src = '/images/sort_carrots.png';
         font-size: 10px;
         color: white;
         padding: 0;
+        width: 115px;
+        text-align: center;
     }
 
     td > div {
         vertical-align: middle;
+        text-align: center;
     }
-
-    .time-period-th {
-        width: 45px !important;
-    }
-
-    .column-th {
-        width: 75px;
-    }
-
     td {
         font-size: 10px;
         vertical-align: middle;
@@ -225,6 +252,7 @@ let src = '/images/sort_carrots.png';
         height: 20px;
         color: #333333;
         padding: 0;
+        text-align: center;
     }
 
     .active {
@@ -247,8 +275,8 @@ let src = '/images/sort_carrots.png';
     }
 
     .th-div-header {
-        width: 75%;
-        text-align: middle;
+        width: 20%;
+        text-align: center;
         vertical-align: middle;
         display: table-cell;
         height: 36px;
@@ -270,15 +298,15 @@ let src = '/images/sort_carrots.png';
         <table id="datatable" bind:this={tableElement} class="order-column" style="width: 100%;">
             <thead>
                 <tr>
-                    <th class="time-period-th data-table-header"><div class="time-th-div-header">Time Period</div>
+                    <th class="time-period-th data-table-header date-group"><div class="time-th-div-header">Time Period</div>
                     </th>
                 {#each row_headers as row_header, i}
-                       {#if row_header !== 'Median For Sale vs Median Sold' && row_header !== 'Median Sold Price' && row_header !== 'Median For Sale Price'}
-                            <th class="column-th data-table-header" id="{keys[i]}"><div class="th-div-header">{row_header}</div></th>
-                        {:else if row_header === 'Median For Sale vs Median Sold'}
-                            <th class="column-th data-table-header" id="{keys[i]}-sale"><div class="th-div-header">Median For Sale Price</div></th>
-                            <th class="column-th data-table-header" id="{keys[i]}-sold"><div class="th-div-header">Median Sold Price</div></th>
-                            <th class="column-th data-table-header" id="{keys[i]}-delta"><div class="th-div-header">Median For Sale vs Sold</div></th>
+                       {#if row_header.label !== 'Median For Sale vs Median Sold' && row_header.label !== 'Median Sold Price' && row_header.label !== 'Median For Sale Price'}
+                            <th class="column-th data-table-header group-{row_header.group}" id="{keys[i]}"><div class="th-div-header">{row_header.label}</div></th>
+                        {:else if row_header.label === 'Median For Sale vs Median Sold'}
+                            <th class="column-th data-table-header group-{row_header.group}" id="{keys[i]}-sale"><div class="th-div-header">Median For Sale Price</div></th>
+                            <th class="column-th data-table-header group-{row_header.group}" id="{keys[i]}-sold"><div class="th-div-header">Median Sold Price</div></th>
+                            <th class="column-th data-table-header group-{row_header.group}" id="{keys[i]}-delta"><div class="th-div-header">Median For Sale vs Sold</div></th>
                         {/if}
                 {/each}
                 </tr>
@@ -291,23 +319,23 @@ let src = '/images/sort_carrots.png';
 
                        {#if data.key !== 'saleMedianSoldMedian' && data.key !== 'soldMedian' && data.key !== 'forSaleMedian'}
                             {#if data.key === 'supplyDemand'}    
-                                <td class="{data.key}" align="right">
-                                    <div class:active={data.key === key} class="td-value {data.key}">{formatValues(data.value[0], data.key)}/{formatValues(data.value[1], data.key)}</div>
+                                <td class="td-cell {data.key} group-{data.group}" align="right">
+                                    <div class:active={data.key === key} class="td-value {data.key} group-{data.group}">{formatValues(data.value[0], data.key)}/{formatValues(data.value[1], data.key)}</div>
                                 </td>
                             {:else}
-                                <td class="{data.key}" align="right">
-                                    <div class:active={data.key === key} class="td-value {data.key}">{formatValues(data.value, data.key)}</div>
+                                <td class="td-cell {data.key} group-{data.group}" align="right">
+                                    <div class:active={data.key === key} class="td-value {data.key} group-{data.group}">{formatValues(data.value, data.key)}</div>
                                 </td>
                             {/if}
                         {:else if data.key === 'saleMedianSoldMedian'}
-                            <td class="{data.key}" align="right">
-                                <div class:active={data.key === key} class="td-value forSaleMedian {data.key}">{smvsm(data.value, 1)}</div>
+                            <td class="td-cell {data.key} group-{data.group}" align="right">
+                                <div class:active={data.key === key} class="td-value forSaleMedian {data.key} group-{data.group}">{smvsm(data.value, 1)}</div>
                             </td>
-                            <td class="{data.key}" align="right">
-                                <div class:active={data.key === key} class="td-value soldMedian {data.key}">{smvsm(data.value, 2)}</div>
+                            <td class="td-cell {data.key} group-{data.group}" align="right">
+                                <div class:active={data.key === key} class="td-value soldMedian {data.key} group-{data.group}">{smvsm(data.value, 2)}</div>
                             </td>
-                            <td class="{data.key}" align="right">
-                                <div class:active={data.key === key} class="td-value {data.key}">{smvsm(data.value, 3)}</div>
+                            <td class="td-cell {data.key} group-{data.group}" align="right">
+                                <div class:active={data.key === key} class="td-value {data.key} group-{data.group}">{smvsm(data.value, 3)}</div>
                             </td>
                         {/if}
                     {/each}    
