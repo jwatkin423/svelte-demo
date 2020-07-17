@@ -46,9 +46,6 @@ export let secondary_fill_color;
     .kmi-row {
         display: flex;
         flex-wrap: wrap;
-        max-width: 750px;
-        margin-left: auto;
-        margin-right: auto;
     }
 
     /* data kmi rows */
@@ -66,7 +63,6 @@ export let secondary_fill_color;
         text-align: center;
         margin-top: 2px;
         width: 20%;
-        max-width: 150px;
     }
 
     /* div "body" cells */
