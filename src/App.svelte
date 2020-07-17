@@ -97,7 +97,7 @@ onMount(() => {
 
 	@media only screen and (min-height: 1024px) {
 		main {
-			height: 850px;
+			/* height: 850px; */
 		}
 	}
 
