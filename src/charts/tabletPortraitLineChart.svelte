@@ -1,315 +1,299 @@
 <script>
-import chartStore from '../utils/chart-store';
-import Tspan from '../charts/tspan.svelte';
-import { scaleLinear } from 'd3-scale';
+import * as d3 from 'd3';
 import { onMount, afterUpdate } from 'svelte';
-import clearData from '../helpers/clear-chart'
-import { resetChart } from '../helpers/chartreset';
 
-// report period props
-export let reportPeriod;
+export let data = [];
+export let dataTwo = [];
+export let reportPeriod = [];
 export let reportYear;
-// chart data prop
+// export let yData = '';
 export let yPoints;
-
 // y Tick marks
 $: yTicks = yPoints;
-$: tickWidth(yPoints);
+
+export let mappedPoints = [];
+export let mappedPointsTwo = [];
+export let chartType = '';
 
 // primary color prop
 export let p_color = false;
 export let s_color = false;
 
-// mapped points
-export let mappedPoints = [];
-export let mappedPointsTwo = [];
+// primary color
+let primary_fill_color = '';
+let secondary_fill_color = '';
+$: primary_fill_color = p_color ? p_color : '#019184';
+$: secondary_fill_color = s_color ? s_color :' #666666';
 
-// show dollar in tool tip
 export let showDollar;
 $: dollar = showDollar ? '$' : '';
 
-// tooltips
-let heyo = false;
+export let screenSize;
+export let initHeight;
+export let initWidth;
+export let margins;
+export let wRatio;
+export let radius = 4;
 
-export let rightPadding;
+let points = [];
+$: points = [...data];
+$: drawChart(points);
+let margin = {...margins};
 
-// chart type
-export let chartType;
+let width = initWidth - margin.left - margin.right;
+let height = initHeight - margin.top - margin.bottom;
 
-// chart and misc dimensions
-let padding = { top: 25, right: 0, bottom: 30, left: 30 };
-let width = 748;
-let height = 436;
-let textWidth = 600;
+$: width = screenSize - 20;
+$: height = ((initHeight / wRatio) * screenSize) - margin.top - margin.bottom;
 
-// desc ID
-let desc;
+$: drawChart(width);
+let xTicks = [];
+let tmpDate;
 
-// X and Y scale initialize
-let xScale = scaleLinear();
-let yScale = scaleLinear();
-let d3TicksScale = scaleLinear();
-let lowerDomain = 0;
-let upperDomain = 0;
-let d3Ticks = [];
+function drawChart() {
+	d3.selectAll(".line-chart > *").remove();
 
-// initializing x scale
-$: xScale = scaleLinear()
-	.domain([0, xTicks.length])
-	.range([padding.left, width  - rightPadding]);
-
-// initializing y scale
-$: yScale = scaleLinear()
-	.domain([0, Math.max.apply(null, yTicks)])
-	.range([height - padding.bottom, padding.top]);
-
-
-// chart data key/value pair
-let chartData;
-let path;
-
-// primary color
-$: primary_fill_color = p_color ? p_color : '#019184';
-$: secondary_fill_color = s_color ? s_color : '#DDDDDD';
-
-// report period for the x axis
-$: xTicks = reportPeriod;
-
-let r = 3;
-
-// chart data mapped
-$: chartData = mappedPoints.map((mp, i) => {
-	let t = mp.x;
-	let s = mp.y;
-
-	return {y:s, x:t};
-});
-
-// chart data mapped
-$: chartData = mappedPoints.map((mp) => {
-	let t = mp.x;
-	let s = mp.y;
-	return {y:s, x:t};
-});
-
-// chart data mapped
-$: chartDataTwo = mappedPointsTwo.map((mp, i) => {
-
-	if (chartType === 'saleMedianSoldMedian' || chartType === 'supplyDemand') {
-		let t = mp.x;
-		let s = mp.y;
-		
-		return {y:s, x:t};
-	} else {
-		mappedPointsTwo = [];
-		pathTwo = false;
-		chartDataTwo = false;
+	width = screenSize - 25;
+	if (reportPeriod.length === 37) {
+		width = screenSize - 35;
 	}
 	
-});
 
-// chart line
-$: path = `M${chartData.map(mp => `${xScale(mp.x)},${yScale(mp.y)}`).join('L')}`;
-$: pathTwo = mappedPointsTwo.length > 0 ? `M${chartDataTwo.map(mp => `${xScale(mp.x)},${yScale(mp.y)}`).join('L')}` : [];
+	let svg = d3.select(".line-chart")
+			.attr("width", width)
+			.attr("height", height + margin.top + margin.bottom) 
+			.append("g")
+    		.attr("transform", "translate(" + 0 + "," + margin.top + ")");
 
-// set the inner width of the chart
-$: innerWidth = width;
-// set the text width
-$: textWidth = innerWidth / xTicks.length;
+	// set the max height of the ticks
+	let maxHeight = d3.max(data, function(d){ return d * 1.1 });
 
-let lineHeight = -height;
-let line = width;
-$: line = width - (width > 650 ? 20 : 10);
+	// creates the yScale
+	let yScale = d3.scaleLinear()
+		.domain([maxHeight, 0])
+		.range([0, height])
+		.nice(8);
 
-function formatLine(line) {
-	return line + 'px';
-}
+		// grid lines for the chart
+	let linesYaxis = d3.axisLeft(yScale)
+		.ticks(8)
+		.tickFormat("");
 
-// format ticks
-function formatTick(tick) {
+	// add grid lines
+	svg.append("g")
+		.attr("class", "grid")
+		.call(linesYaxis)
+		.select('.domain').remove();
 
-	if (tick >= 1000 && tick < 100000)  {
-		tick = (tick / 1000).toFixed(0);
-		tick += 'K';
-	}
+	d3.selectAll("line").attr("x1", "60").attr("x2", width - 10);
 
-	if (tick >= 100000 && tick < 1000000) {
-		tick = tick / 1000;
-		tick += 'K';
-	}
+	let ticksAmount = 8;
 
-	if (tick >= 1000000) {
-		tick = (tick / 1000000);
-		tick = Math.floor(tick);
-		tick += 'M';
-	}
+	// defines the y axis styles
+	let yAxis = d3.axisLeft(yScale)
+		.scale(yScale)
+		.tickSize("30")
+		.tickPadding(8)
+		.ticks(ticksAmount)
+		.tickFormat(function(d) { return formatYvalue(d); });
 
-	if (showDollar) {
-		tick = dollar + tick;
-	}
+	// append y axis
+	svg.append("g")
+		.attr('class', "med-axis-tick-mark")
+		.attr("x", "0")
+		.attr("x1", "0")
+		.attr("x2", "0")
+		.call(yAxis).attr("dx", "0")
+		.select(".domain").remove();
 
-	return tick;
-}
-
-function formatPlotPoint(point) {
-	if (point) {
-		point = point.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    }
-
-	return point;
-}
-
-let currentTickLength = 25;
-function tickWidth(ticks) {
+	d3.selectAll("text").attr("x", "45").style("fill", "#666666");
 	
-	if (ticks.length > 0) {
+	let xScaleWidth = width - 45;
+	if (data.length === 37) {
+		xScaleWidth = width - 65;
+	}
+	
+	// creates the xScale 
+	let xScale = d3.scaleLinear()
+		.domain([0, reportPeriod.length])
+		.range([0, xScaleWidth]);
+	let tickVals = [];
+	tickVals = reportPeriod.map((e,i) => {
+		return i;
+	});
 
-		let lastTick = ticks[ticks.length - 1];
-		if (lastTick >= 1000) {
+	// create first x axis for month
+	let xAxis = d3.axisBottom(xScale)
+		.tickValues(tickVals)
+		.tickFormat(function(d, i) {
+			if (reportPeriod[d].includes('<br>')) {
+				let tempArr = reportPeriod[d].split('<br>');
+				return d3.timeFormat(tempArr[0]);
+			} 
+			else if (d == reportPeriod.length - 1) {
+				return reportPeriod[reportPeriod.length - 1];
+			}
+		});
 
-			let lastTickLength = formatTick(lastTick).length;
+	// append the first axis
+	let xShift = 40 + margin.left;
+	let yShift = height;
+	svg.append("g")
+		.attr("class", "x-axis-ticks")
+		.attr("transform", "translate(" + xShift + "," + yShift + ")")
+		.call(xAxis)
+		.select(".domain").remove();
 
-			if (showDollar) {
-				lastTickLength++;
+	// format the first axis
+	d3.selectAll('.x-axis-ticks > .tick > text').each(function (d, i) {
+		if (reportPeriod[d].includes('<br>')) {
+				d3.select(this).attr('y', 8).style("fill", "#666666");
+			}
+	});
+
+	d3.selectAll('.x-axis-ticks > .tick > line')
+		.each(function (d, i) {
+			if (reportPeriod[d].includes('<br>')) {
+				d3.select(this).attr('y2', -height -10);
+			} 
+			
+			else if (d == reportPeriod.length - 1) {
+				d3.select(this).attr('y2', -height -10);
 			}
 
-			lastTickLength = (lastTickLength / 2) + 27;
+			else {
+				d3.select(this).attr('y2', "10");
+			}
+		});
 
-			currentTickLength = lastTickLength;
+	// line function convention (feeds an array)
+	let lineOne = d3.line()
+		.x(function(d) { return xScale(d.x); })
+		.y(function(d) { return yScale(d.y); });
 
-			return lastTickLength + 'px';
-		}
+	 // Add the line.
+  	svg.append("path")
+		.data([mappedPoints])
+		.attr("class", "line")
+		.style("fill", "none")
+		.style("stroke", primary_fill_color)
+		.attr("transform", "translate(" + 70 + "," + 0 + ")")
+		.attr("d", lineOne);
 
-		else if (lastTick < 1000 && lastTick >= 100) {
-			currentTickLength = (15/2)+ 20;
-		}
-
-		else if (lastTick < 100 && lastTick >= 10){
-			currentTickLength = (10 / 2) + 20;
-		} else {
-			currentTickLength = 25;
-		}
-		
-	}
-
-	return currentTickLength + 'px';
-}
-
-let tickSplits;
-export let monthYear = '';
-let month;
-$:month = monthYear.month;
-
-let year;
-$:year = monthYear.year;
-
-const months = {
-	'Jan': "January",
-	'Feb': 'February',
-	'Mar': 'March',
-	'Apr': 'April',
-	'May': 'May',
-	'Jun': 'June',
-	'Jul': 'July',
-	'Aug': 'August',
-	'Sep': 'September',
-	'Oct': 'October',
-	'Nov': 'November',
-	'Dec': 'December'
-};
-
-let currentYear;
-let ttReportPeriodData = [];
-let fullMonth;
-$: ttReportPeriodData = reportPeriod.map((rp) => {
-	if (rp.includes('<br>')) {
-		let chunks = rp.split('<br>');
-		currentYear = chunks[1];
-		fullMonth = months[chunks[0]];
-	} else {
-		fullMonth = months[rp];
-	}
-
-	return fullMonth + ' ' + currentYear;
-});
-
-function showToolTip(i, leftX, topY, point, dataType) {
-	desc = document.getElementById('desc');
-	desc.classList.add("enabled");
-	desc.classList.add("active");
-	leftX += 'px';
-	topY = (topY - 70) + 'px';
-	desc.style.left = leftX;
-	desc.style.top = topY;
-	let date = ttReportPeriodData[i];
-
-	let py = point.y.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-	let hoverDate = date ;
-	let units = py;
-
-	let unitsSuffix = 'units';
 	
-	if (chartType === 'spOpRatio') {
-		unitsSuffix = '%';
-	} else if (chartType === 'fsldMsi')  {
-		unitsSuffix = 'months';
-	} else if (chartType === 'saleMedianSoldMedian') {
-		unitsSuffix = "(" + dataType + ")";
+	let x = d3.scaleLinear()
+		.domain([0, reportPeriod.length])
+		.range([0, xScaleWidth]);
+
+	let y = d3.scaleLinear()
+		.domain([maxHeight, 0])
+		.range([0, height])
+		.nice(8);
+
+	// Data line and dots group
+    let lineAndDots = svg.append("g")
+    	.attr("class", "line-and-dots")
+		.attr("transform", "translate(70,0)");
+		
+	// Data dots
+    lineAndDots.selectAll("line-circle")
+    	.data(data)
+    	.enter().append("circle")
+        .attr("class", "data-circle")
+		.attr("r", radius)
+		.attr("fill", primary_fill_color)
+		.attr("cx", function(d, e) { return x(e); })
+        .attr("cy", function(d, e) { return y(d); });
+
+	if (dataTwo.length > 0) {
+		let lineTwo = d3.line()
+		.x(function(d) { return xScale(d.x); })
+		.y(function(d) { return yScale(d.y); });
+
+		// Add the line.
+		svg.append("path")
+			.data([mappedPointsTwo])
+			.attr("class", "line")
+			.style("fill", "none")
+			.style("stroke", secondary_fill_color)
+			.attr("transform", "translate(" + 0 + "," + 0 + ")")
+			.attr("d", lineTwo);
+
+	// Data line and dots group
+    let lineAndDotsTwo = svg.append("g")
+    	.attr("class", "line-and-dots")
+		.attr("transform", "translate(70,0)");
+		
+	// Data dots
+    lineAndDotsTwo.selectAll("line-circle")
+    	.data(dataTwo)
+    	.enter().append("circle")
+        .attr("class", "data-circle")
+		.attr("r", radius)
+		.attr("fill", secondary_fill_color)
+		.attr("cx", function(d, e) { return x(e); })
+        .attr("cy", function(d, e) { return y(d); });
 	}
 
-	units = py + ' ' + unitsSuffix;
-
-	if (showDollar) {
-		units = dollar + py;
-	}
-
-	let pDateHover = document.getElementById('date-hover');
-	let pUnitHover = document.getElementById('unit-hover');
-	pDateHover.innerHTML = date;
-	pUnitHover.innerHTML = units;
 }
-
-function formatText(tick) {
-	let res = tick;
-	let newDate = res;
-	if(tick.includes("<br>")) {
-		let res = tick.split("<br>");
-		tickSplits = {
-			"month": res[0],
-			"year": res[1]
-		};
-
-		newDate = tickSplits.month;
-	}
-
-	return newDate;
-}
-
-function formatYear(tick) {
-	let res = tick.split("<br>");
-	tickSplits = {
-		"month": res[0],
-		"year": res[1]
-	};
-
-	return tickSplits.year.replace('20', "'");
-}
-
-function formatLastTick(tick) {
-	return tick;
-}
-
 
 function formatLastTickYear(tick) {
 	return reportYear.replace('20', " '");
 }
 
-function hideToolTip() {
-	desc = document.querySelector('.description');
-	desc.classList.remove("enabled");
-	desc.classList.remove("heyo");
-	desc.classList.remove("active");
+// format y value ticks
+function formatYvalue(d) {
+	let val = Math.abs(d);
+
+	let flag = 0;
+	let yValue = '';
+
+	if(d < 0) {
+		flag = 1;
+	}
+
+	if (val < 1000) {
+		yValue = val;
+	}
+
+	// if the val gte 1,000 and lt 1,000,000
+	if(val >= 1000 && val < 1000000) {
+		val /= 1000;
+		yValue = val.toString();
+		yValue = dollar + yValue + 'K';
+	}
+
+	// if the val gte 1,000,000 and lt 1,000,000,000
+	if(val >= 1000000 && val < 1000000000) {
+		val /= 1000000;
+		yValue = val.toString();
+		yValue = dollar + yValue + 'M';
+	}
+
+	// if the val gte 1,000,000,000 and lt 1,000,000,000,000
+	if(val >= 1000000000 && val < 1000000000000) {
+		val /= 1000000000;
+		yValue = val.toString();
+		yValue = dollar + yValue + 'B';
+	}
+	
+	if(flag) {
+		yValue = "(" + yValue + ")";
+	}
+
+	return yValue;
 }
+
+onMount(() => {
+	// drawChart();
+});
+
+afterUpdate(() => {
+	if(points.length > 0) {
+		// d3.selectAll(".line-chart > *").remove();
+		drawChart();
+	}
+});
 
 </script>
 
@@ -317,237 +301,11 @@ function hideToolTip() {
 	.chart {
 		margin-top: 0px;
 		background-color: #ffffff;
-		display: flex;
-		height: 436px;
-		margin-left: 10px;
-		/* max-width: 748px; */
-	}
-
-	svg {
-		position: relative;
-		width: 100%;
-		height: 100%;
-		display: block;
-    }
-
-	g.axis {
-		width: 100%;
-	}
-
-	.tick text {
-		fill: #CCCCCC;
-		font-family: Helvetica, Arial;
-		font-size: 9px;
-	}
-
-	.tick line {
-		stroke: #CCCCCC;
-	}
-
-	/* x axis tick mark */
-	.axis-tick-mark {
-		text-anchor: middle;
-	}
-
-	/* y axis tick mark */
-	.y-axis-tick-mark {
-		text-anchor: end;
-	}
-
-	.y-axis.tick-0 text {
-		fill: #666666;
-	}
-
-	.tick.tick-0 text {
-		fill: #000000 !important;
-		text-anchor: start;
-		white-space: normal !important;
-	}
-
-	.tick.tick-0 line {
-		stroke: #000000 !important;
-	}
-
-	.x-axis .tick text {
-		fill: #666666;
-		text-anchor: middle;
- 		font-size: 9px;
-	}
-
-	.path-line {
-		fill: none;
-		stroke-linejoin: round;
-		stroke-linecap: round;
-		stroke-width: 1;
-	}
-
-	.heyo:hover {
-		fill: #ffabce;
-		-moz-transition: 0.3s;
-		-o-transition: 0.3s;
-		-webkit-transition: 0.3s;
-		transition: 0.3s;
-	}
-
-	.enabled {
-		cursor: pointer;
-	}
-
-	.description {
-		pointer-events: none;
-		position: fixed;
-		font-size: 10px;
-		text-align: center;
-		background: #F2F2F2;
-		z-index: 9999;
-		height: 45px;
-		line-height: 15px;
-		width: 90px;
-		color: #000000;
-		border-radius: 5px;
-		-moz-transform: translateX(-50%);
-		-ms-transform: translateX(-50%);
-		-webkit-transform: translateX(-50%);
-		transform: translateX(-50%);
-		display: none;
-		vertical-align: middle;
-	}
-
-	 p#date-hover {
-		margin-top: 8px;
-		margin-bottom: 0 !important;
-	}
-
-	p#unit-hover {
-		margin-top: 0;
-		margin-bottom: auto;
-	}
-	
-	.description.active {
 		display: block;
 	}
 
-	.description:after {
-		content: "";
-		position: absolute;
-		left: 50%;
-		top: 100%;
-		width: 0;
-		height: 0;
-		margin-left: -10px;
-		border-left: 10px solid transparent;
-		border-right: 10px solid transparent;
-		border-top: 10px solid rgb(179, 179, 179);
-	}
-
-	.x-axis .tick text {
- 		font-size: 9px;
-	}		
-
- 	@media only screen and (max-width: 450px) {
-		.description.active {
-			font-size: 10px;
-			padding-left: 2 !important;
-			padding-right: 2 !important;
-			min-width: 50px;
-		}
- 	} 
-
-	 @media only screen and (max-width: 768px) {
-		 .chart {
-			 margin-left: 0px !important;
-		 }
-	 }
-	
 </style>
 
-{#if path.length > 1}
-
-	<div class="chart" bind:clientWidth={width} bind:clientHeight={height}>
-		<svg xmlns="http://www.w3.org/2000/svg">
-
-			<!-- y axis -->
-			<!-- {#each yTicks as tick, i}
-				<g class="tick y-axis tick-{tick}" transform="translate(20, {yScale(tick)})">
-					<line x1="25" x2="{line}"></line>
-					<text class='axis-tick-mark' dx="0" y="3">{tick >= 100 ? formatTick(tick) : dollar + '' + tick}</text>
-				</g>
-			{/each} -->
-			<!-- </g> -->
-
-			<!-- y axis -->
-			{#each yTicks as tick, i}
-				<g class="tick y-axis tick-{tick}" transform="translate(0, {yScale(tick)})">
-					<text class='y-axis-tick-mark' x="{currentTickLength}" dx="0" y="3">{tick >= 100 ? formatTick(tick) : dollar + '' + tick}</text>
-				</g>
-			{/each}
-
-			<!-- y axis -->
-			{#each yTicks as tick, i}
-				<g class="tick y-axis tick-{tick}" transform="translate(0, {yScale(tick)})">
-					<line x1="40" x2={formatLine(line)}></line>
-				</g>
-			{/each}
-
-			<!-- x axis -->
-			<g class="axis x-axis" transform="translate(0,0)">
-				{#each xTicks as tick, i}
-					<g class="tick tick-{ tick }" transform="translate({xScale(i) + 20},{height - 40})" >
-						
-						{#if !tick.includes('<br>') && i !== (xTicks.length - 1) }
-							<line class="small-tick" y1="10" y2="20" x1="0" x2="0"></line>
-						{:else if (tick.includes('<br>') && i !== (xTicks.length - 1))}
-							<line y1="10" y2="-86%" x1="0" x2="0"></line>
-							<text class='axis-tick-mark' dx=0 y="20">{formatText(tick)}</text>
-						{/if}
-						{#if i === (xTicks.length - 1) }
-							<line y1="10" y2="-86%" x1="0" x2="0"></line>
-							<text class='axis-tick-mark' dx=0 y="20">{formatText(tick)}</text>
-						{/if}	
-					</g>
-				{/each}
-
-				{#each xTicks as tick, i}
-					<g class="tick tick-{ tick }" transform="translate({xScale(i) + 20},{height - 30})">
-						{#if (tick.includes('<br>') && i !== (xTicks.length - 1))}
-							<text dx=0 y="20">{formatYear(tick)}</text>
-						{/if}
-						{#if i === (xTicks.length - 1) }
-							<text class='axis-tick-mark' dx=0 y="20">{formatLastTickYear(tick)}</text>
-						{/if}	
-					</g>
-				{/each}
-				<g transform="translate(20, 0)">
-					<!-- data -->
-					<path class="path-line" d={path} stroke={primary_fill_color}></path>
-
-					<!-- set the circles for the data points -->
-					{#each chartData as point, i}
-						<circle class="enabled" class:heyo cx='{xScale(point.x)}' cy='{yScale(point.y)}' r='{r}' fill={primary_fill_color}
-						on:mouseover={(e) => {showToolTip(i, e.pageX, e.clientY, point, 'sold') }}  
-						on:mouseleave={hideToolTip}/>
-					{/each}
-
-					{#if chartType === 'saleMedianSoldMedian' || chartType === 'supplyDemand'}
-						<path class="path-line" d={pathTwo} stroke={secondary_fill_color}></path>
-
-						{#each chartDataTwo as point, i}
-						<circle class="enabled" class:heyo cx='{xScale(point.x)}' cy='{yScale(point.y)}' r='{r}' fill={secondary_fill_color}
-						on:mouseover={(e) => {showToolTip(i, e.pageX, e.clientY, point, 'sale') }} 
-						on:mouseleave={hideToolTip}/>
-						{chartDataTwo = []}
-						{/each}
-
-					{/if}
-
-				</g>
-			</g>
-			
-		</svg>
-	</div>
-
-{:else}
-	<h3>Still processing the data ... </h3>
-{/if}
-
-<div class="description" id='desc'><p id='date-hover'></p><p id='unit-hover'></p></div>
+<div class="chart" >
+	<svg class="line-chart"></svg>
+</div>
