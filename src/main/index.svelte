@@ -210,11 +210,7 @@ function drawChart(event, initial = 0) {
 		currentKey = key;
 		chartTitle = ddsData.chartData[key].label;
 
-		if (key !== 'saleMedianSoldMedian') {
-			yTicks = processPoints(dt);
-		} else {
-			yTicks = processDeltaPoints(dt, dtTwo);
-		}
+		yTicks = processPoints(dt);
 		
 	}
 	
@@ -233,7 +229,7 @@ function processDeltaPoints(data) {
 	return tickMarksDeltas(maxValue, minValue);
 }
 
-let width = 1280;
+let width = window.innerWidth;
 let height = 675;
 
 function formatChartTitle(title) {
@@ -326,7 +322,6 @@ function formatChartTitle(title) {
 	.chart-title {
 		text-align: center;
 		height: 40px;
-		max-width: 1280px;
 		position: relative;
 	}
 
@@ -419,7 +414,7 @@ function formatChartTitle(title) {
 <!-- DATA DISPLAY SECTION -->
 {#if "soldUnits" in ddsData.chartData}
 
-	<div class="content-area" bind:clientHeight={height} bind:clientWidth={width}>
+	<div class="content-area" >
 
 	<div class="td-sidebar">
 		<div class="sidebar-buffer"></div>
@@ -436,7 +431,7 @@ function formatChartTitle(title) {
 	<div class="chart-title">
 			<h3 class="chart-title-h3">{chartTitle}</h3>
 	</div>
-		<div class="content-inner-wrapper">
+		<div class="content-inner-wrapper" bind:clientHeight={height} bind:clientWidth={width}>
 			{#if searchType !== 'mnth-ytd'}
 			<div class="kmi-wrapper">
 				<KMI 
@@ -498,17 +493,6 @@ function formatChartTitle(title) {
 			<!-- Line Charts -->
 			{#if searchType !== 'mnth-ytd'}
 				{#if screenSize > 1024}
-					<!-- <Linechart 
-						reportPeriod={reportPeriod} 
-						p_color={p_color} 
-						s_color={s_color} 
-						yPoints={yT} 
-						mappedPoints={mPoints}
-						mappedPointsTwo={mPointsTwo}
-						showDollar={dollar}
-						reportYear={year}
-						rightPadding={rpadL}
-						chartType={barData.key}/> -->
 					<LinechartV2
 						data={barData.data}
 						dataTwo={barData.dataTwo}
@@ -521,46 +505,77 @@ function formatChartTitle(title) {
 						mappedPointsTwo={mPointsTwo}
 						showDollar={dollar}
 						chartType={barData.key} 
-						{screenSize} />	
+						screenSize={width - 10}
+						initHeight={575}
+						initWidth={1048}
+						margins={{top: 35, right: 30, bottom: 35, left: 60}}
+						wRatio={1068}
+						radius={4}
+						/>
 				{/if}
-				{#if screenSize <= 1024 && screenSize >768}
-					<TabletLandScapeChart 
-						reportPeriod={reportPeriod} 
-						p_color={p_color} 
-						s_color={s_color} 
-						yPoints={yT} 
-						mappedPoints={mappedPoints}
-						mappedPointsTwo={mappedPointsTwo}
-						showDollar={dollar}
-						reportYear={year}
-						rightPadding={rpadM}
-						chartType={barData.key}/>
+				{#if screenSize <= 1024 && screenSize > 768}
+						<TabletLandScapeChart
+							data={barData.data}
+							dataTwo={barData.dataTwo}
+							reportPeriod={reportPeriod} 
+							reportYear={year}
+							p_color={p_color} 
+							s_color={s_color} 
+							yPoints={yT} 
+							mappedPoints={mPoints}
+							mappedPointsTwo={mPointsTwo}
+							showDollar={dollar}
+							chartType={barData.key} 
+							{screenSize} 
+							initHeight={450}
+							initWidth={1004}
+							margins={{top: 25, right: 25, bottom: 30, left: 30}}
+							wRatio={1024}
+							radius={4}
+							/>
 				{/if}
 				{#if screenSize <= 768 && screenSize > 480}
 					<TabletPortraitChart 
-						reportPeriod={reportPeriod} 
-						p_color={p_color} 
-						s_color={s_color} 
-						yPoints={yT} 
-						mappedPoints={mappedPoints}
-						mappedPointsTwo={mappedPointsTwo} 
-						showDollar={dollar}
-						reportYear={year}
-						rightPadding={rpadM}
-						chartType={barData.key}/>
+						data={barData.data}
+							dataTwo={barData.dataTwo}
+							reportPeriod={reportPeriod} 
+							reportYear={year}
+							p_color={p_color} 
+							s_color={s_color} 
+							yPoints={yT} 
+							mappedPoints={mPoints}
+							mappedPointsTwo={mPointsTwo}
+							showDollar={dollar}
+							chartType={barData.key} 
+							{screenSize} 
+							initHeight={450}
+							initWidth={1004}
+							margins={{top: 25, right: 25, bottom: 30, left: 30}}
+							wRatio={1024}
+							radius={4}
+						/>
 				{/if}
 				{#if screenSize <= 480}
 					<SmartPhoneChart 
-						reportPeriod={reportPeriod} 
-						p_color={p_color} 
-						s_color={s_color} 
-						yPoints={yT} 
-						mappedPoints={mappedPoints}
-						mappedPointsTwo={mappedPointsTwo}
-						showDollar={dollar}
-						reportYear={year}
-						rightPadding={rpadS}
-						chartType={barData.key}/>
+						data={barData.data}
+							dataTwo={barData.dataTwo}
+							reportPeriod={reportPeriod} 
+							reportYear={year}
+							p_color={p_color} 
+							s_color={s_color} 
+							yPoints={yT} 
+							mappedPoints={mPoints}
+							mappedPointsTwo={mPointsTwo}
+							showDollar={dollar}
+							chartType={barData.key} 
+							{screenSize} 
+							initHeight={270}
+							initWidth={screenSize - 20}
+							margins={{ top: 15, right: 20, bottom: 25, left: 20}}
+							wRatio={screenSize}
+							sideBarWidth={0}
+							radius={2}
+							/>
 				{/if}
 				
 			{:else}	
