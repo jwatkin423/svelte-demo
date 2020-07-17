@@ -53,7 +53,7 @@ export let secondary_fill_color;
         line-height: 10px;
         font-size: 10px;
         font-weight: 800;
-        width: 150px;
+        width: 20%;
         color: #666666;
         text-align: center;
         margin-top: 2px;
@@ -66,7 +66,7 @@ export let secondary_fill_color;
         line-height: 16px;
         font-size: 16px;
         font-weight: 600;
-        width: 150px;
+        width: 20%;
         color: #666666;
         vertical-align: unset;   
     }

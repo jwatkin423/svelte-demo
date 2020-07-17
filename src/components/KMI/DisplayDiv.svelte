@@ -39,8 +39,8 @@ export let chngPercent;
         color: #666666;
         text-align: center;
         margin-top: 10px;
-        width: 20%;
-        max-width: 150px;
+        width: 25%;
+        /* max-width: 150px; */
     }
 
     /* div "body" cells */
@@ -52,20 +52,18 @@ export let chngPercent;
         font-weight: 600;
         color: #666666;
         vertical-align: unset;   
-        width: 20%;
-        max-width: 150px;
+        width: 25%;
+        /* max-width: 150px; */
     }
 </style>
 
 <div class="kmi-row">
-    <div class="div-header"></div>
     <div class="div-header">{rpOne}</div>
     <div class="div-header">{rpTwo}</div>
     <div class="div-header">Change</div>
     <div class="div-header">% Change</div>
 </div>
 <div class="kmi-row kmi-data-row">
-    <div class="div-cell"></div>
     <div class="div-cell">{initMonth}</div>
     <div class="div-cell">{lastMonth}</div>
     <div class="div-cell">

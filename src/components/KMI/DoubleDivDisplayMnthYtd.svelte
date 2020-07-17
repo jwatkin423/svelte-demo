@@ -66,7 +66,7 @@ export let secondary_fill_color;
         text-align: center;
         margin-top: 10px;
         width: 20%;
-        max-width: 100px;
+        /* max-width: 100px; */
 
     }
 
@@ -80,7 +80,7 @@ export let secondary_fill_color;
         color: #666666;
         vertical-align: unset;   
         width: 20%;
-        max-width: 100px;
+        /* max-width: 100px; */
         margin-top: 4px;
     }
 
