@@ -29,26 +29,34 @@ export let showDollar;
 $: dollar = showDollar ? '$' : '';
 
 export let screenSize;
+export let initHeight;
+export let initWidth;
+export let margins;
+export let wRatio;
 
 let points = [];
 $: points = [...data];
 $: drawChart(points);
-let margin = {top: 35, right: 20, bottom: 35, left: 60};
+let margin = {...margins};
 
-let width = 1048 - margin.left - margin.right;
-let height = 575 - margin.top - margin.bottom;
+let width = screenSize;
+let height = initHeight - margin.top - margin.bottom;
 
-$: width = ((1048 / 1068) * screenSize) - 222 - margin.left - margin.right;
-$: height = ((575 / 1068) * screenSize) - 250 - margin.top - margin.bottom;
+$: height = ((initHeight / wRatio) * screenSize) - margin.top - margin.bottom;
 
-$: drawChart(width);
+$: drawChart(screenSize);
+
 let xTicks = [];
 let tmpDate;
 
 function drawChart() {
+	
+	d3.selectAll(".line-chart > *").remove();
+
+	width = screenSize;
 
 	let svg = d3.select(".line-chart")
-			.attr("width", width + margin.left + margin.right)
+			.attr("width", width)
 			.attr("height", height + margin.top + margin.bottom) 
 			.append("g")
     		.attr("transform", "translate(" + 0 + "," + margin.top + ")");
@@ -73,7 +81,7 @@ function drawChart() {
 		.call(linesYaxis)
 		.select('.domain').remove();
 
-	d3.selectAll("line").attr("x1", "60").attr("x2", width + margin.right + 15);
+	d3.selectAll("line").attr("x1", "60").attr("x2", width - 20);
 
 	let ticksAmount = 8;
 
@@ -95,18 +103,22 @@ function drawChart() {
 		.select(".domain").remove();
 
 	d3.selectAll("text").attr("x", "45").style("fill", "#666666");
-
+	
+	let xScaleWidth = 0;
+	xScaleWidth = reportPeriod.length === 37 ? width - 75 : width - margin.right;
+	
 	// creates the xScale 
 	let xScale = d3.scaleLinear()
 		.domain([0, reportPeriod.length])
-		.range([0, width - 60]);
-	let tickVals = [];		
+		.range([0, xScaleWidth]);
+	let tickVals = [];
 	tickVals = reportPeriod.map((e,i) => {
 		return i;
 	});
 
 	// create first x axis for month
 	let xAxis = d3.axisBottom(xScale)
+		.ticks(reportPeriod.length)
 		.tickValues(tickVals)
 		.tickFormat(function(d, i) {
 			if (reportPeriod[d].includes('<br>')) {
@@ -119,7 +131,8 @@ function drawChart() {
 		});
 
 	// append the first axis
-	let xShift = 15 + margin.left;
+	// shift the x axis over to the right
+	let xShift = 10 + margin.left;
 	let yShift = height;
 	svg.append("g")
 		.attr("class", "x-axis-ticks")
@@ -127,7 +140,7 @@ function drawChart() {
 		.call(xAxis)
 		.select(".domain").remove();
 
-	// format the first axis
+	// format the first axis for months
 	d3.selectAll('.x-axis-ticks > .tick > text').each(function (d, i) {
 		if (reportPeriod[d].includes('<br>')) {
 				d3.select(this).attr('y', 8).style("fill", "#666666");
@@ -150,37 +163,37 @@ function drawChart() {
 		});
 
 	// create second x axis for year
-	// let xAxisTwo = d3.axisBottom(xScale)
-	// 	.tickValues(reportPeriod)
-	// 	.tickFormat(function(d,i) {
-	// 		console.log(d,i)
-	// 		if (reportPeriod[i].includes('<br>')) {
-	// 			let tempArr = reportPeriod[i].split('<br>');
-	// 			return formatLastTickYear(tempArr[1]);
-	// 		} 
-	// 		else if (i == reportPeriod.length - 1) {
-	// 			return formatLastTickYear(reportYear);
-	// 		}
-	// 		else {
-	// 			return "";
-	// 		}
-	// 	});
+	let xAxisTwo = d3.axisBottom(xScale)
+		.ticks(reportPeriod.length)
+		.tickValues(tickVals)
+		.tickFormat(function(d,i) {
+			if (reportPeriod[i].includes('<br>')) {
+				let tempArr = reportPeriod[i].split('<br>');
+				return formatLastTickYear(tempArr[1]);
+			} 
+			else if (i == reportPeriod.length - 1) {
+				return formatLastTickYear(reportYear);
+			}
+			else {
+				return "";
+			}
+		});
 
-	// // // append the second axis
-	// svg.append("g")
-	// 	.attr("class", "x-axis-ticks-two")
-	// 	.attr("transform", "translate(" + xShift + "," + yShift + ")")
-	// 	.call(xAxisTwo)
-	// 	.select(".domain").remove();
+	// append the second axis
+	svg.append("g")
+		.attr("class", "x-axis-ticks-two")
+		.attr("transform", "translate(" + xShift + "," + yShift + ")")
+		.call(xAxisTwo)
+		.select(".domain").remove();
 
 
-	// d3.selectAll('.x-axis-ticks-two > .tick > text').each(function (d, i) {
-	// 	if (reportPeriod[i].includes('<br>') || reportPeriod.length === i+1) {
-	// 		d3.select(this).attr('y', 18).style("fill", "#666666");
-	// 	}
-	// });
+	d3.selectAll('.x-axis-ticks-two > .tick > text').each(function (d, i) {
+		if (reportPeriod[i].includes('<br>') || reportPeriod.length === i+1) {
+			d3.select(this).attr('y', 18).style("fill", "#666666");
+		}
+	});
 
-		// line function convention (feeds an array)
+	// line function convention (feeds an array)
 	let lineOne = d3.line()
 		.x(function(d) { return xScale(d.x); })
 		.y(function(d) { return yScale(d.y); });
@@ -191,10 +204,35 @@ function drawChart() {
 		.attr("class", "line")
 		.style("fill", "none")
 		.style("stroke", primary_fill_color)
-		.attr("transform", "translate(" + 75 + "," + 0 + ")")
+		.attr("transform", "translate(" + 70 + "," + 0 + ")")
 		.attr("d", lineOne);
 
-	
+	let x = d3.scaleLinear()
+		.domain([0, reportPeriod.length])
+		.range([0, xScaleWidth]);
+
+	let y = d3.scaleLinear()
+		.domain([maxHeight, 0])
+		.range([0, height])
+		.nice(8);
+
+	// Data line and dots group
+    var lineAndDots = svg.append("g")
+    	.attr("class", "line-and-dots")
+		.attr("transform", "translate(70,0)");
+		
+	// Data dots
+    lineAndDots.selectAll("line-circle")
+    	.data(data)
+    	.enter().append("circle")
+        .attr("class", "data-circle")
+		.attr("r", 4)
+		.attr("fill", primary_fill_color)
+		.attr("cx", function(d, e) {return x(e); })
+        .attr("cy", function(d, e) {return y(d); });
+
+
+	// second line
 	if (dataTwo.length > 0) {
 		let lineTwo = d3.line()
 		.x(function(d) { return xScale(d.x); })
@@ -206,9 +244,26 @@ function drawChart() {
 			.attr("class", "line")
 			.style("fill", "none")
 			.style("stroke", secondary_fill_color)
-			.attr("transform", "translate(" + 75 + "," + 0 + ")")
+			.attr("transform", "translate(" + 70 + "," + 0 + ")")
 			.attr("d", lineTwo);
+
+		// Data line and dots group
+    let lineAndDotsTwo = svg.append("g")
+    	.attr("class", "line-and-dots")
+		.attr("transform", "translate(70,0)");
+		
+	// Data dots
+    lineAndDotsTwo.selectAll("line-circle")
+    	.data(dataTwo)
+    	.enter().append("circle")
+        .attr("class", "data-circle")
+		.attr("r", 4)
+		.attr("fill", secondary_fill_color)
+		.attr("cx", function(d, e) { return x(e); })
+        .attr("cy", function(d, e) { return y(d); });	
 	}
+
+	
 
 }
 
@@ -260,12 +315,11 @@ function formatYvalue(d) {
 }
 
 onMount(() => {
-	// drawChart();
+	drawChart();
 });
 
 afterUpdate(() => {
 	if(points.length > 0) {
-		d3.selectAll(".line-chart > *").remove();	
 		drawChart();
 	}
 });
