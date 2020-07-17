@@ -1,7 +1,6 @@
 html, body {
 	position: relative;
 	width: 100%;
-	height: 784px;
 	background-color: #f2f2f2;
 }
 
@@ -98,52 +97,54 @@ table.dataTable thead .sorting:before {
 	content: url('../images/sort_carrots.png'); 
 	vertical-align: middle;
 	display: table-cell;
-	width: 10px;
-	line-height: 36px;
-	float: right;
+	width: 15px;
+    line-height: 36px;
+    float: right;
+    padding-right: 5px;
 }
 
 table.dataTable thead .sorting_asc:before { 
 	content: url('../images/sort_carrots.png');
 	vertical-align: middle;
 	display: table-cell;
-	width: 10px;
-	line-height: 36px;
-	float: right;
+	width: 15px;
+    line-height: 36px;
+    float: right;
+    padding-right: 5px;
 }
 
 table.dataTable thead .sorting_desc:before { 
 	content: url('../images/sort_carrots.png'); 
 	vertical-align: middle;
 	display: table-cell;
-	width: 10px;
-	line-height: 36px;
-	float: right;
+	width: 15px;
+    line-height: 36px;
+    float: right;
+    padding-right: 5px;
 }
 
 table.dataTable thead .sorting_asc_disabled:before { 
 	content: url('../images/sort_carrots.png'); 
 	vertical-align: middle;
 	display: table-cell;
-	width: 10px;
-	line-height: 36px;
-	float: right;
+	width: 15px;
+    line-height: 36px;
+    float: right;
+    padding-right: 5px;
 }
 
 table.dataTable thead .sorting_desc_disabled:before { 
 	content: url('../images/sort_carrots.png'); 
 	vertical-align: middle;
 	display: table-cell;
-	width: 10px;
-	line-height: 36px;
-	float: right;
+	width: 15px;
+    line-height: 36px;
+    float: right;
+    padding-right: 5px;
 }
 
-/**
-Median For Sale vs Median Sold
-**/
+/** Median For Sale vs Median Sold **/
 
-/*  */
 .tags {
 	fill: #666666;
 	text-anchor: middle;
