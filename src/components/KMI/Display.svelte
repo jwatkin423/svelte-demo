@@ -537,7 +537,7 @@ function toggleDisplayTable() {
     {#if (chartType !== 'supplyDemand')}
         <div class="div-buffer"></div>
         <div class="kmi-wrapper">
-            <DivDisplayMnthYtd 
+            <DivDisplayMnthYtd
                 rpOne={formatYear(reportPeriod[0])} 
                 rpTwo={formatYear(reportPeriod[2])}
                 initMonth={formatNumber(data[0])}

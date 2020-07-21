@@ -245,7 +245,6 @@ function yPos(point, i) {
 
 	.chart-left {
 		height: 474px;
-		width: calc(50% - 5px);
 		margin-right: 5px;
 		float: left;
 		background-color: #ffffff;
@@ -253,7 +252,6 @@ function yPos(point, i) {
 
 	.chart-right {
 		height: 474px;
-		width: calc(50% - 5px);
 		margin-left: 5px;
 		float: right;
 		background-color: #ffffff;

@@ -56,7 +56,7 @@ export function setChart(k) {
 		font-size: 12px;
 	}
 
-	@media only screen and (max-width: 1024px) {
+	@media only screen and (max-width: 1024px) and (min-width: 481px) {
 		li.td-list-par {
 			height: 30px;
 			line-height: 30px;

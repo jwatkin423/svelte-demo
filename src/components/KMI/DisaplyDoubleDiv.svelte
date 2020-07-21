@@ -68,8 +68,25 @@ export let secondary_fill_color;
         font-weight: 600;
         width: 20%;
         color: #666666;
-        vertical-align: unset;   
+        vertical-align: unset;
     }
+
+    .sale-sold-container {
+        display: grid;
+        grid-template-columns: calc(100% - 54px) 54px;
+        justify-items: end;
+        justify-content: end;
+    }
+    .sale-item {
+        grid-column: 1/2;
+        grid-row: 1/2;
+    }
+
+    .sold-item {
+        grid-column: 1/2;
+        grid-row: 2/2;
+    }
+
 </style>
 
 <!-- KMI HEADER-->
@@ -83,11 +100,19 @@ export let secondary_fill_color;
 
 <!-- KMI ROW ONE-->
 <div class="kmi-row kmi-data-row">
-    <div class="div-cell">
-        <i>
-            <Icon customColor={primary_fill_color} class="year" tempId="line-one" icon={icon[2]} />
-            For Sale
-        </i>
+    <div class="div-cell sale-sold-container">
+        <div class="sale-item">
+            <i>
+                <Icon customColor={primary_fill_color} class="year" tempId="line-one" icon={icon[2]} />
+                For Sale
+            </i>
+        </div>
+        <div class="sold-item">
+            <i>
+                <Icon customColor={secondary_fill_color} class="year" tempId="line-two" icon={icon[2]} />
+            </i>
+            Sold
+        </div>
 
     </div>
     <div class="div-cell">{initMonth}</div>
@@ -121,10 +146,7 @@ export let secondary_fill_color;
 <!-- KMI ROW TWO -->
 <div class="kmi-row kmi-data-row">
     <div class="div-cell">
-        <i>
-            <Icon customColor={secondary_fill_color} class="year" tempId="line-two" icon={icon[2]} />
-        </i>
-        Sold
+        
     </div>
     <div class="div-cell">{initMonthTwo}</div>
     <div class="div-cell">{lastMonthTwo}</div>

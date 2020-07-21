@@ -40,7 +40,6 @@ export let chngPercent;
         text-align: center;
         margin-top: 10px;
         width: 25%;
-        /* max-width: 150px; */
     }
 
     /* div "body" cells */
@@ -53,7 +52,6 @@ export let chngPercent;
         color: #666666;
         vertical-align: unset;   
         width: 25%;
-        /* max-width: 150px; */
     }
 </style>
 

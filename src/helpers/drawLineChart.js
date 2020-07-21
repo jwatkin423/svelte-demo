@@ -1,24 +1,22 @@
 import * as d3 from 'd3';
+import { formatLastTickYear, formatYvalue } from './lineChartTicks';
 
-export function lineChartGen() {
+export function lineChartGen(options) {
 
+	// return;
+    let data = options.data;
+    let dataTwo = options.dataTwo;
+    let reportPeriod = options.reportPeriod;
+    let reportYear = options.reportYear;
+    let yTicks = options.yPionts;
 
-    let data = [];
-    let dataTwo = [];
-    let reportPeriod = [];
-    let reportYear;
-    // let yData = '';
-    let yPoints;
-    // y Tick marks
-    $: yTicks = yPoints;
-
-    let mappedPoints = [];
-    let mappedPointsTwo = [];
-    let chartType = '';
+    let mappedPoints = options.mappedPointsTwo;
+    let mappedPointsTwo = options.mappedPointsTwo;
+    let chartType = options.chartType;
 
     // primary color prop
-    let p_color = false;
-    let s_color = false;
+    let p_color = options.p_color;
+    let s_color = options.s_color;
 
     // primary color
     let primary_fill_color = p_color ? p_color : '#019184';
@@ -26,34 +24,25 @@ export function lineChartGen() {
     let secondary_fill_color = s_color ? s_color :' #666666';
 
     // show dollar
-    let dollar = showDollar ? '$' : '';
+    let dollar = options.showDollar ? '$' : '';
 
     // chart size parameters
-    let screenSize;
-    let initHeight;
-    let initWidth;
-    let margins;
-    let wRatio;
-    let xShift;
+    let screenSize = options.screenSize;
+    let initHeight = options.initHeight;
+    let initWidth = options.initWidth;
+    let margins = options.margin;
+    let wRatio = options.wRatio;
+    let xShift = options.xShift;
     let yShift;
 
-    let points = [];
-
-    let margin = {...margins};
-
+    let margin = options.margins;
     let width = screenSize;
-    let height = ((initHeight / wRatio) * screenSize) - margin.top - margin.bottom;
-
-
-
-    let xTicks = [];
-    let tmpDate;
-
+    // let height = ((initHeight / wRatio) * screenSize) - margin.top - margin.bottom;
+    let height = (.55 * screenSize) - margin.top - margin.bottom;
+	$: yShift = height
 	
 	d3.selectAll(".line-chart > *").remove();
 
-	width = screenSize;
-	
 	let svg = d3.select(".line-chart")
 			.attr("width", width)
 			.attr("height", height + margin.top + margin.bottom) 
@@ -61,7 +50,7 @@ export function lineChartGen() {
     		.attr("transform", "translate(" + 0 + "," + margin.top + ")");
 
 	// set the max height of the ticks
-	let maxHeight = d3.max(data, function(d){ return d * 1.1 });
+	let maxHeight = d3.max(data, function(d){ return d * 1.1 } );
 
 	// creates the yScale
 	let yScale = d3.scaleLinear()
@@ -90,7 +79,7 @@ export function lineChartGen() {
 		.tickSize("30")
 		.tickPadding(8)
 		.ticks(ticksAmount)
-		.tickFormat(function(d) { return formatYvalue(d); });
+		.tickFormat(function(d) { return formatYvalue(d, dollar); });
 
 	// append y axis
 	svg.append("g")
@@ -132,20 +121,20 @@ export function lineChartGen() {
 	// append the first axis
     // shift the x axis over to the right
     // desktop 
-	xShift = 10 + margin.left;
-    yShift = height;
+	// xShift = 10 + margin.left;
+    // yShift = height;
     
     // tablet portrait
 
 
     // tablet landscape
-    xShift = 40 + margin.left;
-	yShift = height;
+    // xShift = 40 + margin.left;
+	// yShift = height;
 
     // smart phone
     // append the first axis
-	xShift = 30 + margin.left;
-	yShift = height;
+	// xShift = 30 + margin.left;
+	// yShift = height;
 
 
 	svg.append("g")
@@ -192,7 +181,7 @@ export function lineChartGen() {
 				return "";
 			}
 		});
-
+	
 	// append the second axis
 	svg.append("g")
 		.attr("class", "x-axis-ticks-two")

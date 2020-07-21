@@ -38,76 +38,6 @@ temp = Object.keys(areaValueData).forEach((key) => {
     return aV;
 });
 
-/*
-$: anchorKeys = dataKeys.map((key, i) => {
-    if (key.toLowerCase() === 'a' || key === 'b' || key === 'c' && (tempKey !== 1)){
-        tempKey = i;
-        return {group: 1, index: i, groupId: 'ac'};
-    }
-
-    if (key.toLowerCase() === 'd' || key === 'e' || key === 'f' && (tempKey !== 2)){
-        tempKey = 2;
-        return {group: 2, index: i, groupId: 'df'}
-    }
-
-    if (key.toLowerCase() === 'g' || key === 'h' || key === 'i' && (tempKey !== 3)){
-        tempKey = 3;
-        return {group: 3, index: i, groupId: 'gi'}
-    }
-
-    if (key.toLowerCase() === 'j' || key === 'k' || key === 'l' && (tempKey !== 4)){
-        tempKey = 4;
-        return {group: 4, index: i, groupId: 'jl'}
-    }
-
-    if (key.toLowerCase() === 'm' || key === 'n' || key === 'o' && (tempKey !== 5)){
-        tempKey = 5;
-        return {group: 5, index: i, groupId: 'mo'}
-    }
-
-    if (key.toLowerCase() === 'p' || key === 'q' || key === 'r' && (tempKey !== 6)){
-        tempKey = 6;
-        return {group: 6, index: i, groupId: 'pr'}
-    }
-
-    if (key.toLowerCase() === 's' || key === 't' || key === 'u' && (tempKey !== 7)){
-        tempKey = 7;
-        return {group: 7, index: i, groupId: 'su'}
-    }
-
-    if (key.toLowerCase() === 'v' || key === 'w' || key === 'x' || key === 'y' || key === 'z' && (tempKey !== 8)){
-        tempKey = 8;
-        return {group: 8, index: i, groupId: 'vz'}
-    }
-
-    if (key === '0' || key === '1' && (tempKey !== 9)) {
-        tempKey = 9;
-        return {group: 9, index: i, groupId: '01'}
-    }
-
-    if (key === '2' || key === '3' && (tempKey !== 10)) {
-        tempKey = 10;
-        return {group: 10, index: i, groupId: '23'}
-    }
-
-    if (key === '4' || key === '5' && (tempKey !== 11)) {
-        tempKey = 11;
-        return {group: 11, index: i, groupId: '45'}
-    }
-
-    if (key === '6' || key === '7' && (tempKey !== 12)) {
-        tempKey = 12;
-        return {group: 12, index: i, groupId: '67'}
-    }
-
-    if (key === '8' || key === '9' && (tempKey !== 13)) {
-        tempKey = 13;
-        return {group: 13, index: i, groupId: '89'}
-    }
-
-    return {group: -1, index: -1, groupId: '-1'};
-});
-*/
 let aVsSelected;
 let aVEls;
 let areaTypeSelected;
@@ -192,21 +122,7 @@ function areaValueSelected() {
 let groupCountUnchecked = 0;
 
 let tempId = -1;
-/*
-function setAnchorId(i) {
-    let id = '';
-    if (anchorKeys.length > 0 && tempId != i) {
-        anchorKeys.forEach((aKey) => {
-            if (aKey.index == i) {
-                id = idClass + '-' + aKey.groupId;
-            }
-            
-        });
-    tempId = i;
-    return id;
-    }
-}
-*/
+
 let currentAV = '';
 function currentAVType(thisEl) {
     let parentType = thisEl.dataset.parent;

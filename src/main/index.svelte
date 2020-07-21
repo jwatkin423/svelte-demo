@@ -111,8 +111,16 @@ function setChart() {
 onMount(() => {
 	// get keys of the different charts
 	let keys = Object.keys(ddsData.chartData);
+	
 	// set the initial chart
 	let key = keys[0];
+
+	// get the div element
+	let ciw = document.querySelector('.content-inner-wrapper');
+
+	// set the correct width on intial load
+	width = ciw.offsetWidth;
+	
 	// draw chart
 	drawChart(key, 1);
 });
@@ -262,7 +270,6 @@ function formatChartTitle(title) {
 	.kmi-wrapper {
 		margin-bottom: 10px;
 		display: flex;
-		/* flex-direction: column; */
 		height: 60px;
 		background-color: #ffffff;
 		margin-left: 10px;
@@ -271,7 +278,6 @@ function formatChartTitle(title) {
 	.kmi-wrapper-double {
 		margin-bottom: 10px;
 		display: flex;
-		/* flex-direction: column; */
 		height: 80px;
 		background-color: #f2f2f2;
 		margin-left: 10px;
@@ -298,19 +304,16 @@ function formatChartTitle(title) {
 		flex-direction: column;
 		background-color: #ffffff;
 		height: 100%;
-		/* max-height: 560px; */
 		flex: 1 1 auto;
 		flex-basis: 100%;
 	}
 
 	.chart-wrapper-blank {
-		width: 1068px;
-		display: flex;
+		display: grid;
+		grid-template-columns: 50% 50%;
 		margin-left: 10px;
      	height: 100%;
 		max-height: 560px;
-		flex: 1 1 auto;
-		flex-basis: 100%;
 	}
 
 	.tabular-wrapper {

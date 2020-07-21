@@ -75,8 +75,24 @@ export let secondary_fill_color;
         color: #666666;
         vertical-align: unset;
         width: 20%;
-        max-width: 150px;
     }
+
+    .mnth-ytd-container {
+        display: grid;
+        grid-template-columns: calc(100% - 54px) 54px;
+        justify-items: end;
+        justify-content: end;
+    }
+    .mnth-item {
+        grid-column: 1/2;
+        grid-row: 1/2;
+    }
+
+    .ytd-item {
+        grid-column: 1/2;
+        grid-row: 2/2;
+    }
+
 </style>
 
 <!-- KMI HEADER-->
@@ -90,11 +106,19 @@ export let secondary_fill_color;
 
 <!-- KMI ROW ONE-->
 <div class="kmi-row kmi-data-row">
-    <div class="div-cell">
-        <i>
-            <Icon customColor={primary_fill_color} class="year" tempId="line-one" icon={icon[2]} />
-        </i>
-        {monthDate}
+    <div class="div-cell mnth-ytd-container">
+        <div class="mnth-item">
+            <i>
+                <Icon customColor={primary_fill_color} class="year" tempId="line-one" icon={icon[2]} />
+                {monthDate}
+            </i>
+        </div>
+        <div class="ytd-item">
+            <i>
+                <Icon customColor={secondary_fill_color} class="year" tempId="line-two" icon={icon[2]} />
+            </i>
+            YTD
+        </div>
     </div>
     <div class="div-cell">{initMonth}</div>
     <div class="div-cell">{lastMonth}</div>
@@ -127,10 +151,6 @@ export let secondary_fill_color;
 <!-- KMI ROW TWO -->
 <div class="kmi-row kmi-data-row">
     <div class="div-cell">
-        <i>
-            <Icon customColor={secondary_fill_color} class="year" tempId="line-two" icon={icon[2]} />
-        </i>
-        YTD
     </div>
     <div class="div-cell">{initMonthTwo}</div>
     <div class="div-cell">{lastMonthTwo}</div>

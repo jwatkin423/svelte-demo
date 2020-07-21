@@ -193,3 +193,7 @@ table.dataTable thead .sorting_desc_disabled:before {
 	fill: #666666;
 
 }
+
+.description.active {
+	display: block;
+}

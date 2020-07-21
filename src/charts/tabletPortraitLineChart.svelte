@@ -177,7 +177,7 @@ function drawChart() {
 		.attr("class", "line")
 		.style("fill", "none")
 		.style("stroke", primary_fill_color)
-		.attr("transform", "translate(" + 70 + "," + 0 + ")")
+		.attr("transform", "translate(70, 0)")
 		.attr("d", lineOne);
 
 	
@@ -216,7 +216,7 @@ function drawChart() {
 			.attr("class", "line")
 			.style("fill", "none")
 			.style("stroke", secondary_fill_color)
-			.attr("transform", "translate(" + 0 + "," + 0 + ")")
+			.attr("transform", "translate(70, 0)")
 			.attr("d", lineTwo);
 
 	// Data line and dots group

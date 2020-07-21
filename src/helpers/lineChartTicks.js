@@ -1,9 +1,9 @@
 export function formatLastTickYear(tick) {
-	return reportYear.replace('20', " '");
+	return tick.replace('20', " '");
 }
 
 // format y value ticks
-export function formatYvalue(d) {
+export function formatYvalue(d, dollar) {
 	let val = Math.abs(d);
 
 	let flag = 0;

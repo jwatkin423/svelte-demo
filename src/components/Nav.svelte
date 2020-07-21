@@ -92,6 +92,7 @@ onMount(() => {
 function toggleShowHamMenu() {
     showHamburger = showHamburger === true ? false : true;
     showClass = false;
+    
 }
 
 function setKey(e) {
@@ -191,8 +192,9 @@ let screenSize = window.innerWidth;
 
 $: hideMobileMenu(width);
 
+// hide menu if over 1024 px
 function hideMobileMenu(width) {
-    if (width > 768) {
+    if (width > 1024) {
         showHamburger = false;
     }
 }
