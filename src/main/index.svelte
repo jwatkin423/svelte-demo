@@ -9,6 +9,10 @@ import Link from '../components/Link.svelte';
 import MnthYtd from '../charts/MnthYtd.svelte';
 import MnthYtdSmall from '../charts/MnthYtdSmall.svelte';
 import MnthYtdTabletPortrait from '../charts/MnthYtdTabletPortrait.svelte';
+import MnthYtdTop from '../charts/MnthYtdTbTop.svelte';
+import MnthYtdBottom from '../charts/MnthYtdTbBottom.svelte';
+import MnthYtdLeft from '../charts/MnthYtdleft.svelte';
+import MnthYtdRight from '../charts/MnthYtdRight.svelte';
 import MnthYtdTabletLandscape from '../charts/MnthYtdTabletLandscape.svelte';
 import { tickMarks } from '../utils/_utils';
 import { onMount } from 'svelte';
@@ -122,12 +126,12 @@ onMount(() => {
 	width = ciw.offsetWidth;
 	
 	// draw chart
-	drawChart(key, 1);
+	genChartData(key, 1);
 });
 
 function setKey (key) {
 	if (key) {
-		drawChart(key, 1);
+		genChartData(key, 1);
 	}
 	setDollarSymbol(key);
 }
@@ -135,7 +139,7 @@ function setKey (key) {
 // set the key to draw the chart
 $: setKey(mobileKey);
 
-function drawChart(event, initial = 0) {
+function genChartData(event, initial = 0) {
 
 	let key = '';
 
@@ -284,17 +288,29 @@ function formatChartTitle(title) {
 	}
 
 	.kmi-div {
-		width: 50%;
 		background-color: #ffffff;
 	}
 
 	.kmi-div-left {
+		width: 50%;
 		margin-right: 5px;
 		display: flex;
 	}
 
 	.kmi-div-right {
+		width: 50%;
 		margin-left: 5px;
+		display: flex;
+	}
+
+	.kmi-div-top {
+		margin-bottom: 10px;
+		display: flex;
+	}
+
+	.kmi-div-bottom {
+		margin-top: 10px;
+		margin-bottom: 10px;
 		display: flex;
 	}
 
@@ -426,7 +442,7 @@ function formatChartTitle(title) {
 		</div>
 		<div class="sidebar-menu-links">
 			<ul>
-				<Link data={chartData} keys={keys} on:l={drawChart}/>
+				<Link data={chartData} keys={keys} on:l={genChartData}/>
 			</ul>
 		</div>
 		
@@ -435,35 +451,42 @@ function formatChartTitle(title) {
 			<h3 class="chart-title-h3">{chartTitle}</h3>
 	</div>
 		<div class="content-inner-wrapper" bind:clientHeight={height} bind:clientWidth={width}>
+			<!-- KMI Section Line graphs-->
 			{#if searchType !== 'mnth-ytd'}
-			<div class="kmi-wrapper">
-				<KMI 
-					data={barData.data}
-					dataTwo={barData.dataTwo}
-					year={year}
-					reportPeriod={reportPeriod}
-					searchType={searchType}
-					{p_color}
-					{s_color}
-					showDollar={dollar}
-					chartType={barData.key} 
-				/>
-			</div>
-			{:else if (currentKey !== 'supplyDemand') && searchType === 'mnth-ytd'}
 				<div class="kmi-wrapper">
 					<KMI 
 						data={barData.data}
 						dataTwo={barData.dataTwo}
-						year={year} 
-						reportPeriod={reportPeriod}  
-						searchType={searchType} 
-						{p_color} 
+						year={year}
+						reportPeriod={reportPeriod}
+						searchType={searchType}
+						{p_color}
 						{s_color}
 						showDollar={dollar}
-						chartType={barData.key}
-						/>
+						chartType={barData.key} 
+					/>
 				</div>
-			{:else}
+			{/if}
+			<!-- End of KMI Section (sans supplyDemand) -->
+
+			{#if currentKey !== 'supplyDemand' && searchType === 'mnth-ytd'}
+				<div class="kmi-wrapper">
+					<KMI 
+						data={barData.data}
+						dataTwo={barData.dataTwo}
+						year={year}
+						reportPeriod={reportPeriod}
+						searchType={searchType}
+						{p_color}
+						{s_color}
+						showDollar={dollar}
+						chartType={barData.key} 
+					/>
+				</div>
+			{/if}
+
+			<!-- KMI section for supplyDemand Desktop -->
+			{#if currentKey === 'supplyDemand' && screenSize >= 1024 && searchType === 'mnth-ytd'}
 				<div class="kmi-wrapper-double">
 					<div class="kmi-div kmi-div-left">
 						<KMI 
@@ -493,6 +516,8 @@ function formatChartTitle(title) {
 					</div>
 				</div>
 			{/if}
+			<!-- End of KMI section for supplyDemand Desktop -->
+
 			<!-- Line Charts -->
 			{#if searchType !== 'mnth-ytd'}
 				{#if screenSize > 1024}
@@ -516,7 +541,7 @@ function formatChartTitle(title) {
 						radius={4}
 						/>
 				{/if}
-				{#if screenSize <= 1024 && screenSize > 768}
+				{#if screenSize <= 1024 && screenSize > 768 && currentKey !== 'supplyDemmand'}
 						<TabletLandScapeChart
 							data={barData.data}
 							dataTwo={barData.dataTwo}
@@ -550,7 +575,7 @@ function formatChartTitle(title) {
 							mappedPointsTwo={mPointsTwo}
 							showDollar={dollar}
 							chartType={barData.key} 
-							{screenSize} 
+							screenSize={width}
 							initHeight={450}
 							initWidth={1004}
 							margins={{top: 25, right: 25, bottom: 30, left: 30}}
@@ -571,7 +596,7 @@ function formatChartTitle(title) {
 							mappedPointsTwo={mPointsTwo}
 							showDollar={dollar}
 							chartType={barData.key} 
-							{screenSize} 
+							screenSize={width}
 							initHeight={270}
 							initWidth={screenSize - 20}
 							margins={{ top: 15, right: 20, bottom: 25, left: 20}}
@@ -580,20 +605,13 @@ function formatChartTitle(title) {
 							radius={2}
 							/>
 				{/if}
+				<!-- End of line charts -->
 				
-			{:else}	
-				{#if screenSize > 1024}
-					{#if currentKey !== 'supplyDemand' && currentKey !== 'saleMedianSoldMedian'}
-						<div class="chart-wrapper">
-							<MnthYtdMedian 
-								data={barData.data}
-								reportPeriod={reportPeriod}
-								{p_color} 
-								{s_color} 
-								showDollar={dollar}
-								{screenSize}/>
-						</div>
-					{:else if currentKey === 'saleMedianSoldMedian'}	
+            {/if}
+
+			{#if searchType === 'mnth-ytd'}	
+				{#if screenSize >= 1024}
+					{#if currentKey !== 'supplyDemand'}
 						<div class="chart-wrapper">
 							<MnthYtdMedian
 								data={barData.data}
@@ -601,67 +619,92 @@ function formatChartTitle(title) {
 								{p_color} 
 								{s_color} 
 								showDollar={dollar}
-								{screenSize}/>
+								{screenSize}
+								/>
 						</div>
 					{:else}
 						<div class="chart-wrapper-blank">
-							<MnthYtd 
+							<MnthYtdLeft 
 								data={barData.data}
+								reportPeriod={reportPeriod}
+								{p_color} 
+								{s_color} 
+								showDollar={dollar}
+								screenSize={width}
+								/>
+
+							<MnthYtdRight
 								dataTwo={barData.dataTwo}
 								reportPeriod={reportPeriod}
 								{p_color} 
 								{s_color} 
 								showDollar={dollar}
-								yPoints={yT} 
-								reportYear={year}
-								chartType={barData.key}/>
+								screenSize={width}
+								/>	
 						</div>
-					{/if}	
+					{/if}
 				{/if}
-				{#if screenSize > 768 && screenSize <= 1024}
-					<div class="chart-wrapper">
-						<MnthYtdTabletPortrait 
-							data={barData.data} 
-							reportPeriod={reportPeriod} 
-							p_color={p_color} 
-							s_color={s_color} 
-							showDollar={dollar}
-							yPoints={yT} 
-							mappedPoints={mappedPoints} 
-							reportYear={year}
-							chartType={barData.key}/>
-					</div>
+				<!-- {#if screenSize < 1024 && screenSize > 480} -->
+				{#if screenSize < 1024}
+					{#if currentKey !== 'supplyDemand'}
+						<div class="chart-wrapper">
+							<MnthYtdTabletPortrait 
+								data={barData.data} 
+								reportPeriod={reportPeriod} 
+								{p_color} 
+								{s_color} 
+								showDollar={dollar}
+								screenSize={width}
+								/>
+						</div>
+					{:else}
+						<div class="kmi-div kmi-div-top">
+							<KMI 
+								data={barData.data}
+								year={year} 
+								reportPeriod={reportPeriod}  
+								searchType={searchType} 
+								{p_color} 
+								{s_color}
+								showDollar={dollar}
+								chartType={barData.key}
+								kmi={'top'} />
+						</div>
+						<div class="chart-wrapper">
+							<MnthYtdTop
+								data={barData.data}
+								reportPeriod={reportPeriod}
+								{p_color} 
+								{s_color} 
+								showDollar={dollar}
+								screenSize={width}
+								/>
+						</div>
+						<div class="kmi-div kmi-div-bottom">
+							<KMI 
+								data={barData.dataTwo}
+								year={year} 
+								reportPeriod={reportPeriod}  
+								searchType={searchType} 
+								{p_color} 
+								{s_color}
+								showDollar={dollar}
+								chartType={barData.key}
+								kmi={'bottom'} />
+						</div>
+						<div class="chart-wrapper">
+							<MnthYtdBottom
+								dataTwo={barData.dataTwo}
+								reportPeriod={reportPeriod}
+								{p_color} 
+								{s_color} 
+								showDollar={dollar}
+								screenSize={width}
+								/>
+						</div>
+					{/if}
 				{/if}
-				{#if screenSize > 480 && screenSize <= 768}
-					<div class="chart-wrapper">
-						<MnthYtdTabletPortrait 
-							data={barData.data} 
-							reportPeriod={reportPeriod} 
-							p_color={p_color} 
-							s_color={s_color} 
-							showDollar={dollar}
-							yPoints={yT} 
-							mappedPoints={mappedPoints} 
-							reportYear={year}
-							chartType={barData.key}/>
-					</div>
-				{/if}
-				{#if screenSize <= 480}
-					<div class="chart-wrapper">
-						<MnthYtdSmall 
-							data={barData.data} 
-							reportPeriod={reportPeriod} 
-							p_color={p_color}
-							s_color={s_color} 
-							showDollar={dollar}
-							yPoints={yT} 
-							mappedPoints={mappedPoints} 
-							reportYear={year}
-							chartType={barData.key}/>
-					</div>
-				{/if}
-				
-			{/if}	
+			{/if}
 			<div class="tabular-wrapper">
 				<Datatable {p_color} {chartData} {reportPeriod} key={currentKey} {keys}/>
 			</div>
