@@ -53,6 +53,28 @@ export let chngPercent;
         vertical-align: unset;   
         width: 25%;
     }
+ 
+@media only screen and (max-width: 480px) {
+
+    .div-header {
+        height: 10px;
+        line-height: 10px;
+        font-size: 10px;
+        font-weight: 600;
+        color: #666666;
+        text-align: center;
+    }
+
+    .div-cell {
+        height: 16px;
+        line-height: 16px;
+        font-size: 15px;
+        font-weight: 600;
+        color: #666666;
+        vertical-align: unset;
+    }
+
+}
 </style>
 
 <div class="kmi-row">

@@ -59,7 +59,6 @@ $: lastMonth = data[data.length - 1];
 $: change = (lastMonth - initialMonth).toFixed(toFixed);
 $: chngPercent = changePercentage(change, initialMonth);
 
-
 // second data set
 $: initialMonthTwo = parseFloat(dataTwo[0]);
 $: lastMonthTwo = dataTwo[data.length - 1];
@@ -77,8 +76,6 @@ $: mthChange = (monthTwo - initialMonth).toFixed(toFixed);
 $: ytdChange = (data[3] - data[1]).toFixed(toFixed);
 $: percentMnthChange = mnthYtdChangePercentage(mthChange, initialMonth);
 $: percentYtdChange = mnthYtdChangePercentage(ytdChange, yearOne);
-
-
 
 let periodSplits;
 
@@ -131,13 +128,13 @@ function formatNumber(num) {
         // Billions
         if (Math.abs(num) >= 1000000000) {
 			num /= 1000000000;
-			num = Number(Math.round(num + 'e' + 1) + 'e-1').toFixed(1);
+			num = Number(Math.floor(num + 'e' + 1) + 'e-1').toFixed(1);
             num = num + "B";
         }
         // millions
         else if(Math.abs(num) >= 1000000 && Math.abs(num) < 1000000000) {
 			num /= 1000000;
-			num = Number(Math.round(num + 'e' + 1) + 'e-1').toFixed(1);
+			num = Number(Math.floor(num + 'e' + 1) + 'e-1').toFixed(1);
             num = num + "M";
         } 
         else if (Math.abs(num) >= 1000 & Math.abs(num) < 1000000) {
@@ -286,6 +283,14 @@ function toggleDisplayTable() {
         height: 60px;
     }
 
+    .kmi-wrapper-sd {
+        display: block;
+        text-align: center;
+        background-color: #ffffff;
+        width: 100%;
+        height: 60px;
+    }
+
     .kmi-wrapper-double {
         display: block;
         text-align: center;
@@ -417,12 +422,22 @@ function toggleDisplayTable() {
     }
 }
 
+@media only screen and (max-width: 1023px) {
+    .button-wrapper {
+        display: none;
+    }
+
+    .kmi-wrapper {
+        width: 100%;
+    }
+}
+
+/* Smart Phones */
 @media only screen and (max-width: 480px) {
     .kmi-wrapper {
         display: block;
         text-align: center;
         background-color: #ffffff;
-        width: 80%;
     }
 
     table {
@@ -554,7 +569,7 @@ function toggleDisplayTable() {
             />
         </div>    
         <!-- button or buffer -->
-        {#if kmi === 'left'}
+        {#if kmi === 'left' || kmi === 'bottom' || kmi === 'bottom'}
             <div class="div-buffer-double"></div>
         {:else}
             <div class="button-wrapper">
@@ -563,8 +578,7 @@ function toggleDisplayTable() {
             </div>
         {/if}
 
-    {:else if (chartType === 'supplyDemand')}
-        <!-- <div class="div-buffer-double"></div> -->
+    {:else if (chartType === 'supplyDemand' && kmi !== 'bottom' && kmi !== 'top')}
         <div class="kmi-wrapper-double">
             <DoubleDivDisplayMnthYtd
                 rpOne={formatYear(reportPeriod[0])} 
@@ -583,7 +597,33 @@ function toggleDisplayTable() {
                 {kmi}
             />
         </div>
-        {#if kmi === 'left'}
+        {#if kmi === 'left' || kmi === 'top' || kmi === 'bottom'}
+            <div class="div-buffer-double"></div>
+        {:else}
+            <div class="button-wrapper-double">
+                <a class="button-small" on:click|preventDefault on:click={toggleDisplayChart} href='.'><img src='/images/chart.png' width="15" height="15" alt='chart toggle' /></a>
+                <a class="button-small" on:click|preventDefault on:click={toggleDisplayTable} href='.'><img src='/images/table.png' width="15" height="15" alt='table toggle' /></a>
+            </div>
+        {/if}
+    {:else if (chartType === 'supplyDemand' && (kmi === 'bottom' || kmi === 'top'))}
+            <div class="kmi-wrapper-sd">
+            <DivDisplayMnthYtd
+                rpOne={formatYear(reportPeriod[0])} 
+                rpTwo={formatYear(reportPeriod[2])}
+                initMonth={formatNumber(data[0])}
+                lastMonth={formatNumber(data[2])}
+                initMonthTwo={formatNumber(data[1])}
+                lastMonthTwo={formatNumber(data[3])}
+                {monthDate}
+                mthChange={formatNumber(mthChange)}
+                percentMnthChange={formatNumber(percentMnthChange)}
+                ytdChange={formatNumber(ytdChange)}
+                percentYtdChange={formatNumber(percentYtdChange)}
+                {primary_fill_color}
+                {secondary_fill_color}
+            />
+        </div>   
+        {#if kmi === 'left' || kmi === 'bottom' || kmi === 'top'}
             <div class="div-buffer-double"></div>
         {:else}
             <div class="button-wrapper-double">
@@ -592,4 +632,5 @@ function toggleDisplayTable() {
             </div>
         {/if}
     {/if}
+    <!-- end of supply demmand -->
 {/if}
