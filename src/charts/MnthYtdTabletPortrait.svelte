@@ -8,6 +8,9 @@ import { resetChart } from '../helpers/chartreset';
 export let data = [];
 export let reportPeriod = [];
 
+// set the chart width
+export let screenSize = '';
+
 // primary color prop
 export let p_color = false;
 export let s_color = false;
@@ -19,7 +22,6 @@ $: primary_fill_color = p_color ? p_color : '#019184';
 $: secondary_fill_color = s_color ? s_color :' #666666';
 
 export let showDollar;
-$: console.log(showDollar);
 let dollar = '';
 $: dollar = showDollar ? '$' : '';
 
@@ -29,17 +31,19 @@ const barDistanceSetTwo = .65;
 
 let points = [];
 $: points = [...data];
+
 $: drawChart(points);
 let margin = { top: 20, right: 15, bottom: 29, left: 25 };
-let width = 420 - margin.left - margin.right;
+let width = (screenSize > 480 ? screenSize : screenSize - 20) - margin.left - margin.right;
 let height = 436 - margin.top - margin.bottom;
 	
-$: console.log(width);
 let xTicks = [];
 let tmpDate;
 
 // draw the chart
 function drawChart() {
+
+	d3.selectAll(".median-chart > *").remove();
 	
 	// x ticks for the mnth ytd chart
 	xTicks[0] = reportPeriod[0];
@@ -47,8 +51,8 @@ function drawChart() {
 
 	// svg for d3
 	let svg = d3.select(".median-chart")
-			.attr("width",width+margin.left+margin.right)
-			.attr("height",height+margin.top+margin.bottom);
+			.attr("width", width + margin.left + margin.right)
+			.attr("height",height + margin.top + margin.bottom);
 
 	// ensures the highest tick mark value is greater than
 	// the highest value in the dataset
@@ -226,7 +230,7 @@ function formatYvalue(d) {
 	}
 
 	if (val < 1000) {
-		yValue = val;
+		yValue = dollar + val.toString();
 	}
 
 	// if the val gte 1,000 and lt 1,000,000
@@ -274,7 +278,7 @@ function formatTags(d) {
 
 	// if the val gte 1,000 and lt 1,000,000
 	if(val >= 1000 && val < 1000000) {
-		val /= 1000;
+		val = Math.ceil(val / 1000);
 		val = val.toFixed(0);
 		yValue = val.toString();
 		yValue = dollar + yValue + 'K';
@@ -282,7 +286,7 @@ function formatTags(d) {
 
 	// if the val gte 1,000,000 and lt 1,000,000,000
 	if(val >= 1000000 && val < 1000000000) {
-		val /= 1000000;
+		val = Math.ceil(val / 1000000);
 		val = val.toFixed(0);
 		yValue = val.toString();
 		yValue = dollar + yValue + 'M';
@@ -290,7 +294,7 @@ function formatTags(d) {
 
 	// if the val gte 1,000,000,000 and lt 1,000,000,000,000
 	if(val >= 1000000000 && val < 1000000000000) {
-		val /= 1000000000;
+		val = Math.ceil(val / 1000000000);
 		val = val.toFixed(0);
 		yValue = val.toString();
 		yValue = dollar + yValue + 'B';
@@ -305,7 +309,6 @@ function formatTags(d) {
 
 afterUpdate(() => {
 	if(points.length > 0) {
-		d3.selectAll(".median-chart > *").remove();	
 		drawChart();
 	}
 });
@@ -317,8 +320,6 @@ afterUpdate(() => {
 		margin-top: 0px;
 		background-color: #ffffff;
 		display: block;
-		/* height: 436px; */
-		/* width: 420px; */
 		margin: auto;
 	}
 
@@ -326,5 +327,5 @@ afterUpdate(() => {
 
 
 <div class="chart">
-	<svg class="median-chart border-violet"></svg>
+	<svg class="median-chart"></svg>
 </div>

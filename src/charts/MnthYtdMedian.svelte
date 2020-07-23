@@ -41,13 +41,15 @@ let width = 488 - margin.left - margin.right;
 let height = 474 - margin.top - margin.bottom;
 
 $: width = ((488 / 1068) * screenSize) - margin.left - margin.right;
-$: height = ((474 / 1068) * screenSize) - margin.top - margin.bottom;
+// $: height = ((474 / 1068) * screenSize) - margin.top - margin.bottom;
 $: drawChart(width);
 let xTicks = [];
 let tmpDate;
 
 function drawChart() {
 	
+	d3.selectAll(".bar-chart > *").remove();
+
 	// x ticks for the mnth ytd chart
 	xTicks[0] = reportPeriod[0];
 	xTicks[1] = 'YTD';
@@ -55,7 +57,7 @@ function drawChart() {
 	// svg for d3
 	let svg = d3.select(".bar-chart")
 			.attr("width",width+margin.left+margin.right)
-			.attr("height",height+margin.top+margin.bottom);
+			.attr("height", height + margin.top + margin.bottom);
 
 	
 	let maxHeight = d3.max(data,function(d){return Math.abs(d) * 1.1});
@@ -232,7 +234,7 @@ function formatYvalue(d) {
 	}
 
 	if (val < 1000) {
-		yValue = val;
+		yValue = dollar + val.toString();
 	}
 
 	// if the val gte 1,000 and lt 1,000,000
@@ -280,7 +282,7 @@ function formatTags(d) {
 
 	// if the val gte 1,000 and lt 1,000,000
 	if(val >= 1000 && val < 1000000) {
-		val /= 1000;
+		val = Math.ceil(val / 1000);
 		val = val.toFixed(0);
 		yValue = val.toString();
 		yValue = dollar + yValue + 'K';
@@ -288,7 +290,7 @@ function formatTags(d) {
 
 	// if the val gte 1,000,000 and lt 1,000,000,000
 	if(val >= 1000000 && val < 1000000000) {
-		val /= 1000000;
+		val = Math.ceil(val / 1000000);
 		val = val.toFixed(0);
 		yValue = val.toString();
 		yValue = dollar + yValue + 'M';
@@ -296,7 +298,7 @@ function formatTags(d) {
 
 	// if the val gte 1,000,000,000 and lt 1,000,000,000,000
 	if(val >= 1000000000 && val < 1000000000000) {
-		val /= 1000000000;
+		val = Math.ceil(val / 1000000000);
 		val = val.toFixed(0);
 		yValue = val.toString();
 		yValue = dollar + yValue + 'B';
@@ -311,7 +313,6 @@ function formatTags(d) {
 
 afterUpdate(() => {
 	if(points.length > 0) {
-		d3.selectAll(".bar-chart > *").remove();	
 		drawChart();
 	}
 });
@@ -323,8 +324,6 @@ afterUpdate(() => {
 		margin-top: 0px;
 		background-color: #ffffff;
 		display: block;
-		/* height: 474px; */
-		/* width: 488px; */
 		margin: auto;
 	}
 </style>

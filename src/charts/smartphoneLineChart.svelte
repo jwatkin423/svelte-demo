@@ -33,7 +33,6 @@ export let initHeight;
 export let initWidth;
 export let margins;
 export let wRatio;
-export let sideBarWidth;
 export let radius;
 
 let points = [];
@@ -41,19 +40,19 @@ $: points = [...data];
 $: drawChart(points);
 let margin = {...margins};
 
-let width = initWidth;
+let width = screenSize;
 let height = initHeight - margin.top - margin.bottom;
 
-$: width = initWidth;
 $: height = ((initHeight / wRatio) * screenSize) - margin.top - margin.bottom;
-$: console.log(width, height, sideBarWidth, heightRed, screenSize);
+
 $: drawChart(width);
 let xTicks = [];
 let tmpDate;
 
 function drawChart() {
+	width = screenSize;
 
-	d3.selectAll(".line-chart > *").remove();
+   	d3.selectAll(".line-chart > *").remove();
 
 	let svg = d3.select(".line-chart")
 			.attr("width", width)
@@ -81,6 +80,7 @@ function drawChart() {
 		.call(linesYaxis)
 		.select('.domain').remove();
 
+	
 	d3.selectAll("line").attr("x1", "45").attr("x2", width - 15);
 
 	let ticksAmount = 8;
@@ -102,13 +102,13 @@ function drawChart() {
 		.call(yAxis).attr("dx", "0")
 		.select(".domain").remove();
 
-	d3.selectAll("text").attr("x", "30").style("fill", "#666666");
+	// set the axis from the left edge
+	d3.selectAll("text").attr("x", "35").style("fill", "#666666");
 	
-	let xScaleWidth = width - 30 - margin.left;
-	if (data.length === 37) {
-		xScaleWidth = xScaleWidth - 20;
+	let xScaleWidth = width - 30 - margin.right;
+	if (reportPeriod.length === 37) {
+		xScaleWidth -= 15;
 	}
-	
 	// creates the xScale 
 	let xScale = d3.scaleLinear()
 		.domain([0, reportPeriod.length])
@@ -217,14 +217,14 @@ function drawChart() {
 		// Data line and dots group
 		let lineAndDotsTwo = svg.append("g")
 			.attr("class", "line-and-dots")
-			.attr("transform", "translate(70,0)");
+			.attr("transform", "translate(" + xShift + "," + 0 + ")");
 			
 		// Data dots
 		lineAndDotsTwo.selectAll("line-circle")
 			.data(dataTwo)
 			.enter().append("circle")
 			.attr("class", "data-circle")
-			.attr("r", 4)
+			.attr("r", radius)
 			.attr("fill", secondary_fill_color)
 			.attr("cx", function(d, e) { return x(e); })
 			.attr("cy", function(d, e) { return y(d); });
