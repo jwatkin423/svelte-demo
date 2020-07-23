@@ -145,7 +145,11 @@ table.dataTable thead .sorting_desc_disabled:before {
 
 /** Median For Sale vs Median Sold **/
 
-.tags {
+.tags, 
+.tags-top, 
+.tags-bottom,
+.tags-left,
+.tags-right {
 	fill: #666666;
 	text-anchor: middle;
 	white-space: unset !important;
@@ -164,12 +168,31 @@ table.dataTable thead .sorting_desc_disabled:before {
 	stroke-width: 0;
 }
 
+.med-axis-tick-mark-bottom > .tick > line {
+	stroke: none;
+	stroke-width: 0;
+}
+
+.med-axis-tick-mark-left > .tick > line {
+	stroke: none;
+	stroke-width: 0;
+}
+
+.med-axis-tick-mark-right > .tick > line {
+	stroke: none;
+	stroke-width: 0;
+}
+
 .tick > line {
 	stroke: #CCCCCC;
 	stroke-width: 1px;
 }
 
-.xaxis-ticks{
+.xaxis-ticks, 
+.xaxis-ticks-top, 
+.xaxis-ticks-bottom,
+.xaxis-ticks-left,
+.xaxis-ticks-right {
 	font-size: 10px;
 	fill: #666666 !important;
 	text-anchor: middle;
