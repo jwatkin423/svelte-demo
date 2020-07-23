@@ -273,22 +273,21 @@ function drawChart() {
         .on("mouseleave", handleMouseOut);
 	}
 
-	// create event handlers for mouse
-	function handleMouseOver(d, i, e) {  // Add interactivity
-		let saleSold = this.dataset.type;
-		let xCoord = d3.event.pageX;
-		let yCoord = d3.event.clientY - 15;
+}
 
-		showToolTip(i, xCoord, yCoord, d, saleSold);
+// create event handlers for mouse
+function handleMouseOver(d, i, e) {  // Add interactivity
+	let saleSold = this.dataset.type;
+	let xCoord = d3.event.pageX;
+	let yCoord = d3.event.clientY - 15;
 
-	}
+	showToolTip(i, xCoord, yCoord, d, saleSold);
 
-	  // mouse out
-      function handleMouseOut(d, i) {
-		hideToolTip();
-	}
-  
+}
 
+	// mouse out
+	function handleMouseOut(d, i) {
+	hideToolTip();
 }
 
 function formatLastTickYear(tick) {
@@ -495,7 +494,7 @@ function hideToolTip() {
 </style>
 
 <div class="chart">
-	<svg class="line-chart border-violet"></svg>
+	<svg class="line-chart"></svg>
 </div>
 
 <div class="description" id='desc'><p id='date-hover'></p><p id='unit-hover'></p></div>
