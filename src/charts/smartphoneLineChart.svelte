@@ -67,30 +67,28 @@ function drawChart() {
 	let yScale = d3.scaleLinear()
 		.domain([maxHeight, 0])
 		.range([0, height])
-		.nice(8);
+		.nice(4);
 
 		// grid lines for the chart
 	let linesYaxis = d3.axisLeft(yScale)
-		.ticks(8)
 		.tickFormat("");
 
 	// add grid lines
 	svg.append("g")
 		.attr("class", "grid")
-		.call(linesYaxis)
+		.call(linesYaxis.ticks(4))
 		.select('.domain').remove();
 
 	
 	d3.selectAll("line").attr("x1", "45").attr("x2", width - 15);
 
-	let ticksAmount = 8;
+	let ticksAmount = 4;
 
 	// defines the y axis styles
 	let yAxis = d3.axisLeft(yScale)
 		.scale(yScale)
 		.tickSize("30")
 		.tickPadding(8)
-		.ticks(ticksAmount)
 		.tickFormat(function(d) { return formatYvalue(d); });
 
 	// append y axis
@@ -99,7 +97,7 @@ function drawChart() {
 		.attr("x", "0")
 		.attr("x1", "0")
 		.attr("x2", "0")
-		.call(yAxis).attr("dx", "0")
+		.call(yAxis.ticks(4)).attr("dx", "0")
 		.select(".domain").remove();
 
 	// set the axis from the left edge
@@ -183,7 +181,7 @@ function drawChart() {
 	let y = d3.scaleLinear()
 		.domain([maxHeight, 0])
 		.range([0, height])
-		.nice(8);
+		.nice(4);
 	
 	// Data line and dots group
     let lineAndDots = svg.append("g")
@@ -301,5 +299,5 @@ afterUpdate(() => {
 </style>
 
 <div class="chart" >
-	<svg class="line-chart border-violet"></svg>
+	<svg class="line-chart"></svg>
 </div>
