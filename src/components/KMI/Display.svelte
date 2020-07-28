@@ -247,7 +247,7 @@ function toggleDisplayChart() {
     showChart = showChart === true ? false : true;
     let chart = document.querySelector('.chart');
     if (chart) {
-        if (!showChart) {
+        if (!showChart && showTable) {
             chart.style.display = 'none';
         } else {
             chart.style.display = 'block';
@@ -263,7 +263,7 @@ function toggleDisplayTable() {
     showTable = showTable === true ? false : true;
     let table = document.querySelector('.tabular-wrapper');
     if (table) {
-        if (!showTable) {
+        if (!showTable & showChart) {
             table.style.display = 'none';
         } else {
             table.style.display = 'block';
