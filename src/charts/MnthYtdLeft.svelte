@@ -1,9 +1,9 @@
 <script>
-import { scaleLinear } from 'd3-scale';
 import * as d3 from 'd3';
 import { onMount, afterUpdate } from 'svelte';
 import clearData from '../helpers/clear-chart';
 import { resetChart } from '../helpers/chartreset';
+import { formatTags } from '../utils/formatMtYdTags';
 
 // data for the chart
 export let data = [];
@@ -36,7 +36,7 @@ $: points = [...data];
 // $: drawChart(points);
 let margin = {top: 35, right: 20, bottom: 35, left: 20};
 let width = (screenSize / 2) - margin.left - margin.right;
-let height = 474 - margin.top - margin.bottom;
+let height = 474 - margin.bottom - margin.top;
 $: width = (screenSize / 2) - margin.left - margin.right;
 $: drawChart(width);
 
@@ -48,7 +48,11 @@ function drawChart() {
 
 	d3.selectAll("#chart-left > *").remove();
     
-    width = (screenSize / 2) - margin.left - margin.right;
+	width = (screenSize / 2) - margin.left - margin.right;
+
+	if (width > 488) {
+		width = 488;
+	}
 
 	// x ticks for the mnth ytd chart
 	xTicks[0] = reportPeriod[0];
@@ -56,7 +60,7 @@ function drawChart() {
 
 	// svg for d3
 	let svgLeft = d3.select("#chart-left")
-			.attr("width",width + margin.left + margin.right)
+			.attr("width", width + margin.left + margin.right)
 			.attr("height", height + margin.top + margin.bottom);
 
 	// ensures the highest tick mark value is greater than
@@ -168,7 +172,7 @@ function drawChart() {
 		.data(data).enter()
 		.append("text")
 		.text(function(d) {
-			return formatTags(d);
+			return formatTags(d, dollar);
 		})
 		.attr("x", function(d,i){
 			let bdOne = width * barDistanceSetOne;
@@ -282,52 +286,6 @@ function formatYvalue(d) {
 	return yValue;
 }
 
-// format the bar values
-function formatTags(d) {
-	let val = Math.abs(d);
-
-	let flag = 0;
-	let yValue = '';
-
-	if(d < 0) {
-		flag = 1;
-	}
-
-	if (val < 1000) {
-		yValue = val;
-	}
-
-	// if the val gte 1,000 and lt 1,000,000
-	if(val >= 1000 && val < 1000000) {
-		val = Math.ceil(val / 1000);
-		val = val.toFixed(0);
-		yValue = val.toString();
-		yValue = dollar + yValue + 'K';
-	}
-
-	// if the val gte 1,000,000 and lt 1,000,000,000
-	if(val >= 1000000 && val < 1000000000) {
-		val = Math.ceil(val / 1000000);
-		val = val.toFixed(0);
-		yValue = val.toString();
-		yValue = dollar + yValue + 'M';
-	}
-
-	// if the val gte 1,000,000,000 and lt 1,000,000,000,000
-	if(val >= 1000000000 && val < 1000000000000) {
-		val = Math.ceil(val / 1000000000);
-		val = val.toFixed(0);
-		yValue = val.toString();
-		yValue = dollar + yValue + 'B';
-	}
-	
-	if(flag) {
-		yValue = "(" + yValue + ")";
-	}
-
-	return yValue;
-}
-
 afterUpdate(() => {
 	if(points.length > 0) {
 		drawChart();
@@ -337,24 +295,28 @@ afterUpdate(() => {
 </script>
 
 <style>
+
+	.chart-left {
+		margin-right: 5px;
+		float: left;
+		background-color: #ffffff;
+		height: 474px;
+		grid-column: 1/2;
+        grid-row: 1/1;
+    }
+
 	.chart {
 		margin-top: 0px;
 		background-color: #ffffff;
 		display: block;
-		/* margin: auto; */
+		height: 474px;
+		max-width: 500px;
+		margin-left: auto;
+		margin-right: auto;
 	}
-
-    .chart-left {
-		margin-right: 5px;
-		float: left;
-		background-color: #ffffff;
-    }
     
     svg {
 		position: relative;
-		width: 100%;
-		height: 100%;
-		display: block;
 		margin-left: auto;
 		margin-right: auto;
 	}
@@ -362,9 +324,7 @@ afterUpdate(() => {
 </style>
 
 <div class="chart-left">
-
     <div class="chart">
         <svg class="median-chart-left" id="chart-left"></svg>
     </div>
-
 </div>

@@ -4,6 +4,7 @@ import * as d3 from 'd3';
 import { onMount, afterUpdate } from 'svelte';
 import clearData from '../helpers/clear-chart';
 import { resetChart } from '../helpers/chartreset';
+import { formatTags } from '../utils/formatMtYdTags';
 
 export let data = [];
 export let reportPeriod = [];
@@ -25,34 +26,44 @@ export let showDollar;
 let dollar = '';
 $: dollar = showDollar ? '$' : '';
 
-const barWdith = 40;
-const barDistanceSetOne = .2;
-const barDistanceSetTwo = .65;
+// bar width
+let barWidth = 40;
+//distance between bars
+let barGap = 10;
+
+let barChartCenterDist = 80;
 
 let points = [];
 $: points = [...data];
 
 $: drawChart(points);
+
 let margin = { top: 20, right: 15, bottom: 29, left: 25 };
-let width = (screenSize > 480 ? screenSize : screenSize - 20) - margin.left - margin.right;
-let height = 436 - margin.top - margin.bottom;
+let width = 500 - margin.left - margin.right;
+let height = 550 - margin.top - margin.bottom;
 	
 let xTicks = [];
 let tmpDate;
+
+function chartWidth() {
+	return 500;
+}
 
 // draw the chart
 function drawChart() {
 
 	d3.selectAll(".median-chart > *").remove();
 	
+	let cWidth = chartWidth();
+
 	// x ticks for the mnth ytd chart
 	xTicks[0] = reportPeriod[0];
 	xTicks[1] = 'YTD';
-
+	
 	// svg for d3
 	let svg = d3.select(".median-chart")
-			.attr("width", width + margin.left + margin.right)
-			.attr("height",height + margin.top + margin.bottom);
+			.attr("width", cWidth)
+			.attr("height", height + margin.top + margin.bottom);
 
 	// ensures the highest tick mark value is greater than
 	// the highest value in the dataset
@@ -85,6 +96,12 @@ function drawChart() {
 
 	d3.selectAll("line").attr("x1", "60").attr("x2", width);
 
+	let barMiddle = cWidth / 2;
+	let barPosOne = barMiddle - (barChartCenterDist / 2) - ((barWidth * 2) + barGap);
+	let barPosTwo = barMiddle - (barChartCenterDist / 2) - ((barWidth));
+	let barPosThree = barMiddle + (barChartCenterDist / 2) + barWidth;
+	let barPosFour = barMiddle + (barChartCenterDist / 2) + ((barWidth * 2) + barGap);
+	
 	//add y axis
 	let yAxis = d3.axisLeft(yScale)
 		.ticks(8)
@@ -108,17 +125,17 @@ function drawChart() {
 
 	let bars = svg.selectAll("rect").data(data).enter().append("rect");
 	bars.attr("x",function(d,i) {
-		if (i === 0) {
-				return (width * barDistanceSetOne) + 10;
+		if (i == 0) {
+			return barPosOne;
 		}
-		if (i === 1) {
-				return (width * barDistanceSetOne) + 60;
+		if (i == 1) {
+			return barPosTwo;
 		}
 		if (i == 2) {
-				return (width * barDistanceSetTwo) + 10;
+			return barPosThree;
 		}	
 		if (i == 3) {
-				return (width * barDistanceSetTwo) + 60;
+			return barPosFour;
 		}
 	})
 	.attr("y",function(d) {
@@ -134,7 +151,7 @@ function drawChart() {
 		}
 		
 	})//for bottom to top
-	.attr("width", barWdith)
+	.attr("width", barWidth)
 	.attr("height", function(d) {
 		if (min < 0) {
 			return height/2 -yScale(Math.abs(d));
@@ -152,22 +169,24 @@ function drawChart() {
 		}
 	});
 	
+	
+
 	//add tag to every bar
 	let tags = svg.selectAll().data(data).enter().append("text").text(function(d) {
-		return formatTags(d);
+		return formatTags(d, dollar);
 	})
 	.attr("x", function(d,i){
 		if (i == 0) {
-			return (width * barDistanceSetOne) + 25;
+			return barPosOne + (barWidth / 2);
 		}
 		if (i == 1) {
-			return (width * barDistanceSetOne) + 80;
+			return barPosTwo + (barWidth / 2);
 		}
 		if (i == 2) {
-			return (width * barDistanceSetTwo) + 30;
+			return barPosThree + (barWidth / 2);
 		}	
 		if (i == 3) {
-			return (width * barDistanceSetTwo) + 80;
+			return barPosFour + (barWidth / 2);
 		}
 	})
 	.attr("y",function(d, i) {
@@ -190,9 +209,9 @@ function drawChart() {
 	})
 	.attr("x", function(d, i) {
 		if (i === 0) {
-			return (width * barDistanceSetOne) + 55;
+			return barPosOne + ((2 * barWidth) + 5 ) / 2;
 		} else if(i === 1){			
-			return (width * barDistanceSetTwo) + 55;
+			return barPosThree + ((2 * barWidth) + 5 ) / 2;
 		}
 	})
 	.attr("class", "xaxis-ticks")
@@ -250,52 +269,6 @@ function formatYvalue(d) {
 	// if the val gte 1,000,000,000 and lt 1,000,000,000,000
 	if(val >= 1000000000 && val < 1000000000000) {
 		val /= 1000000000;
-		yValue = val.toString();
-		yValue = dollar + yValue + 'B';
-	}
-	
-	if(flag) {
-		yValue = "(" + yValue + ")";
-	}
-
-	return yValue;
-}
-
-// format the bar values
-function formatTags(d) {
-	let val = Math.abs(d);
-
-	let flag = 0;
-	let yValue = '';
-
-	if(d < 0) {
-		flag = 1;
-	}
-
-	if (val < 1000) {
-		yValue = val;
-	}
-
-	// if the val gte 1,000 and lt 1,000,000
-	if(val >= 1000 && val < 1000000) {
-		val = Math.ceil(val / 1000);
-		val = val.toFixed(0);
-		yValue = val.toString();
-		yValue = dollar + yValue + 'K';
-	}
-
-	// if the val gte 1,000,000 and lt 1,000,000,000
-	if(val >= 1000000 && val < 1000000000) {
-		val = Math.ceil(val / 1000000);
-		val = val.toFixed(0);
-		yValue = val.toString();
-		yValue = dollar + yValue + 'M';
-	}
-
-	// if the val gte 1,000,000,000 and lt 1,000,000,000,000
-	if(val >= 1000000000 && val < 1000000000000) {
-		val = Math.ceil(val / 1000000000);
-		val = val.toFixed(0);
 		yValue = val.toString();
 		yValue = dollar + yValue + 'B';
 	}

@@ -4,14 +4,10 @@ import * as d3 from 'd3';
 import { onMount, afterUpdate } from 'svelte';
 import clearData from '../helpers/clear-chart';
 import { resetChart } from '../helpers/chartreset';
+import { formatTags } from '../utils/formatMtYdTags';
 
 export let data = [];
 export let reportPeriod = [];
-// export let reportYear;
-// // export let yData = '';
-// export let yPoints;
-// // y Tick marks
-// $: yTicks = yPoints;
 
 // primary color prop
 export let p_color = false;
@@ -49,6 +45,10 @@ let tmpDate;
 function drawChart() {
 	
 	d3.selectAll(".bar-chart > *").remove();
+	width = ((488 / 1068) * screenSize) - margin.left - margin.right;
+	if (width > 488) {
+		width = 488;
+	}
 
 	// x ticks for the mnth ytd chart
 	xTicks[0] = reportPeriod[0];
@@ -56,7 +56,7 @@ function drawChart() {
 
 	// svg for d3
 	let svg = d3.select(".bar-chart")
-			.attr("width",width+margin.left+margin.right)
+			.attr("width",width + margin.left + margin.right)
 			.attr("height", height + margin.top + margin.bottom);
 
 	
@@ -158,7 +158,7 @@ function drawChart() {
 	
 	//add tag to every bar
 	let tags = svg.selectAll().data(data).enter().append("text").text(function(d) {
-		return formatTags(d);
+		return formatTags(d, dollar);
 	})
 	.attr("x", function(d,i){
 		if (i == 0) {
@@ -254,52 +254,6 @@ function formatYvalue(d) {
 	// if the val gte 1,000,000,000 and lt 1,000,000,000,000
 	if(val >= 1000000000 && val < 1000000000000) {
 		val /= 1000000000;
-		yValue = val.toString();
-		yValue = dollar + yValue + 'B';
-	}
-	
-	if(flag) {
-		yValue = "(" + yValue + ")";
-	}
-
-	return yValue;
-}
-
-// format the bar values
-function formatTags(d) {
-	let val = Math.abs(d);
-
-	let flag = 0;
-	let yValue = '';
-
-	if(d < 0) {
-		flag = 1;
-	}
-
-	if (val < 1000) {
-		yValue = val;
-	}
-
-	// if the val gte 1,000 and lt 1,000,000
-	if(val >= 1000 && val < 1000000) {
-		val = Math.ceil(val / 1000);
-		val = val.toFixed(0);
-		yValue = val.toString();
-		yValue = dollar + yValue + 'K';
-	}
-
-	// if the val gte 1,000,000 and lt 1,000,000,000
-	if(val >= 1000000 && val < 1000000000) {
-		val = Math.ceil(val / 1000000);
-		val = val.toFixed(0);
-		yValue = val.toString();
-		yValue = dollar + yValue + 'M';
-	}
-
-	// if the val gte 1,000,000,000 and lt 1,000,000,000,000
-	if(val >= 1000000000 && val < 1000000000000) {
-		val = Math.ceil(val / 1000000000);
-		val = val.toFixed(0);
 		yValue = val.toString();
 		yValue = dollar + yValue + 'B';
 	}

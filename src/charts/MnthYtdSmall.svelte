@@ -4,14 +4,13 @@ import * as d3 from 'd3';
 import { onMount, afterUpdate } from 'svelte';
 import clearData from '../helpers/clear-chart';
 import { resetChart } from '../helpers/chartreset';
+import { formatTags } from '../utils/formatMtYdTags';
 
 export let data = [];
 export let reportPeriod = [];
-export let reportYear;
-// export let yData = '';
-export let yPoints;
-// y Tick marks
-$: yTicks = yPoints;
+
+// set the chart width
+export let screenSize = '';
 
 // primary color prop
 export let p_color = false;
@@ -24,34 +23,54 @@ $: primary_fill_color = p_color ? p_color : '#019184';
 $: secondary_fill_color = s_color ? s_color :' #666666';
 
 export let showDollar;
+let dollar = '';
 $: dollar = showDollar ? '$' : '';
 
-const barWdith = 20;
+// bar width
+let barWidth = 20;
+//distance between bars
+let barGap = 5;
+
+// tag distance
+let tagDistOne = 10;
+let tagDistTwo = 20;
+
+let barChartCenterDist = 45;
 
 let points = [];
 $: points = [...data];
+
 $: drawChart(points);
-let margin = { top: 15, right: 20, bottom: 25, left: 20 };
-let width = window.innerWidth - margin.left - margin.right;
-let height = 270 - margin.top - margin.bottom;
+
+let margin = { top: 20, right: 15, bottom: 29, left: 25 };
+let width = 285 - margin.left - margin.right;
+let height = 340 - margin.top - margin.bottom;
 	
 let xTicks = [];
 let tmpDate;
 
+function chartWidth() {
+	return 285;
+}
+
+// draw the chart
 function drawChart() {
+
+	d3.selectAll(".median-chart > *").remove();
 	
-	xTicks[0] = '';
+	let cWidth = chartWidth();
+
+	// x ticks for the mnth ytd chart
 	xTicks[0] = reportPeriod[0];
 	xTicks[1] = 'YTD';
-
+	
 	// svg for d3
 	let svg = d3.select(".median-chart")
-			.attr("width",width + 15)
-			.attr("height",height+margin.top+margin.bottom)
-			.append("g")  //add group to leave margin for axis
-			.attr("transform","translate(30,"+margin.top+")");
+			.attr("width", cWidth)
+			.attr("height", height + margin.top + margin.bottom);
 
-	
+	// ensures the highest tick mark value is greater than
+	// the highest value in the dataset
 	let maxHeight = d3.max(data,function(d){return Math.abs(d) * 1.1});
 	
 	// determine the min point 
@@ -63,72 +82,81 @@ function drawChart() {
 
 	// setup y scale
 	let yScale = d3.scaleLinear()
-		.domain([maxHeight, min])
-		.nice(8)
-		.range([0, height]);
+					.domain([maxHeight, min])
+					.nice(8)
+					.range([0, height]);
 
 	// grid lines for the chart
 	let linesYaxis = d3.axisLeft(yScale)
 		.ticks(8)
-		.tickSize(-width + margin.right)
 		.tickFormat("");
 
+	// add grid lines
 	svg.append("g")
 		.attr("class", "grid")
+		.attr("transform", "translate(0, " + margin.top + ")")
 		.call(linesYaxis)
 		.select('.domain').remove();
 
-	d3.selectAll("line").attr("x1", "15");
+	d3.selectAll("line").attr("x1", "60").attr("x2", width);
 
+	let barMiddle = cWidth / 2;
+	let barPosOne = barMiddle - (barChartCenterDist / 2) - ((barWidth * 2) + barGap);
+	let barPosTwo = barMiddle - (barChartCenterDist / 2) - ((barWidth));
+	let barPosThree = barMiddle + (barChartCenterDist / 2) + barWidth;
+	let barPosFour = barMiddle + (barChartCenterDist / 2) + ((barWidth * 2) + barGap);
+	
 	//add y axis
 	let yAxis = d3.axisLeft(yScale)
 		.ticks(8)
-		.tickSize(-width)
+		.tickSize(-width + margin.right)
 		.tickFormat(function(d) {
 			return formatYvalue(d);
 		});
 
 	svg.append("g")
-		.attr('class', "med-axis-tick-mark border-violet")
+		.attr('class', "med-axis-tick-mark")
 		.attr("x", "0")
 		.attr("x1", "0")
 		.attr("x2", "0")
+		.attr("transform", "translate(0, " + margin.top + ")")
 		.call(yAxis).attr("dx", "0")
 		.select('.domain').remove();
 
-		d3.selectAll("text").style("x", "-5");
+		// set the y axis to 30 pixles out
+		d3.selectAll("text").attr("x", "30");
 	  
 
 	let bars = svg.selectAll("rect").data(data).enter().append("rect");
 	bars.attr("x",function(d,i) {
-		if (i === 0) {
-				return (width * .10) + 30;
+		if (i == 0) {
+			return barPosOne;
 		}
-		if (i === 1) {
-				return (width * .10) + 60;
+		if (i == 1) {
+			return barPosTwo;
 		}
 		if (i == 2) {
-				return (width * .6) + 30;
+			return barPosThree;
 		}	
 		if (i == 3) {
-				return (width * .6) + 60;
+			return barPosFour;
 		}
 	})
 	.attr("y",function(d) {
 		if (min < 0) {
-			if(d<0){
-				return height/2;
+			if(d < 0) {
+				return height/2 + margin.top;
 			}
 			else{
-				return yScale(d); 
+				return yScale(d) + margin.top; 
 			}
 		} else {
-			return yScale(d);
+			return yScale(d) + margin.top;
 		}
 		
 	})//for bottom to top
-	.attr("width", barWdith)
-	.attr("height", function(d){
+	.attr("width", barWidth)
+	.attr("height", function(d) {
 		if (min < 0) {
 			return height/2 -yScale(Math.abs(d));
 		}
@@ -136,40 +164,41 @@ function drawChart() {
 		
 	});
 
-	bars.attr("fill",function(d, i){
+	bars.attr("fill",function(d, i) {
 		if(i===0 || i === 2){
 			return primary_fill_color;
 		}
-		else {
+		else{
 			return secondary_fill_color;
 		}
 	});
 	
+	
+
 	//add tag to every bar
 	let tags = svg.selectAll().data(data).enter().append("text").text(function(d) {
-		return formatTags(d);
+		return formatTags(d, dollar);
 	})
 	.attr("x", function(d,i){
 		if (i == 0) {
-			return (width * .1) + 40;
+			return barPosOne + (barWidth / 2);
 		}
 		if (i == 1) {
-			return (width * .1) + 70;
+			return barPosTwo + (barWidth / 2);
 		}
 		if (i == 2) {
-			return (width * .6) + 40;
+			return barPosThree + (barWidth / 2);
 		}	
 		if (i == 3) {
-			return (width * .6) + 70;
+			return barPosFour + (barWidth / 2);
 		}
 	})
 	.attr("y",function(d, i) {
 		if (d >= 0) {
-			return yScale(d) - 5;
+			return yScale(d) + margin.top - 5;
 		} else {
-			return height - yScale(Math.abs(d)) + 10;
+			return height - yScale(Math.abs(d)) + margin.top + 15;
 		}
-		
 	})
 	.attr('class', 'tags');
 
@@ -184,14 +213,16 @@ function drawChart() {
 	})
 	.attr("x", function(d, i) {
 		if (i === 0) {
-			return (width * .1) + 55;
+			return barPosOne + ((2 * barWidth) + 5 ) / 2;
 		} else if(i === 1){			
-			return (width * .6) + 55;
+			return barPosThree + ((2 * barWidth) + 5 ) / 2;
 		}
 	})
 	.attr("class", "xaxis-ticks")
-	.attr("y", height + (margin.bottom / 2));
-	
+	.attr("y", height + (margin.bottom / 2) + margin.top);
+
+	// add styles to the 0 tick and corresponding
+	// grid line
 	let lines = svg.selectAll('.grid .tick line')
 		.each(function(d) {
 			if (d == 0) {
@@ -202,7 +233,7 @@ function drawChart() {
 	let yTicksText = svg.selectAll('.med-axis-tick-mark .tick text')
 		.each(function(d) {
 			if (d == 0) {
-				d3.select(this).attr("class", "text-0");
+				d3.select(this).attr("class", "text-0").style("fill", "#666666");
 			} else {
 				d3.select(this).attr("class", "non-zero");
 			}
@@ -222,7 +253,7 @@ function formatYvalue(d) {
 	}
 
 	if (val < 1000) {
-		yValue = val;
+		yValue = dollar + val.toString();
 	}
 
 	// if the val gte 1,000 and lt 1,000,000
@@ -242,52 +273,6 @@ function formatYvalue(d) {
 	// if the val gte 1,000,000,000 and lt 1,000,000,000,000
 	if(val >= 1000000000 && val < 1000000000000) {
 		val /= 1000000000;
-		yValue = val.toString();
-		yValue = dollar + yValue + 'B';
-	}
-	
-	if(flag) {
-		yValue = "(" + yValue + ")";
-	}
-
-	return yValue;
-}
-
-// format the bar values
-function formatTags(d) {
-	let val = Math.abs(d);
-
-	let flag = 0;
-	let yValue = '';
-
-	if(d < 0) {
-		flag = 1;
-	}
-
-	if (val < 1000) {
-		yValue = val;
-	}
-
-	// if the val gte 1,000 and lt 1,000,000
-	if(val >= 1000 && val < 1000000) {
-		val /= 1000;
-		val = val.toFixed(0);
-		yValue = val.toString();
-		yValue = dollar + yValue + 'K';
-	}
-
-	// if the val gte 1,000,000 and lt 1,000,000,000
-	if(val >= 1000000 && val < 1000000000) {
-		val /= 1000000;
-		val = val.toFixed(0);
-		yValue = val.toString();
-		yValue = dollar + yValue + 'M';
-	}
-
-	// if the val gte 1,000,000,000 and lt 1,000,000,000,000
-	if(val >= 1000000000 && val < 1000000000000) {
-		val /= 1000000000;
-		val = val.toFixed(0);
 		yValue = val.toString();
 		yValue = dollar + yValue + 'B';
 	}
@@ -301,7 +286,6 @@ function formatTags(d) {
 
 afterUpdate(() => {
 	if(points.length > 0) {
-		d3.selectAll(".median-chart > *").remove();	
 		drawChart();
 	}
 });
@@ -313,11 +297,7 @@ afterUpdate(() => {
 		margin-top: 0px;
 		background-color: #ffffff;
 		display: block;
-		height: 270px;
-		/* max-width: 420px; */
-		margin-left: auto;
-		margin-right: auto;
-		width: 100%;
+		margin: auto;
 	}
 
 </style>
