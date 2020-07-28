@@ -11,6 +11,8 @@ import MnthYtdSmall from '../charts/MnthYtdSmall.svelte';
 import MnthYtdTabletPortrait from '../charts/MnthYtdTabletPortrait.svelte';
 import MnthYtdTop from '../charts/MnthYtdTbTop.svelte';
 import MnthYtdBottom from '../charts/MnthYtdTbBottom.svelte';
+import MnthYtdTopSmall from '../charts/MnthYtdTopSmall.svelte';
+import MnthYtdBottomSmall from '../charts/MnthYtdBottomSmall.svelte';
 import MnthYtdLeft from '../charts/MnthYtdleft.svelte';
 import MnthYtdRight from '../charts/MnthYtdRight.svelte';
 import MnthYtdTabletLandscape from '../charts/MnthYtdTabletLandscape.svelte';
@@ -258,11 +260,9 @@ function formatChartTitle(title) {
 
      /* main content area */
      .content-area {
-		/* max-width: 1280px; */
 		display: block;
 		margin-left: 10px;
 		margin-right: 10px;
-		/* max-height: 685px; */
      }
 	
 	.content-inner-wrapper {
@@ -327,9 +327,10 @@ function formatChartTitle(title) {
 	.chart-wrapper-blank {
 		display: grid;
 		grid-template-columns: 50% 50%;
+		grid-template-rows: 474px;
 		margin-left: 10px;
      	height: 100%;
-		max-height: 560px;
+		max-height: 474px;
 	}
 
 	.tabular-wrapper {
@@ -609,7 +610,9 @@ function formatChartTitle(title) {
 				
             {/if}
 
-			{#if searchType === 'mnth-ytd'}	
+			<!-- Mnth Ytd -->
+			{#if searchType === 'mnth-ytd'}
+				<!-- Desktop -->
 				{#if screenSize >= 1024}
 					{#if currentKey !== 'supplyDemand'}
 						<div class="chart-wrapper">
@@ -634,7 +637,7 @@ function formatChartTitle(title) {
 								/>
 
 							<MnthYtdRight
-								dataTwo={barData.dataTwo}
+								data={barData.dataTwo}
 								reportPeriod={reportPeriod}
 								{p_color} 
 								{s_color} 
@@ -644,8 +647,8 @@ function formatChartTitle(title) {
 						</div>
 					{/if}
 				{/if}
-				<!-- {#if screenSize < 1024 && screenSize > 480} -->
-				{#if screenSize < 1024}
+				<!-- Tablet Size -->
+				{#if screenSize < 1024 && screenSize > 480}
 					{#if currentKey !== 'supplyDemand'}
 						<div class="chart-wrapper">
 							<MnthYtdTabletPortrait 
@@ -702,6 +705,67 @@ function formatChartTitle(title) {
 								screenSize={width}
 								/>
 						</div>
+				
+					{/if}
+				<!-- Smart phone -->
+				{:else if (screenSize <= 480)}
+					{#if currentKey !== 'supplyDemand'}
+						<div class="chart-wrapper">
+							<MnthYtdSmall 
+								data={barData.data} 
+								reportPeriod={reportPeriod} 
+								{p_color} 
+								{s_color} 
+								showDollar={dollar}
+								screenSize={width}
+								/>
+						</div>
+					{:else}
+						<div class="kmi-div kmi-div-top">
+							<KMI 
+								data={barData.data}
+								year={year} 
+								reportPeriod={reportPeriod}  
+								searchType={searchType} 
+								{p_color} 
+								{s_color}
+								showDollar={dollar}
+								chartType={barData.key}
+								kmi={'top'} />
+						</div>
+						<div class="chart-wrapper">
+							<MnthYtdTopSmall
+								data={barData.data}
+								reportPeriod={reportPeriod}
+								{p_color} 
+								{s_color} 
+								showDollar={dollar}
+								screenSize={width}
+								/>
+						</div>
+						<div class="kmi-div kmi-div-bottom">
+							<KMI 
+								data={barData.dataTwo}
+								year={year} 
+								reportPeriod={reportPeriod}  
+								searchType={searchType} 
+								{p_color} 
+								{s_color}
+								showDollar={dollar}
+								chartType={barData.key}
+								kmi={'bottom'} />
+						</div>
+						<div class="chart-wrapper">
+							<MnthYtdBottomSmall
+								dataTwo={barData.dataTwo}
+								reportPeriod={reportPeriod}
+								{p_color} 
+								{s_color} 
+								showDollar={dollar}
+								screenSize={width}
+								/>
+						</div>
+				
 					{/if}
 				{/if}
 			{/if}
