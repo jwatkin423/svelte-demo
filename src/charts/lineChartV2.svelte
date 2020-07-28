@@ -37,7 +37,7 @@ export let radius;
 
 let points = [];
 $: points = [...data];
-$: drawChart(points);
+
 let margin = {...margins};
 
 let width = screenSize;
@@ -45,7 +45,11 @@ let height = initHeight - margin.top - margin.bottom;
 
 $: height = ((initHeight / wRatio) * screenSize) - margin.top - margin.bottom;
 
-$: drawChart(screenSize);
+// $: drawChart(screenSize);
+$: drawChart(points);
+
+let cWidth;
+$: drawChart(cWidth);
 
 let xTicks = [];
 let tmpDate;
@@ -75,25 +79,21 @@ function drawChart() {
 
 		// grid lines for the chart
 	let linesYaxis = d3.axisLeft(yScale)
-		.ticks(8)
 		.tickFormat("");
 
 	// add grid lines
 	svg.append("g")
 		.attr("class", "grid")
-		.call(linesYaxis)
+		.call(linesYaxis.ticks(8))
 		.select('.domain').remove();
 
 	d3.selectAll("line").attr("x1", "60").attr("x2", width - 20);
-
-	let ticksAmount = 8;
 
 	// defines the y axis styles
 	let yAxis = d3.axisLeft(yScale)
 		.scale(yScale)
 		.tickSize("30")
 		.tickPadding(8)
-		.ticks(ticksAmount)
 		.tickFormat(function(d) { return formatYvalue(d); });
 
 	// append y axis
@@ -102,7 +102,7 @@ function drawChart() {
 		.attr("x", "0")
 		.attr("x1", "0")
 		.attr("x2", "0")
-		.call(yAxis).attr("dx", "0")
+		.call(yAxis.ticks(8)).attr("dx", "0")
 		.select(".domain").remove();
 
 	d3.selectAll("text").attr("x", "45").style("fill", "#666666");
@@ -342,9 +342,9 @@ onMount(() => {
 });
 
 afterUpdate(() => {
-	if(points.length > 0) {
-		drawChart();
-	}
+	// if(points.length > 0) {
+	// 	drawChart();
+	// }
 });
 
 // desc ID
@@ -493,7 +493,7 @@ function hideToolTip() {
 
 </style>
 
-<div class="chart">
+<div class="chart" bind:clientWidth={cWidth}>
 	<svg class="line-chart"></svg>
 </div>
 
