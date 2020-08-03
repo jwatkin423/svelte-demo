@@ -271,7 +271,7 @@ function formatChartTitle(title) {
 		margin-left: 10px;
 	}
 
-	.kmi-wrapper {
+	.kmi-wrapper-outer {
 		margin-bottom: 10px;
 		display: flex;
 		height: 60px;
@@ -282,7 +282,7 @@ function formatChartTitle(title) {
 	.kmi-wrapper-double {
 		margin-bottom: 10px;
 		display: flex;
-		height: 80px;
+		height: 161px;
 		background-color: #f2f2f2;
 		margin-left: 10px;
 	}
@@ -369,7 +369,7 @@ function formatChartTitle(title) {
 		padding-left: 0;
 	}
 
-     .sidebar-title-area {
+    .sidebar-title-area {
          background-color: #ffffff;
          height: 25px;
          border-bottom: 1px solid #CCCCCC;
@@ -382,13 +382,13 @@ function formatChartTitle(title) {
 		padding-bottom: 10px;
      }
 
-     .sidebar-menu-title {
+    .sidebar-menu-title {
          font-size: 14px;
          text-transform: uppercase;
          width: 202px;
 		 text-align: center;
 		 margin: auto;
-     }
+    }
 
 	.sidebar-buffer {
 		height: 40px;
@@ -414,7 +414,7 @@ function formatChartTitle(title) {
 			margin-left: 0 !important;
 		}
 
-		.kmi-wrapper {
+		.kmi-wrapper-outer {
 			margin-left: 0px;
 		}
 
@@ -454,7 +454,7 @@ function formatChartTitle(title) {
 		<div class="content-inner-wrapper" bind:clientHeight={height} bind:clientWidth={width}>
 			<!-- KMI Section Line graphs-->
 			{#if searchType !== 'mnth-ytd'}
-				<div class="kmi-wrapper">
+				<div class="kmi-wrapper-outer">
 					<KMI 
 						data={barData.data}
 						dataTwo={barData.dataTwo}
@@ -471,7 +471,7 @@ function formatChartTitle(title) {
 			<!-- End of KMI Section (sans supplyDemand) -->
 
 			{#if currentKey !== 'supplyDemand' && searchType === 'mnth-ytd'}
-				<div class="kmi-wrapper">
+				<div class="kmi-wrapper-outer">
 					<KMI 
 						data={barData.data}
 						dataTwo={barData.dataTwo}
@@ -543,45 +543,45 @@ function formatChartTitle(title) {
 						/>
 				{/if}
 				{#if screenSize <= 1024 && screenSize > 768 && currentKey !== 'supplyDemmand'}
-						<TabletLandScapeChart
-							data={barData.data}
-							dataTwo={barData.dataTwo}
-							reportPeriod={reportPeriod} 
-							reportYear={year}
-							p_color={p_color} 
-							s_color={s_color} 
-							yPoints={yT} 
-							mappedPoints={mPoints}
-							mappedPointsTwo={mPointsTwo}
-							showDollar={dollar}
-							chartType={barData.key} 
-							{screenSize} 
-							initHeight={450}
-							initWidth={1004}
-							margins={{top: 25, right: 25, bottom: 30, left: 30}}
-							wRatio={1024}
-							radius={4}
-							/>
+					<TabletLandScapeChart
+						data={barData.data}
+						dataTwo={barData.dataTwo}
+						reportPeriod={reportPeriod} 
+						reportYear={year}
+						p_color={p_color} 
+						s_color={s_color} 
+						yPoints={yT} 
+						mappedPoints={mPoints}
+						mappedPointsTwo={mPointsTwo}
+						showDollar={dollar}
+						chartType={barData.key} 
+						{screenSize} 
+						initHeight={450}
+						initWidth={1004}
+						margins={{top: 25, right: 25, bottom: 30, left: 30}}
+						wRatio={1024}
+						radius={4}
+						/>
 				{/if}
 				{#if screenSize <= 768 && screenSize > 480}
 					<TabletPortraitChart 
 						data={barData.data}
-							dataTwo={barData.dataTwo}
-							reportPeriod={reportPeriod} 
-							reportYear={year}
-							p_color={p_color} 
-							s_color={s_color} 
-							yPoints={yT} 
-							mappedPoints={mPoints}
-							mappedPointsTwo={mPointsTwo}
-							showDollar={dollar}
-							chartType={barData.key} 
-							screenSize={width}
-							initHeight={450}
-							initWidth={1004}
-							margins={{top: 25, right: 25, bottom: 30, left: 30}}
-							wRatio={1024}
-							radius={4}
+						dataTwo={barData.dataTwo}
+						reportPeriod={reportPeriod} 
+						reportYear={year}
+						p_color={p_color} 
+						s_color={s_color} 
+						yPoints={yT} 
+						mappedPoints={mPoints}
+						mappedPointsTwo={mPointsTwo}
+						showDollar={dollar}
+						chartType={barData.key} 
+						screenSize={width}
+						initHeight={450}
+						initWidth={1004}
+						margins={{top: 25, right: 25, bottom: 30, left: 30}}
+						wRatio={1024}
+						radius={4}
 						/>
 				{/if}
 				{#if screenSize <= 480}
