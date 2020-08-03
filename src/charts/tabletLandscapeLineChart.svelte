@@ -64,33 +64,31 @@ function drawChart() {
 	// set the max height of the ticks
 	let maxHeight = d3.max(data, function(d){ return d * 1.1 });
 
+	let ticksAmount = 6;
+
 	// creates the yScale
 	let yScale = d3.scaleLinear()
 		.domain([maxHeight, 0])
 		.range([0, height])
-		.nice(8);
+		.nice(ticksAmount);
 
 		// grid lines for the chart
 	let linesYaxis = d3.axisLeft(yScale)
-		.ticks(8)
 		.tickFormat("");
 
 	// add grid lines
 	svg.append("g")
 		.attr("class", "grid")
-		.call(linesYaxis)
+		.call(linesYaxis.ticks(ticksAmount))
 		.select('.domain').remove();
 
 	d3.selectAll("line").attr("x1", "60").attr("x2", width - margin.right);
-
-	let ticksAmount = 8;
 
 	// defines the y axis styles
 	let yAxis = d3.axisLeft(yScale)
 		.scale(yScale)
 		.tickSize("30")
-		.tickPadding(8)
-		.ticks(ticksAmount)
+		.tickPadding(6)
 		.tickFormat(function(d) { return formatYvalue(d); });
 
 	// append y axis
@@ -99,12 +97,12 @@ function drawChart() {
 		.attr("x", "0")
 		.attr("x1", "0")
 		.attr("x2", "0")
-		.call(yAxis).attr("dx", "0")
+		.call(yAxis.ticks(ticksAmount)).attr("dx", "0")
 		.select(".domain").remove();
 
 	d3.selectAll("text").attr("x", "45").style("fill", "#666666");
 	
-	let xScaleWidth = width - 75;
+	let xScaleWidth = width - 55;
 	if (data.length === 37) {
 		xScaleWidth = width - 105;
 	}
@@ -173,7 +171,7 @@ function drawChart() {
 		.attr("class", "line")
 		.style("fill", "none")
 		.style("stroke", primary_fill_color)
-		.attr("transform", "translate(" + 70 + "," + 0 + ")")
+		.attr("transform", "translate(" + xShift + "," + 0 + ")")
 		.attr("d", lineOne);
 
 	let x = d3.scaleLinear()
@@ -183,7 +181,7 @@ function drawChart() {
 	let y = d3.scaleLinear()
 		.domain([maxHeight, 0])
 		.range([0, height])
-		.nice(8);
+		.nice(ticksAmount);
 
 	// Data line and dots group
     let lineAndDots = svg.append("g")
