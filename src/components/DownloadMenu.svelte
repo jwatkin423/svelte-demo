@@ -109,7 +109,7 @@ function validateForm() {
         margin-bottom: 0px;
     }   
 
-    label {
+    .option-label {
         height: 20px;
         line-height: 20px;
         font-size: 12px;
@@ -120,7 +120,7 @@ function validateForm() {
         color: #666666;
     } 
 
-   .pull-right {
+    .pull-right {
         float: right;
     }
 
@@ -161,6 +161,14 @@ function validateForm() {
     }
 
     .all-label {
+        height: 20px;
+        line-height: 20px;
+        font-size: 12px;
+        position: relative;
+        display: inline-block;
+        vertical-align: middle;
+        margin-bottom: 5px;
+        color: #666666;
         font-weight: bold;
     }
 
@@ -168,40 +176,49 @@ function validateForm() {
         margin-left: 10px;
     }
 
-    h3 {
-        padding-top: 12px;
-        font-size: 13px;
-        font-weight: bolder;
-        line-height: 25px;
-        margin-bottom: 15px;
-        margin-top: 0;
-        background-color: #FFFFFF;
-        color: #666666;
-    }
-
     .title-wrapper {
         width: 100%;
-        display: block;
+        display: grid;
+        grid-template-columns: 25% 50% 25%;
+        grid-template-areas: "div-title-buffer title-div cls-btn-div";
+        margin-top: 22px;
+        margin-bottom: 22px;
     }
 
     .title-div {
-        width: 50%;
-        float: left;
-        height: 40px;
+        height: 14px;
+
     }
 
     .cls-btn-div {
-        width: 50%;
-        float: right;
-        height: 40px;
+        height: 14px;
+    }
+
+    .h3-el {
+        margin-top: 0;
+        margin-bottom: 0;
+        font-size: 14px;
+        font-weight: bolder;
+        line-height: 14px;
+        height: 14px;
+        background-color: #FFFFFF;
+        color: #666666;
+        text-align: center;
+        padding: 0;
     }
 
     .close-btn {
-        padding-top: 12px;
-        font-size: 13px;
+        font-size: 12px;
         color: #666666;
-        line-height: 25px;
+        line-height: 14px;
+        height: 14px;
         margin-right: 15px;
+        margin-left: auto;
+    }
+
+    .mat-title {
+        width: 100%;
+        margin-bottom: 22px;
     }
 
     .form-content {
@@ -210,11 +227,55 @@ function validateForm() {
         display: inline-block;
     }
 
+    @media only screen and (max-width: 1024px) and (min-width: 481px) {
+        
+
+        form {
+            text-align: center;
+            width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .all-wrapper {
+            text-align: center;
+            width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .title-div { 
+            text-align: center;
+        }
+
+        .menu-wrapper {
+            width: 100%;
+            right: 0 !important;
+        }    
+
+        .form-content {
+            width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+        }
+
+        .all-option {
+            width: 100% !important;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    }
+
     @media only screen and (max-width: 480px) {
         .menu-wrapper {
             top: 55px;
+            right: 0;
+            width: 100%;
+            text-align: center;
         }
     }
+
 
 </style>
 
@@ -222,16 +283,22 @@ function validateForm() {
 {#if !isLoading}
     {#if options}
         <div class="title-wrapper">
+            <div class="div-title-buffer"></div>
             <div class="title-div">
-                <h3 class="pull-right">DOWNLOAD</h3>
+                <h3 class="h3-el">DOWNLOAD</h3>
             </div>
             <div class="cls-btn-div">
                 <label on:click|preventDefault on:click={closeMenu} class="pull-right close-btn">X</label>
             </div>
         </div>
-                <div class="option-wrapper pull-left all-option">
-                    <input class="input-select" id='all-dl' type="checkbox" data-type="all" name="all" value="all" on:change={toggleAll}>
-                    <label class='all-label'>ALL</label>
+        <div class="mat-title">
+            <h3 class="h3-el">Market Area Trends</h3>
+        </div>
+                <div class="all-wrapper">
+                    <div class="option-wrapper pull-left all-option">
+                        <input class="input-select" id='all-dl' type="checkbox" data-type="all" name="all" value="all" on:change={toggleAll}>
+                        <label class='all-label'>ALL</label>
+                    </div>
                 </div>
             <form id="pdf-download" action='{url}' method="POST">
                 <div class="form-content">
@@ -243,7 +310,7 @@ function validateForm() {
                             name="matReports[]"
                             value="{option.value}"
                             on:change={validateForm}>
-                        <label>{option.label}</label>
+                        <label class="option-label">{option.label}</label>
                         </div>
                     {/each}    
                 </div>
