@@ -23,6 +23,22 @@ export function setChart(k) {
     });
 }
 
+let groups = [];
+keys.map((key, i) =>{
+	let cg = data[key].group;
+	if (!groups[cg]) {
+		groups[cg] = [];
+		groups[cg].push({'key': data[key].key, 'label': data[key].link});
+	} else if (groups[cg]) {
+		groups[cg].push({'key': data[key].key, 'label': data[key].link});
+	}
+});
+
+// remove empty element created durring initialization
+groups = groups.filter((el) => {
+	return el != null;
+});
+
 </script>
 
 <style>
@@ -40,7 +56,7 @@ export function setChart(k) {
 	.td-list-item-link {
 		background-color: #ffffff;
 		color: #666666;
-		font-size: 13px !important;
+		font-size: 12px;
 		margin-left: 10px;
 		text-decoration: none;
 	}
@@ -53,38 +69,80 @@ export function setChart(k) {
 
 	.mobile-right-arrow {
 		float: right;
-		font-size: 12px;
+		font-size: 14px;
 	}
 
+	.separator {
+		height: 20px;
+		line-height: 20px;
+		font-size: 20px;
+		color: #ffffff;
+	}
+
+	.group:first-child {
+        margin-top: 25px;
+    }
+
+	.group:last-child {
+        margin-bottom: 20px;
+    }
+
 	@media only screen and (max-width: 1024px) and (min-width: 481px) {
+		.separator {
+			height: 18px;
+			line-height: 18px;
+			font-size: 18px;
+			color: #ffffff;
+		}	
+
 		li.td-list-par {
-			height: 30px;
-			line-height: 30px;
-			margin-left: 150px;
-			margin-right: 150px;
+			margin-top: 22px;
+			width: 400px !important;
+			margin-left: auto;
+			margin-right: auto;
 		}
+
+		.td-list-par{
+			height: 12px;
+			line-height: 12px;
+			vertical-align: bottom;
+			list-style-type: none;
+		}
+
+		.td-list-item-link {
+			font-size: 12px;
+		}
+
 	}
 
 	@media only screen and (max-width: 480px) {
 		li.td-list-par {
-			height: 30px;
-			line-height: 30px;
-			margin-left: 30px;
-			margin-right: 30px;
+			margin-top: 22px;
+			height: 12px;
+			line-height: 12px;
+			margin-left: 40px;
+			margin-right: 40px;
 		}
 	}
 </style>
 
-{#each keys as key}
-    <li class="td-list-par">
-        <a  
-            on:click|preventDefault={() => {setChart(key); }}
-            class:td-list-active={active === key}
-            class="td-list-item-link"
-            href="."
-            id={'m-' + key}>
-            {data[key].label}
-        </a>
-		<span class="mobile-right-arrow"> > </span>
-    </li>
+{#each groups as group, i}
+	<div class="group">
+	{#each group as link}	
+		<li class="td-list-par">
+			<a  
+				on:click|preventDefault={() => {setChart(link.key); }}
+				class:td-list-active={active === link.key}
+				class="td-list-item-link"
+				href="."
+				id={'m-' + link.key}>
+				{link.label}
+			</a>
+			<span class="mobile-right-arrow"> > </span>
+		</li>
+	{/each}
+	</div>
+	{#if i + 1 < groups.length}
+		<div class='separator'></div>
+	{/if}
 {/each}
