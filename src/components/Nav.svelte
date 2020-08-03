@@ -242,28 +242,31 @@ let resizeImg;
     }
 
     .menu {
-        list-style: none;
         margin-top: 0px;
         height: 30px;
-        padding: 0 !important;
-        text-align: right;
-        position: relative;
+        display: grid;
+        grid-template-columns: 25% 50% 25%;
+        grid-template-rows: auto 18px auto;
+        grid-template-areas: "left-item center-item right-item";
     }
 
     .nav-item {
-        width: 30px;
-        height: 30px;
-        display: inline-block;
+        height: 18px;
+        grid-row: 2/3;
     }
 
     .center-item {
-        width: 33%;
         text-align: center;
+        align-self: auto;
     }
+
     .right-item {
-        width: 33%;
         height: 30px;
-        padding-right: 10px;
+        text-align: right;
+    }
+
+    .right-item > a {
+        margin-right: 10px;
     }
 
     svg {
@@ -278,6 +281,7 @@ let resizeImg;
         font-size: 18px;
         color: #ffffff;
         line-height: 18px;
+        height: 18px;
         background-color: transparent;
     }
 
@@ -289,7 +293,6 @@ let resizeImg;
         height: 30px;
         width: 30px;
         line-height: 18px;
-        vertical-align: sub;
     }
 
     .dropdown {
@@ -303,7 +306,6 @@ let resizeImg;
         left: 0;
         background-color: white;
         max-width: 1280;
-        /* box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); */
         border-bottom: 5px solid #666666;
         position: relative;
         z-index: 9999;
@@ -399,15 +401,8 @@ let resizeImg;
         }
 
         .nav-item {
-            height: 55px;
-            line-height: 55px;
-        }
-
-        .nav-item > a {
-            line-height: 55px;
-            height: 55px;
-            vertical-align: middle;
-            font-size: 18px;
+            height: 18px;
+            line-height: 18px;
         }
 
         .logo {
@@ -435,8 +430,8 @@ let resizeImg;
         
 		<div class="menu-wrapper">
             <div class="menu">
-                <!-- <div class="nav-item left-item"></div> -->
                 {#if searchable !== 'NA'}
+                    <div class="nav-item left-item"></div>
                     <div class="dropdown nav-item center-item">
                         <button 
                             on:click|preventDefault
@@ -462,16 +457,16 @@ let resizeImg;
                         </button>
                             
                     </div> <!-- end dropdown -->
+                    <div class="nav-item pull-right right-item">
+                        <a 
+                            on:click|preventDefault 
+                            on:click={toggleShowDownload}
+                            href="."
+                            class="dropbtn">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 16"><title>Download</title><g id="Layer_2" data-name="Layer 2"><g id="Layer_1-2" data-name="Layer 1"><path d="M19.35,6a7.49,7.49,0,0,0-14-2A6,6,0,0,0,6,16H19a5,5,0,0,0,.35-10ZM17,9l-5,5L7,9h3V5h4V9Z"/></g></g></svg>
+                        </a>
+                    </div>
                 {/if}
-                <div class="nav-item pull-right right-item">
-                    <a 
-                        on:click|preventDefault 
-                        on:click={toggleShowDownload}
-                        href="."
-                        class="dropbtn">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 16"><title>Download</title><g id="Layer_2" data-name="Layer 2"><g id="Layer_1-2" data-name="Layer 1"><path d="M19.35,6a7.49,7.49,0,0,0-14-2A6,6,0,0,0,6,16H19a5,5,0,0,0,.35-10ZM17,9l-5,5L7,9h3V5h4V9Z"/></g></g></svg>
-                    </a>
-                </div>
                 <div class:showDownload="{showDownload === true}" class="download-menu">
                     <DownloadMenu options={options} btnColor={theme_color} on:closeDlMenu={toggleShowDownload}/>
                 </div>
