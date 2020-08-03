@@ -230,7 +230,6 @@ let src = '/images/sort_carrots.png';
 
     table {
         border-collapse: collapse;
-        min-width: 1040px;
     }
 
     th {
@@ -239,6 +238,7 @@ let src = '/images/sort_carrots.png';
         padding: 0;
         width: 115px;
         text-align: center;
+        height: 50px;
     }
 
     td > div {
@@ -290,6 +290,36 @@ let src = '/images/sort_carrots.png';
         height: 36px;
     }
 
+    @media only screen and (max-width: 1024px) and (min-width: 769) {
+        table {
+            table-layout: fixed;
+        }
+
+        th{
+            width: 111px !important;
+        }
+    }
+
+    @media only screen and (max-width: 768px) and (min-width: 481) {
+        table {
+            table-layout: fixed;
+        }
+
+        th{
+            width: 82px !important;
+        }
+    }
+
+    @media only screen and (max-width: 480px) {
+        table {
+            table-layout: fixed;
+        }
+
+        th {
+            width: 105px !important;
+        }
+    }
+
 </style>
 
 {#if data.length > 0}
@@ -301,8 +331,12 @@ let src = '/images/sort_carrots.png';
                     <th class="time-period-th data-table-header date-group"><div class="time-th-div-header">Time Period</div>
                     </th>
                 {#each row_headers as row_header, i}
-                       {#if row_header.label !== 'Median For Sale vs Median Sold' && row_header.label !== 'Median Sold Price' && row_header.label !== 'Median For Sale Price'}
+                        <!-- {console.log(row_header)} -->
+                       {#if row_header.label !== 'Median For Sale vs Median Sold' && row_header.label !== 'Median Sold Price' && row_header.label !== 'Median For Sale Price' && row_header.label !== 'For Sale vs Sold Listings'}
                             <th class="column-th data-table-header group-{row_header.group}" id="{keys[i]}"><div class="th-div-header">{row_header.label}</div></th>
+                        {:else if row_header.label === 'For Sale vs Sold Listings'}    
+                            <th class="column-th data-table-header group-{row_header.group}" id="{keys[i]}"><div class="th-div-header">For Sale Listings</div></th>
+                            <th class="column-th data-table-header group-{row_header.group}" id="{keys[i]}"><div class="th-div-header">Sold Listings</div></th>
                         {:else if row_header.label === 'Median For Sale vs Median Sold'}
                             <th class="column-th data-table-header group-{row_header.group}" id="{keys[i]}-sale"><div class="th-div-header">Median For Sale Price</div></th>
                             <th class="column-th data-table-header group-{row_header.group}" id="{keys[i]}-sold"><div class="th-div-header">Median Sold Price</div></th>
@@ -320,7 +354,10 @@ let src = '/images/sort_carrots.png';
                        {#if data.key !== 'saleMedianSoldMedian' && data.key !== 'soldMedian' && data.key !== 'forSaleMedian'}
                             {#if data.key === 'supplyDemand'}    
                                 <td class="td-cell {data.key} group-{data.group}" align="right">
-                                    <div class:active={data.key === key} class="td-value {data.key} group-{data.group}">{formatValues(data.value[0], data.key)}/{formatValues(data.value[1], data.key)}</div>
+                                    <div class:active={data.key === key} class="td-value {data.key} group-{data.group}">{formatValues(data.value[0], data.key)}</div>
+                                </td>
+                                <td class="td-cell {data.key} group-{data.group}" align="right">
+                                    <div class:active={data.key === key} class="td-value {data.key} group-{data.group}">{formatValues(data.value[1], data.key)}</div>
                                 </td>
                             {:else}
                                 <td class="td-cell {data.key} group-{data.group}" align="right">
