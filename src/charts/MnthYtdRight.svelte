@@ -59,9 +59,7 @@ function drawChart() {
 	let svg = d3.select("#chart-right")
 		.attr("width", width + margin.left + margin.right)
 		.attr("height", height + margin.top + margin.bottom);
-		console.log(svg);
 
-	
 	let maxHeight = d3.max(data,function(d){return Math.abs(d) * 1.1});
 	
 	// determine the min point 
