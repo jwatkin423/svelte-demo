@@ -29,6 +29,6 @@ export let kmi = '';
     {reportPeriod} 
     {dataTwo}
     {year}
-    primary_fill_color={p_color}
-    secondary_fill_color={s_color}
+    {p_color}
+    {s_color}
     {kmi} />

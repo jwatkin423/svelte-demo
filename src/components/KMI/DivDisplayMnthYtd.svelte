@@ -35,22 +35,17 @@ export let percentYtdChange;
 
 // Colors:
 // primary fill color
-export let primary_fill_color;
+export let p_color;
 // seondary fill color
-export let secondary_fill_color;
+export let s_color;
 
 </script>
 
 <style>
     /* all kmi rows */
-    .kmi-row {
-        display: flex;
-        flex-wrap: wrap;
-    }
-
-    /* data kmi rows */
-    .kmi-data-row {
-        margin-top: 4px;
+    .kmi-container {
+        display: grid;
+        grid-template-columns: repeat(5, auto);
     }
 
     /* div header cells */
@@ -62,76 +57,189 @@ export let secondary_fill_color;
         color: #666666;
         text-align: center;
         margin-top: 2px;
-        width: 20%;
     }
 
     /* div "body" cells */
     .div-cell {
+        margin-top: 4px;
         padding-bottom: 0px;
         height: 16px;
         line-height: 16px;
         font-size: 16px;
-        font-weight: 600;
         color: #666666;
         vertical-align: unset;
-        width: 20%;
     }
 
-    .mnth-ytd-container {
+    .sale-sold-container {
         display: grid;
-        grid-template-columns: calc(100% - 54px) 54px;
+        grid-template-columns: auto 54px;
+        grid-template-rows: 16px repeat(2, auto);
         justify-items: end;
         justify-content: end;
     }
-    .mnth-item {
+
+    .sale-item {
+        height: 16px;
+        line-height: 16px;
+        font-size: 16px;
+        color: #666666;
         grid-column: 1/2;
-        grid-row: 1/2;
+        grid-row: 2/3;
     }
 
-    .ytd-item {
+    .sold-item {
+        height: 16px;
+        line-height: 16px;
+        font-size: 16px;
+        color: #666666;
         grid-column: 1/2;
-        grid-row: 2/2;
+        grid-row: 3/3;
+    }
+
+    @media only screen and (min-width: 481px) and (max-width: 1024px) {
+
+        .sale-sold-container {
+            display: grid;
+            grid-template-columns: auto;
+            grid-template-rows: 16px auto auto;
+            justify-items: end;
+            justify-content: end;
+            grid-column: 1/2;
+        }   
+
+        .sale-item {
+            grid-row: 2/3
+        }
+
+        .sold-item {
+            padding-top: 4px;
+            grid-row: 3/3
+        }
+
+        .kmi-container {
+            display: grid;
+            grid-template-rows: 16px auto auto;
+        }
+
+        .div-header {
+            height: 10px;
+            line-height: 10px;
+            font-size: 10px;
+        }
+
+        .div-cell {
+            height: 16px;
+            line-height: 16px;
+            font-size: 15px;
+        }
+
+    }
+
+
+    @media only screen and (max-width: 480px) {
+
+        .sale-sold-container {
+            display: grid;
+            grid-template-columns: auto;
+            grid-template-rows: 16px auto auto;
+            justify-items: end;
+            justify-content: end;
+            grid-column: 1/2;
+        }   
+
+        .sale-item {
+            grid-row: 2/3
+        }
+
+        .sold-item {
+            padding-top: 4px;
+            grid-row: 3/3
+        }
+
+        .kmi-container {
+            display: grid;
+            grid-template-rows: 16px auto auto;
+        }
+
+        .div-header {
+            height: 10px;
+            line-height: 10px;
+            font-size: 10px;
+            font-weight: 600;
+            color: #666666;
+            text-align: center;
+        }
+
+        .div-cell {
+            height: 16px;
+            line-height: 16px;
+            font-size: 15px;
+            color: #666666;
+            vertical-align: unset;
+        }
+
     }
 
 </style>
 
-<!-- KMI HEADER-->
-<div class="kmi-row">
-    <div class="div-header"></div>
-    <div class="div-header">{rpOne}</div>
-    <div class="div-header">{rpTwo}</div>
-    <div class="div-header">Change</div>
-    <div class="div-header">% Change</div>
-</div>
+<div class="kmi-container">
 
-<!-- KMI ROW ONE-->
-<div class="kmi-row kmi-data-row">
-    <div class="div-cell mnth-ytd-container">
-        <div class="mnth-item">
+    <div class="sale-sold-container">
+        <div class="sale-item">
             <i>
-                <Icon customColor={primary_fill_color} class="year" tempId="line-one" icon={icon[2]} />
+                <Icon customColor={p_color} class="year" tempId="line-one" icon={icon[2]} />
                 {monthDate}
             </i>
         </div>
-        <div class="ytd-item">
+        <div class="sold-item">
             <i>
-                <Icon customColor={secondary_fill_color} class="year" tempId="line-two" icon={icon[2]} />
+                <Icon customColor={s_color} class="year" tempId="line-two" icon={icon[2]} />
             </i>
             YTD
         </div>
     </div>
-    <div class="div-cell">{initMonth}</div>
-    <div class="div-cell">{lastMonth}</div>
-    <div class="div-cell">
-        {#if mthChange > 0}
-            {mthChange} 
-            <ChangeArrows change={mthChange} />
-        {:else}
-            ({mthChange.toString().replace(/\-/, '')}) 
-            <ChangeArrows change={mthChange} />
-        {/if}
+
+    <!-- KMI HEADER-->
+    <div class="kmi-col-one">
+        <div class="div-header">{rpOne}</div>
+        <div class="div-cell">{initMonth}</div>
+        <div class="div-cell">{initMonthTwo}</div>
     </div>
-    <div class="div-cell">
+
+    <!-- KMI HEADER-->
+    <div class="kmi-col-two">
+        <div class="div-header">{rpTwo}</div>
+        <div class="div-cell">{lastMonth}</div>
+        <div class="div-cell">{lastMonthTwo}</div>
+    </div>
+
+    <!-- KMI HEADER-->
+    <div class="kmi-col-three">
+        <div class="div-header">Change</div>
+        <div class="div-cell">
+            {#if mthChange > 0}
+                {mthChange} 
+                <ChangeArrows change={mthChange} />
+            {:else}
+                ({mthChange.toString().replace(/\-/, '')}) 
+                <ChangeArrows change={mthChange} />
+            {/if}
+        </div>
+        <div class="div-cell">
+            {#if ytdChange > 0}
+                {ytdChange} 
+                <ChangeArrows change={ytdChange} />
+            {:else}
+                ({ytdChange.toString().replace(/\-/, '')}) 
+                <ChangeArrows change={ytdChange} />
+            {/if}
+        </div>
+    </div>
+
+    <!-- KMI HEADER-->
+    <div class="kmi-col-four">
+        <div class="div-header">% Change</div>
+        <div class="div-cell">
         {#if percentMnthChange !== 'NA' && percentMnthChange != 0}
             {#if mthChange > 0}
                 {percentMnthChange}%
@@ -145,25 +253,8 @@ export let secondary_fill_color;
         {:else if percentMnthChange === 'NA'}
             NA
         {/if}
-    </div>
-</div>
-
-<!-- KMI ROW TWO -->
-<div class="kmi-row kmi-data-row">
-    <div class="div-cell">
-    </div>
-    <div class="div-cell">{initMonthTwo}</div>
-    <div class="div-cell">{lastMonthTwo}</div>
-    <div class="div-cell">
-        {#if ytdChange > 0}
-            {ytdChange} 
-            <ChangeArrows change={ytdChange} />
-        {:else}
-            ({ytdChange.toString().replace(/\-/, '')}) 
-            <ChangeArrows change={ytdChange} />
-        {/if}
-    </div>
-    <div class="div-cell">
+        </div>
+        <div class="div-cell">
         {#if percentYtdChange !== 'NA' && percentYtdChange != 0}
             {#if ytdChange >= 0}
                 {percentYtdChange}%
@@ -177,5 +268,6 @@ export let secondary_fill_color;
         {:else if percentYtdChange === 'NA'}
             NA
         {/if}
+        </div>
     </div>
 </div>

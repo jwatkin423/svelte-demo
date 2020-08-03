@@ -29,8 +29,8 @@ export let showDollar;
 $: dollar = showDollar ? '$' : '';
 
 // primary color
-export let primary_fill_color = '';
-export let secondary_fill_color = '';
+export let p_color = '';
+export let s_color = '';
 
 // kmi number
 export let kmi;
@@ -275,11 +275,10 @@ function toggleDisplayTable() {
 
 <style>
 
-    .kmi-wrapper {
+    .kmi-wrapper-inner {
         display: block;
         text-align: center;
         background-color: #ffffff;
-        width: 80%;
         height: 60px;
     }
 
@@ -288,21 +287,29 @@ function toggleDisplayTable() {
         text-align: center;
         background-color: #ffffff;
         width: 100%;
-        height: 60px;
+        height: 161px;
     }
 
     .kmi-wrapper-double {
-        display: block;
+        display: grid;
         text-align: center;
         background-color: #ffffff;
-        width: calc(100% - 30px);
         height: 80px;
-        float: left;
+        width: 100%;
     }
 
+    .right{
+        grid-template-columns: 100%; 
+    }
+
+    .left {
+        grid-template-columns: 100%;
+    }
+    
     .button-wrapper {
         width: 10%;
         display: table-cell;
+        margin-right: 10px;
         line-height: 60px;
         vertical-align: bottom;
         text-align: right;
@@ -317,10 +324,6 @@ function toggleDisplayTable() {
         margin-bottom: auto;
     }
 
-    .div-buffer {
-        width: 10%;
-    }
-
     .button {
         margin-right: 10px;
     }
@@ -330,216 +333,108 @@ function toggleDisplayTable() {
     }
 
 
-/* Desktop only settings */
-@media only screen and (min-width: 1025px) {
-}
+    /* Desktop only settings */
+    @media only screen and (min-width: 1025px) {
+        .kmi-wrapper-inner {
+            display: grid;
+            grid-template-columns: auto;
+            text-align: center;
+            background-color: #ffffff;
+            width: 100%;
+        }
 
-@media only screen and (max-width: 1024px) and (min-width: 481px) {
-    .kmi-wrapper {
-        display: block;
-        text-align: center;
-        background-color: #ffffff;
-        width: 80%;
+        .kmi-wrapper-inner-double {
+            display: grid;
+            grid-template-columns: 120px auto;
+            grid-gap: 54px;
+            background-color: #ffffff;
+            width: 100%;
+        }
     }
 
-    table {
-        margin-left: auto;
-        margin-right: auto;
-        height: 50px;
-        border-collapse: collapse;
+    @media only screen and (max-width: 1024px) and (min-width: 481px) {
+        .kmi-wrapper {
+            display: block;
+            text-align: center;
+            background-color: #ffffff;
+            width: 80%;
+        }
+
+        .kmi-wrapper-inner {
+            display: grid;
+            grid-template-columns: auto;
+            text-align: center;
+            background-color: #ffffff;
+            width: 100%;
+        }
+
+        .kmi-wrapper-inner-double {
+            display: grid;
+            grid-template-columns: 120px auto;
+            grid-gap: 54px;
+            background-color: #ffffff;
+            width: 100%;
+        }
+
     }
 
-    .table-mnth-ytd {
-        margin-top: 0;
-        margin-left: auto;
-        margin-right: auto;
+    @media only screen and (max-width: 1023px) {
+        .button-wrapper {
+            display: none;
+        }
+
+        .kmi-wrapper {
+            width: 100%;
+        }
     }
 
-    th {
-        height: 10px;
-        line-height: 10px;
-        font-size: 10px;
-        font-weight: 600;
-        width: 125px;
-        color: #666666;
-        text-align: center;
-        padding-bottom: 3px;
-        padding-top: 12px;
-    }
+    /* Smart Phones */
+    @media only screen and (max-width: 480px) {
+        .kmi-wrapper-inner {
+            display: grid;
+            grid-template-columns: auto;
+            text-align: center;
+            background-color: #ffffff;
+            width: 100%;
+        }
 
-    .th-double-kmi {
-        height: 10px;
-        line-height: 10px;
-        font-size: 10px;
-        font-weight: 800;
-        width: 108px;
-        color: #666666;
-        text-align: center;
-        padding-bottom: unset !important;
-        padding-top: 5px;
+        .kmi-wrapper-sd {
+            height: 131px;
+        }
     }
-
-    .th-mnth-ytd {
-        height: 12px;
-        line-height: 12px;
-        font-size: 12px;
-        font-weight: 800;
-        width: 125px;
-        color: #666666;
-        text-align: center;
-        padding-bottom: unset !important;
-        padding-top: 5px;
-    }
-
-    td {
-        padding-top: 3px;
-        padding-bottom: 0px;
-        height: 16px;
-        line-height: 16px;
-        font-size: 16px;
-        font-weight: 600;
-        width: 125px;
-        color: #666666;
-        vertical-align: unset;
-    }
-
-    .td-double-kmi {
-        height: 14px !important;
-        line-height: 14px !important;
-        font-size: 14px !important;
-        width: 108px;
-    }
-
-    .td-mnth-ytd {
-        height: 14px !important;
-        line-height: 14px !important;
-        font-size: 14px !important;
-        width: 125px;
-    }
-
-    .td-lead {
-        text-align: right;
-    }
-}
-
-@media only screen and (max-width: 1023px) {
-    .button-wrapper {
-        display: none;
-    }
-
-    .kmi-wrapper {
-        width: 100%;
-    }
-}
-
-/* Smart Phones */
-@media only screen and (max-width: 480px) {
-    .kmi-wrapper {
-        display: block;
-        text-align: center;
-        background-color: #ffffff;
-    }
-
-    table {
-        margin-left: auto;
-        margin-right: auto;
-        height: 50px;
-        border-collapse: collapse;
-    }
-
-    .table-mnth-ytd {
-        margin-top: 0;
-        margin-left: auto;
-        margin-right: auto;
-        width: 100%;
-    }
-
-    th {
-        height: 10px;
-        line-height: 10px;
-        font-size: 10px;
-        font-weight: 600;
-        width: 75px;
-        color: #666666;
-        text-align: center;
-        padding-bottom: 3px;
-        padding-top: 12px;
-    }
-
-    .th-mnth-ytd {
-        height: 10px;
-        line-height: 10px;
-        font-size: 10px;
-        font-weight: 800;
-        width: 75px;
-        color: #666666;
-        text-align: center;
-        padding-bottom: unset !important;
-        padding-top: 5px;
-    }
-
-    i {
-        font-size: 8px;
-    }
-
-    td {
-        padding-top: 3px;
-        padding-bottom: 0px;
-        height: 16px;
-        line-height: 16px;
-        font-size: 15px;
-        font-weight: 600;
-        width: 75px;
-        color: #666666;
-        vertical-align: unset;
-    }
-
-    .td-mnth-ytd {
-        height: 12px !important;
-        line-height: 12px !important;
-        font-size: 12px !important;
-        width: 75px;
-    }
-
-    .td-lead {
-        text-align: right;
-    }
-}
-
 
 </style>
 
-
-
 {#if data.length !== 0 && searchType !== 'mnth-ytd'}
-    <div class="div-buffer"></div>
-    <div class="kmi-wrapper">
         {#if chartType !== 'saleMedianSoldMedian' && chartType !== 'supplyDemand'}
-            <DivDisplay 
-                rpOne={formatMonth(reportPeriod[0])}
-                rpTwo={formatLastPeriod(reportPeriod[reportPeriod.length - 1])}
-                initMonth={ formatNumber(initialMonth) }
-                lastMonth={formatNumber(lastMonth)}
-                change={formatNumber(change)}
-                {chngPercent}
-            />
+            <div class="kmi-wrapper-inner">
+                <DivDisplay 
+                    rpOne={formatMonth(reportPeriod[0])}
+                    rpTwo={formatLastPeriod(reportPeriod[reportPeriod.length - 1])}
+                    initMonth={ formatNumber(initialMonth) }
+                    lastMonth={formatNumber(lastMonth)}
+                    change={formatNumber(change)}
+                    {chngPercent}
+                />
+            </div>
         {:else}    
-            <DoubleDivDisplay
-                rpOne={formatMonth(reportPeriod[0])}
-                rpTwo={formatLastPeriod(reportPeriod[reportPeriod.length - 1])}
-                initMonth={formatNumber(initialMonth)}
-                lastMonth={formatNumber(lastMonth)}
-                initMonthTwo={formatNumber(initialMonthTwo)}
-                lastMonthTwo={formatNumber(lastMonthTwo)}
-                change={formatNumber(change)}
-                changeTwo={formatNumber(changeTwo)}
-                {chngPercent}
-                {chngPercentTwo}
-                {primary_fill_color}
-                {secondary_fill_color}
-            />
+            <div class="kmi-wrapper-inner">
+                <DoubleDivDisplay
+                    rpOne={formatMonth(reportPeriod[0])}
+                    rpTwo={formatLastPeriod(reportPeriod[reportPeriod.length - 1])}
+                    initMonth={formatNumber(initialMonth)}
+                    lastMonth={formatNumber(lastMonth)}
+                    initMonthTwo={formatNumber(initialMonthTwo)}
+                    lastMonthTwo={formatNumber(lastMonthTwo)}
+                    change={formatNumber(change)}
+                    changeTwo={formatNumber(changeTwo)}
+                    {chngPercent}
+                    {chngPercentTwo}
+                    {p_color}
+                    {s_color}
+                />
+            </div>
         {/if}
-    </div>
     <div class="button-wrapper">
         <a on:click|preventDefault on:click={toggleDisplayChart} href='.'><img src='/images/chart.png' width="20" height="20" alt='chart toggle' /></a>
         <a on:click|preventDefault on:click={toggleDisplayTable} href='.'><img src='/images/table.png' width="20" height="20" alt='table toggle' /></a>
@@ -550,8 +445,7 @@ function toggleDisplayTable() {
 {#if searchType === 'mnth-ytd'}
    
     {#if (chartType !== 'supplyDemand')}
-        <div class="div-buffer"></div>
-        <div class="kmi-wrapper">
+        <div class="kmi-wrapper-inner">
             <DivDisplayMnthYtd
                 rpOne={formatYear(reportPeriod[0])} 
                 rpTwo={formatYear(reportPeriod[2])}
@@ -564,14 +458,12 @@ function toggleDisplayTable() {
                 percentMnthChange={formatNumber(percentMnthChange)}
                 ytdChange={formatNumber(ytdChange)}
                 percentYtdChange={formatNumber(percentYtdChange)}
-                {primary_fill_color}
-                {secondary_fill_color}
+                {p_color}
+                {s_color}
             />
         </div>    
         <!-- button or buffer -->
-        {#if kmi === 'left' || kmi === 'bottom' || kmi === 'bottom'}
-            <div class="div-buffer-double"></div>
-        {:else}
+        {#if kmi !== 'left' || kmi !== 'bottom' || kmi !== 'bottom'}
             <div class="button-wrapper">
                 <a class="button" on:click|preventDefault on:click={toggleDisplayChart} href='.'><img src='/images/chart.png' width="20" height="20" alt='chart toggle' /></a>
                 <a class="button" on:click|preventDefault on:click={toggleDisplayTable} href='.'><img src='/images/table.png' width="20" height="20" alt='table toggle' /></a>
@@ -579,10 +471,11 @@ function toggleDisplayTable() {
         {/if}
 
     {:else if (chartType === 'supplyDemand' && kmi !== 'bottom' && kmi !== 'top')}
-        <div class="kmi-wrapper-double">
+        <div class:right={kmi === 'right'} class:left={kmi === 'left'} class="kmi-wrapper-double">
             <DoubleDivDisplayMnthYtd
-                rpOne={formatYear(reportPeriod[0])} 
-                rpTwo={formatYear(reportPeriod[2])}
+                rpOne={formatMonth(reportPeriod[0])} 
+                rpTwo={formatMonth(reportPeriod[2])}
+                mnth={formatMonthOnly(reportPeriod[0])}
                 initMonth={formatNumber(data[0])}
                 lastMonth={formatNumber(data[2])}
                 initMonthTwo={formatNumber(data[1])}
@@ -592,24 +485,18 @@ function toggleDisplayTable() {
                 percentMnthChange={formatNumber(percentMnthChange)}
                 ytdChange={formatNumber(ytdChange)}
                 {percentYtdChange}
-                {primary_fill_color}
-                {secondary_fill_color}
+                {p_color}
+                {s_color}
                 {kmi}
             />
         </div>
-        {#if kmi === 'left' || kmi === 'top' || kmi === 'bottom'}
-            <div class="div-buffer-double"></div>
-        {:else}
-            <div class="button-wrapper-double">
-                <a class="button-small" on:click|preventDefault on:click={toggleDisplayChart} href='.'><img src='/images/chart.png' width="15" height="15" alt='chart toggle' /></a>
-                <a class="button-small" on:click|preventDefault on:click={toggleDisplayTable} href='.'><img src='/images/table.png' width="15" height="15" alt='table toggle' /></a>
-            </div>
-        {/if}
+        
     {:else if (chartType === 'supplyDemand' && (kmi === 'bottom' || kmi === 'top'))}
             <div class="kmi-wrapper-sd">
-            <DivDisplayMnthYtd
-                rpOne={formatYear(reportPeriod[0])} 
-                rpTwo={formatYear(reportPeriod[2])}
+            <DoubleDivDisplayMnthYtd
+                rpOne={formatMonth(reportPeriod[0])} 
+                rpTwo={formatMonth(reportPeriod[2])}
+                mnth={formatMonthOnly(reportPeriod[0])}
                 initMonth={formatNumber(data[0])}
                 lastMonth={formatNumber(data[2])}
                 initMonthTwo={formatNumber(data[1])}
@@ -618,9 +505,10 @@ function toggleDisplayTable() {
                 mthChange={formatNumber(mthChange)}
                 percentMnthChange={formatNumber(percentMnthChange)}
                 ytdChange={formatNumber(ytdChange)}
-                percentYtdChange={formatNumber(percentYtdChange)}
-                {primary_fill_color}
-                {secondary_fill_color}
+                {percentYtdChange}
+                {p_color}
+                {s_color}
+                {kmi}
             />
         </div>   
         {#if kmi === 'left' || kmi === 'bottom' || kmi === 'top'}

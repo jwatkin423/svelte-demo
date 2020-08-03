@@ -29,22 +29,17 @@ export let chngPercentTwo;
 
 // Colors:
 // primary fill color
-export let primary_fill_color;
+export let p_color;
 // seondary fill color
-export let secondary_fill_color;
+export let s_color;
 
 </script>
 
 <style>
     /* all kmi rows */
-    .kmi-row {
-        display: flex;
-        flex-wrap: wrap;
-    }
-
-    /* data kmi rows */
-    .kmi-data-row {
-        margin-top: 4px;
+    .kmi-container {
+        display: grid;
+        grid-template-columns: repeat(5, auto);
     }
 
     /* div header cells */
@@ -53,7 +48,6 @@ export let secondary_fill_color;
         line-height: 10px;
         font-size: 10px;
         font-weight: 800;
-        width: 20%;
         color: #666666;
         text-align: center;
         margin-top: 2px;
@@ -61,117 +55,207 @@ export let secondary_fill_color;
 
     /* div "body" cells */
     .div-cell {
+        margin-top: 4px;
         padding-bottom: 0px;
         height: 16px;
         line-height: 16px;
         font-size: 16px;
-        font-weight: 600;
-        width: 20%;
         color: #666666;
         vertical-align: unset;
     }
 
     .sale-sold-container {
         display: grid;
-        grid-template-columns: calc(100% - 54px) 54px;
+        grid-template-columns: auto 54px;
+        grid-template-rows: 16px repeat(2, auto);
         justify-items: end;
         justify-content: end;
     }
+
     .sale-item {
+        height: 16px;
+        line-height: 16px;
+        font-size: 16px;
+        color: #666666;
         grid-column: 1/2;
-        grid-row: 1/2;
+        grid-row: 2/3;
     }
 
     .sold-item {
+        height: 16px;
+        line-height: 16px;
+        font-size: 16px;
+        color: #666666;
         grid-column: 1/2;
-        grid-row: 2/2;
+        grid-row: 3/3;
+    }
+
+    @media only screen and (min-width: 481px) and (max-width: 1024px) {
+
+        .sale-sold-container {
+            display: grid;
+            grid-template-columns: auto;
+            grid-template-rows: 16px auto auto;
+            justify-items: end;
+            justify-content: end;
+            grid-column: 1/2;
+        }   
+
+        .sale-item {
+            grid-row: 2/3
+        }
+
+        .sold-item {
+            padding-top: 4px;
+            grid-row: 3/3
+        }
+
+        .kmi-container {
+            display: grid;
+            grid-template-rows: 16px auto auto;
+        }
+
+        .div-header {
+            height: 10px;
+            line-height: 10px;
+            font-size: 10px;
+        }
+
+        .div-cell {
+            height: 16px;
+            line-height: 16px;
+            font-size: 15px;
+        }
+
+    }
+
+
+    @media only screen and (max-width: 480px) {
+
+        .sale-sold-container {
+            display: grid;
+            grid-template-columns: auto;
+            grid-template-rows: 16px auto auto;
+            justify-items: end;
+            justify-content: end;
+            grid-column: 1/2;
+        }   
+
+        .sale-item {
+            grid-row: 2/3
+        }
+
+        .sold-item {
+            padding-top: 4px;
+            grid-row: 3/3
+        }
+
+        .kmi-container {
+            display: grid;
+            grid-template-rows: 16px auto auto;
+        }
+
+        .div-header {
+            height: 10px;
+            line-height: 10px;
+            font-size: 10px;
+            font-weight: 600;
+            color: #666666;
+            text-align: center;
+        }
+
+        .div-cell {
+            height: 16px;
+            line-height: 16px;
+            font-size: 15px;
+            color: #666666;
+            vertical-align: unset;
+        }
+
     }
 
 </style>
 
-<!-- KMI HEADER-->
-<div class="kmi-row">
-    <div class="div-header"></div>
-    <div class="div-header">{rpOne}</div>
-    <div class="div-header">{rpTwo}</div>
-    <div class="div-header">Change</div>
-    <div class="div-header">% Change</div>
-</div>
+<div class="kmi-container">
 
-<!-- KMI ROW ONE-->
-<div class="kmi-row kmi-data-row">
-    <div class="div-cell sale-sold-container">
+    <div class="sale-sold-container">
         <div class="sale-item">
             <i>
-                <Icon customColor={primary_fill_color} class="year" tempId="line-one" icon={icon[2]} />
+                <Icon customColor={p_color} class="year" tempId="line-one" icon={icon[2]} />
                 For Sale
             </i>
         </div>
         <div class="sold-item">
             <i>
-                <Icon customColor={secondary_fill_color} class="year" tempId="line-two" icon={icon[2]} />
+                <Icon customColor={s_color} class="year" tempId="line-two" icon={icon[2]} />
             </i>
             Sold
         </div>
+    </div>
 
+    <!-- KMI HEADER-->
+    <div class="kmi-col-one">
+        <div class="div-header">{rpOne}</div>
+        <div class="div-cell">{initMonth}</div>
+        <div class="div-cell">{initMonthTwo}</div>
     </div>
-    <div class="div-cell">{initMonth}</div>
-    <div class="div-cell">{lastMonth}</div>
-    <div class="div-cell">
-        {#if change >= 0}
-            {change} 
-            <ChangeArrows change={change} />
-        {:else}
-            ({change.toString().replace(/\-/, '')}) 
-            <ChangeArrows change={change} />
-        {/if}
+
+    <!-- KMI HEADER-->
+    <div class="kmi-col-two">
+        <div class="div-header">{rpTwo}</div>
+        <div class="div-cell">{lastMonth}</div>
+        <div class="div-cell">{lastMonthTwo}</div>
     </div>
-    <div class="div-cell">
-        {#if chngPercent !== 'NA' && chngPercent != 0}
+
+    <!-- KMI HEADER-->
+    <div class="kmi-col-three">
+        <div class="div-header">Change</div>
+        <div class="div-cell">
             {#if change >= 0}
-                {chngPercent}%
+                {change} 
                 <ChangeArrows change={change} />
             {:else}
-                ({chngPercent.toString().replace(/\-/, '')}%)
+                ({change.toString().replace(/\-/, '')}) 
                 <ChangeArrows change={change} />
             {/if}
-        {:else if chngPercent == 0}
-            0%
-        {:else if chngPercent === 'NA'}
-            NA
-        {/if}
-    </div>
-</div>
-
-<!-- KMI ROW TWO -->
-<div class="kmi-row kmi-data-row">
-    <div class="div-cell">
-        
-    </div>
-    <div class="div-cell">{initMonthTwo}</div>
-    <div class="div-cell">{lastMonthTwo}</div>
-    <div class="div-cell">
-        {#if changeTwo >= 0}
-            {changeTwo} 
-            <ChangeArrows change={changeTwo} />
-        {:else}
-            ({changeTwo.toString().replace(/\-/, '')}) 
-            <ChangeArrows change={changeTwo} />
-        {/if}
-    </div>
-    <div class="div-cell">
-        {#if chngPercentTwo !== 'NA' && chngPercentTwo != 0}
+        </div>
+        <div class="div-cell">
             {#if changeTwo >= 0}
-                {chngPercentTwo}%
+                {changeTwo} 
                 <ChangeArrows change={changeTwo} />
             {:else}
-                ({chngPercentTwo.toString().replace(/\-/, '')}%)
+                ({changeTwo.toString().replace(/\-/, '')}) 
                 <ChangeArrows change={changeTwo} />
             {/if}
-        {:else if chngPercentTwo == 0}
-            0%
-        {:else if chngPercentTwo === 'NA'}
-            NA
-        {/if}
+        </div>
+    </div>
+
+    <!-- KMI HEADER-->
+    <div class="kmi-col-four">
+        <div class="div-header">% Change</div>
+        <div class="div-cell">
+            {#if change >= 0}
+                {change} 
+                <ChangeArrows change={change} />
+            {:else}
+                ({change.toString().replace(/\-/, '')}) 
+                <ChangeArrows change={change} />
+            {/if}
+        </div>
+        <div class="div-cell">
+            {#if chngPercentTwo !== 'NA' && chngPercentTwo != 0}
+                {#if changeTwo >= 0}
+                    {chngPercentTwo}%
+                    <ChangeArrows change={changeTwo} />
+                {:else}
+                    ({chngPercentTwo.toString().replace(/\-/, '')}%)
+                    <ChangeArrows change={changeTwo} />
+                {/if}
+            {:else if chngPercentTwo == 0}
+                0%
+            {:else if chngPercentTwo === 'NA'}
+                NA
+            {/if}
+        </div>
     </div>
 </div>
