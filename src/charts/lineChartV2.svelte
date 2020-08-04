@@ -62,6 +62,8 @@ function drawChart() {
 	// set the width of the chart (svg)
 	width = screenSize;
 
+	let ticksAmount = 8;
+
 	let svg = d3.select(".line-chart")
 			.attr("width", width)
 			.attr("height", height + margin.top + margin.bottom) 
@@ -84,10 +86,10 @@ function drawChart() {
 	// add grid lines
 	svg.append("g")
 		.attr("class", "grid")
-		.call(linesYaxis.ticks(8))
+		.call(linesYaxis.ticks(ticksAmount))
 		.select('.domain').remove();
 
-	d3.selectAll("line").attr("x1", "60").attr("x2", width - 20);
+	d3.selectAll("line").attr("x1", "60").attr("x2", width - 15);
 
 	// defines the y axis styles
 	let yAxis = d3.axisLeft(yScale)
@@ -102,7 +104,7 @@ function drawChart() {
 		.attr("x", "0")
 		.attr("x1", "0")
 		.attr("x2", "0")
-		.call(yAxis.ticks(8)).attr("dx", "0")
+		.call(yAxis.ticks(ticksAmount)).attr("dx", "0")
 		.select(".domain").remove();
 
 	d3.selectAll("text").attr("x", "45").style("fill", "#666666");
