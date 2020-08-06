@@ -35,6 +35,14 @@ export let baseSearchUrl;
 export let mlsId = '';
 export let searchable;
 
+export let officeName
+export let address
+export let city
+export let state
+export let zipcode
+export let website
+export let phone;
+
 let data;
 
 let keys = false;
@@ -85,8 +93,15 @@ function setPlusColor() {
     }
 }
 
+function setOfficeNameColor() {
+    if(theme_color) {
+        document.getElementById('office-name').style.color = theme_color;
+    }
+}
+
 onMount(() => {
     setPlusColor();
+    setOfficeNameColor();
 });
 
 function toggleShowHamMenu() {
@@ -356,6 +371,34 @@ let resizeImg;
 
     .logo {
         height: 75px;
+        display: flex;
+    }
+
+    .div-address {
+        margin-right: 10px;
+        margin-left: auto;
+        height: 100%;
+        margin-top: 5px;
+        margin-bottom: 5px;
+        line-height: 11px;
+    }
+
+    .comp-name {
+        font-size: 14px;
+        line-height: 14px;
+        width: 100%;
+        display: inline-block;
+        text-align: right;
+    }
+
+    .comp-info {
+        font-size: 11px;
+        line-height: 11px;
+        height: 11px;
+        color: #666666;
+        width: 100%;
+        display: inline-block;
+        text-align: right;
     }
 
     @media only screen and (min-width: 1025px) {
@@ -393,6 +436,7 @@ let resizeImg;
 
     .logo-container {
         display: none;
+        width: 300px;
     }
 
     @media only screen and (max-width: 480px) {
@@ -407,6 +451,22 @@ let resizeImg;
 
         .logo {
             height: 55px;
+        }
+
+        .div-address {
+            line-height: 8px;
+        }
+
+        .comp-name {
+            font-size: 10px;
+            line-height: 8px;
+            height: 8px;
+        }
+
+        .comp-info {
+            font-size: 8px;
+            line-height: 6px;
+            height: 6px;
         }
 
     }
@@ -425,6 +485,13 @@ let resizeImg;
                     <Logo url={logo} width={145} height={45} />
                 </div>
         {/if}
+        <div class="div-address">
+            <span class="comp-name" id="office-name">{officeName}</span>
+            <span class="comp-info">{address}</span>
+            <span class="comp-info">{city}, {state} {zipcode}</span>
+            <span class="comp-info">{phone}</span>
+            <span class="comp-info">{website}</span>
+        </div>
     </div>    
 	<div class="navbar-td" id="navbar-td" style="background-color: {theme_color};">
         

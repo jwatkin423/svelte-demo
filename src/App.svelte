@@ -137,7 +137,15 @@ onMount(() => {
 				searchParams={urlParams} 
 				baseSearchUrl={baseUrl}
 				mlsId={pageData.mlsId}
-				searchable={searchable}/>
+				searchable={searchable}
+				officeName={pageData.office_name}
+				address={pageData.address}
+				city={pageData.city}
+				state={pageData.state}
+				zipcode={pageData.zipcode}
+				website={pageData.website}
+				phone={pageData.phone}
+				/>
 			
 			<Index ddsData={pageData} mobileKey={key} searchType={urlParams.search}/>
 			
