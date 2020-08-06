@@ -26,7 +26,7 @@ let currentChecked = '';
 
 $: param = searchParam;
 $: areaType = decodeURI(typeSelected);
-$: typeSelected = decodeURI(typeSelected);
+$: typeSelected = decodeURI(typeSelected).replace(/\+/g, ' ');
 let currentGroupId = '';
 let currentAreaSubMenuType = '';
 
@@ -263,7 +263,7 @@ function checkAllArea(e) {
 }
 
 onMount(() => {
-    if(initialPropertyClassList){
+    if (initialPropertyClassList.toLowerCase() === 'all' || initialPropertyClassList.toLowerCase() === 'res' || initialPropertyClassList.toLowerCase() === 'resi') {
         if (initialPropertyClassList.toLowerCase() === 'all') {
             allPropertyChecked = true;
         }

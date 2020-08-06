@@ -150,7 +150,7 @@ onMount(() => {
 			<Index ddsData={pageData} mobileKey={key} searchType={urlParams.search}/>
 			
 			<div class="search-params">
-				<SearchParams searchParams={urlParams} chartType={key}/>
+				<SearchParams pTypeDisplayText={pageData.pTypesText} searchParams={urlParams} chartType={key}/>
 			</div>
 
 			<Footer 

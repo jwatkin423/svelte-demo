@@ -43,6 +43,31 @@ let aVEls;
 let areaTypeSelected;
 $: areaTypeSelected = typeSelected;
 
+let tempIdArray = [];
+
+function setAreaValueId(first, second) {
+    let id = first + "-" + second.toLowerCase().replace(/ /g, '_').replace(/,/g, '_');
+    if(tempIdArray.indexOf(id) >= 0) {
+        tempIdArray.push(id);
+        let increment = countDups(id);
+        return id + '-' + increment;
+    } else {
+        tempIdArray.push(id);
+        return id;
+    }
+}
+
+function countDups (id) {
+    let count = 0;
+    tempIdArray.forEach((el) => {
+        if (el === id) {
+            count++;
+        }
+    }); 
+    console.log(count);
+    return count++;
+}
+
 let uncheckedCount = 0;
 function areaValueSelected() {
 

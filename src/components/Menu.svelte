@@ -17,7 +17,7 @@ let initialPropertyClassList = 'none';
 $: initialPropertyClassList = typeof (params) === 'undefined' ? false : params.propertyClassList;
 
 let initalAreaType = 'none';
-$: initialAreaType = params ? params.areaType : false;
+$: initialAreaType = params ? params.areaType.replace(/\+/g) : false;
 
 //&set=MTAvNTk=
 

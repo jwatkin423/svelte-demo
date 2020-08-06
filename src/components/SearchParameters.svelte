@@ -1,7 +1,11 @@
 <script>
-import { onMount } from 'svelte';
+import { onMount, afterUpdate } from 'svelte';
 import {faCircle} from '@fortawesome/free-solid-svg-icons';
 import Icon from "./Icon.svelte";
+import searchData from '../helpers/searchdata';
+
+export let pTypeDisplayText = '';
+
 
 export let searchParams;
 export let chartType;
@@ -9,17 +13,25 @@ let areaValues = '';
 let areaValueCf = '';
 let propertyTypesCf = '';
 $: timePeriodValue = searchParams.timePeriodValue;
-$: propertyTypes = searchParams.propertyTypeDisplayText ? decodeURI(searchParams.propertyTypeDisplayText) : 'ALL';
+$: propertyTypes = searchParams.propertyTypeDisplayText ? decodeURI(searchParams.propertyTypeDisplayText) : pTypeDisplayText;
 $: propertyTypesCf = decodeURI(propertyTypes).replace(/\,/g, ', ');
 
 let rawareaValues = 'ALL';
 let areaType = '';
 let status = '';
+// incase the areaValuesDisplayText is not set
+let rawAreaValueList = '';
+
+$: rawAreaValueList = searchParams.areaValueList ? decodeURI(searchParams.areaValueList).replace(/\,/g, ', ') : 'ALL';
 
 $: status = setStatus(chartType);
 $: areaType = searchParams.areaType ? searchParams.areaType : '';
 $: rawareaValues = searchParams.areaValuesDisplayText ? searchParams.areaValuesDisplayText : '';
 $: areaValues = rawareaValues ? decodeURI(rawareaValues) : 'ALL';
+$: areaType = searchParams.areaType ? decodeURI(searchParams.areaType).replace(/\+/g, ' ') : '';
+$: rawareaValues = searchParams.areaValuesDisplayText ? decodeURI(searchParams.areaValuesDisplayText) : rawAreaValueList;
+
+$: areaValues = rawareaValues ? rawareaValues : 'ALL';
 $: areaValueCf = areaValues.replace(/\,/g, ', ');
 
 // icons for nav bar

@@ -38,6 +38,8 @@ let dLink = {};
 
 let yTicks = '';
 
+let pTypesText = ddsData.pTypesText;
+
 let keys = ddsData.keys;
 let reportPeriod = ddsData.reportPeriod;
 let rpTest = ddsData.reportPeriod;
