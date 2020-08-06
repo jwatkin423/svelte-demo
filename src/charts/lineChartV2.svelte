@@ -45,15 +45,17 @@ let height = initHeight - margin.top - margin.bottom;
 
 $: height = ((initHeight / wRatio) * screenSize) - margin.top - margin.bottom;
 
-// $: drawChart(screenSize);
+// draw when the points are not null
 $: drawChart(points);
 
+// chart width
 let cWidth;
 $: drawChart(cWidth);
 
 let xTicks = [];
 let tmpDate;
 
+// draw the chart
 function drawChart() {
 	
 	// remove all of the elements from chart
@@ -154,6 +156,7 @@ function drawChart() {
 			}
 	});
 
+	// format the x axis
 	d3.selectAll('.x-axis-ticks > .tick > line')
 		.each(function (d, i) {
 			if (reportPeriod[d].includes('<br>')) {
@@ -193,7 +196,7 @@ function drawChart() {
 		.call(xAxisTwo)
 		.select(".domain").remove();
 
-
+	// format the year x axis
 	d3.selectAll('.x-axis-ticks-two > .tick > text').each(function (d, i) {
 		if (reportPeriod[i].includes('<br>') || reportPeriod.length === i+1) {
 			d3.select(this).attr('y', 18).style("fill", "#666666");
