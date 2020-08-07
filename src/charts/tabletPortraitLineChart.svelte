@@ -1,5 +1,4 @@
 <script>
-console.log("Using this one");
 import * as d3 from 'd3';
 import { onMount, afterUpdate } from 'svelte';
 
@@ -204,6 +203,20 @@ function drawChart() {
 		.attr("fill", primary_fill_color)
 		.attr("cx", function(d, e) { return x(e); })
 		.attr("cy", function(d, e) { return y(d); })
+		.on("click", function (d, e) {
+
+			if(showData) {
+				let saleSold = this.dataset.type;
+				let xCoord = d3.event.pageX;
+				let yCoord = d3.event.clientY - 65;
+				showToolTip(e, xCoord, yCoord, d, saleSold);
+				showData = false;
+			} else {
+
+				handleMouseOut();
+				showData = true;
+			}
+		})
 		.on("mouseover", handleMouseOver)
         .on("mouseleave", handleMouseOut);
 
@@ -244,11 +257,14 @@ function drawChart() {
 // desc ID
 let desc;
 
+// show tool tip
+let showData = true;
+
 // create event handlers for mouse
 function handleMouseOver(d, i, e) {  // Add interactivity
 	let saleSold = this.dataset.type;
 	let xCoord = d3.event.pageX;
-	let yCoord = d3.event.clientY - 15;
+	let yCoord = d3.event.clientY - 65;
 
 	showToolTip(i, xCoord, yCoord, d, saleSold);
 
@@ -388,6 +404,7 @@ function showToolTip(i, leftX, topY, point, dataType) {
 // hid tool tip 
 function hideToolTip() {
 	desc = document.querySelector('.description');
+	console.log(desc);
 	desc.style.display = "none";
 }
 

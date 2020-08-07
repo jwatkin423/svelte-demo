@@ -196,7 +196,23 @@ function drawChart() {
 		.attr("r", radius)
 		.attr("fill", primary_fill_color)
 		.attr("cx", function(d, e) { return x(e); })
-        .attr("cy", function(d, e) { return y(d); });
+		.attr("cy", function(d, e) { return y(d); })
+		.on("click", function (d, e) {
+
+			if(showData) {
+				let saleSold = this.dataset.type;
+				let xCoord = d3.event.pageX;
+				let yCoord = d3.event.clientY - 65;
+				showToolTip(e, xCoord, yCoord, d, saleSold);
+				showData = false;
+			} else {
+
+				handleMouseOut();
+				showData = true;
+			}
+		})
+		.on("mouseover", handleMouseOver)
+        .on("mouseleave", handleMouseOut);
 
 	if (dataTwo.length > 0) {
 		let lineTwo = d3.line()
@@ -225,10 +241,130 @@ function drawChart() {
 			.attr("r", radius)
 			.attr("fill", secondary_fill_color)
 			.attr("cx", function(d, e) { return x(e); })
-			.attr("cy", function(d, e) { return y(d); });
+			.attr("cy", function(d, e) { return y(d); })
+			.on("click", function (d, e) {
+
+			if(showData) {
+				let saleSold = this.dataset.type;
+				let xCoord = d3.event.pageX;
+				let yCoord = d3.event.clientY - 5;
+				showToolTip(e, xCoord, yCoord, d, saleSold);
+				showData = false;
+			} else {
+
+				handleMouseOut();
+				showData = true;
+			}
+		})
+		.on("mouseover", handleMouseOver)
+        .on("mouseleave", handleMouseOut);
 	}
 
 }
+
+// create event handlers for mouse
+function handleMouseOver(d, i, e) {  // Add interactivity
+	let saleSold = this.dataset.type;
+	let xCoord = d3.event.pageX;
+	let yCoord = d3.event.clientY - 15;
+
+	showToolTip(i, xCoord, yCoord, d, saleSold);
+
+}
+
+	// mouse out
+	function handleMouseOut(d, i) {
+	hideToolTip();
+}
+
+// desc ID
+let desc;
+
+// show tool tip
+let showData = true;
+
+let tickSplits;
+export let monthYear = '';
+let month;
+$:month = monthYear.month;
+
+let year;
+$:year = monthYear.year;
+
+const months = {
+	'Jan': "January",
+	'Feb': 'February',
+	'Mar': 'March',
+	'Apr': 'April',
+	'May': 'May',
+	'Jun': 'June',
+	'Jul': 'July',
+	'Aug': 'August',
+	'Sep': 'September',
+	'Oct': 'October',
+	'Nov': 'November',
+	'Dec': 'December'
+};
+
+
+let currentYear;
+let ttReportPeriodData = [];
+let fullMonth;
+$: ttReportPeriodData = reportPeriod.map((rp) => {
+	if (rp.includes('<br>')) {
+		let chunks = rp.split('<br>');
+		currentYear = chunks[1];
+		fullMonth = months[chunks[0]];
+	} else {
+		fullMonth = months[rp];
+	}
+
+	return fullMonth + ' ' + currentYear;
+});
+
+// show tool tip
+function showToolTip(i, leftX, topY, point, dataType) {
+
+	desc = document.getElementById('desc');
+	desc.style.display = 'block';
+	leftX += 'px';
+	topY = (topY - 70) + 'px';
+	desc.style.left = leftX;
+	desc.style.top = topY;
+	let date = ttReportPeriodData[i];
+
+	let py = point.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	let hoverDate = date ;
+	let units = py;
+
+	let unitsSuffix = 'units';
+	
+	if (chartType === 'spOpRatio') {
+		unitsSuffix = '%';
+	} else if (chartType === 'fsldMsi')  {
+		unitsSuffix = 'months';
+	} else if (chartType === 'saleMedianSoldMedian') {
+		unitsSuffix = "(" + dataType + ")";
+	}
+
+	units = py + ' ' + unitsSuffix;
+	
+	if (showDollar) {
+		units = dollar + py;
+	}
+
+	let pDateHover = document.getElementById('date-hover');
+	let pUnitHover = document.getElementById('unit-hover');
+	pDateHover.innerHTML = date;
+	pUnitHover.innerHTML = units;
+}
+
+// hid tool tip 
+function hideToolTip() {
+	desc = document.querySelector('.description');
+	desc.style.display = "none";
+}
+
 
 function formatLastTickYear(tick) {
 	return reportYear.replace('20', " '");
@@ -296,8 +432,59 @@ afterUpdate(() => {
 		display: block;
 	}
 
+		.description {
+		pointer-events: none;
+		position: fixed;
+		font-size: 10px;
+		text-align: center;
+		background: #F2F2F2;
+		z-index: 9999;
+		line-height: 15px;
+		width: 90px;
+		color: #000000;
+		border-radius: 5px;
+		-moz-transform: translateX(-50%);
+		-ms-transform: translateX(-50%);
+		-webkit-transform: translateX(-50%);
+		transform: translateX(-50%);
+		display: none;
+		vertical-align: middle;
+	}
+
+	.description:after {
+		content: "";
+		position: absolute;
+		left: 50%;
+		top: 100%;
+		width: 0;
+		height: 0;
+		margin-left: -10px;
+		border-left: 10px solid transparent;
+		border-right: 10px solid transparent;
+		border-top: 10px solid rgb(179, 179, 179);
+	}
+
+	.heyo:hover {
+		fill: #ffabce;
+		-moz-transition: 0.3s;
+		-o-transition: 0.3s;
+		-webkit-transition: 0.3s;
+		transition: 0.3s; 
+	}
+
+ 	@media only screen and (max-width: 450px) {
+		.description.active {
+			font-size: 10px;
+			padding-left: 2 !important;
+			padding-right: 2 !important;
+			min-width: 50px;
+		}
+ 	} 
+
 </style>
 
 <div class="chart" >
 	<svg class="line-chart"></svg>
 </div>
+
+<div class="description" id='desc'><p id='date-hover'></p><p id='unit-hover'></p></div>

@@ -196,7 +196,7 @@ function drawChart() {
 		.call(xAxisTwo)
 		.select(".domain").remove();
 
-	// format the year x axis
+	// format the year x
 	d3.selectAll('.x-axis-ticks-two > .tick > text').each(function (d, i) {
 		if (reportPeriod[i].includes('<br>') || reportPeriod.length === i+1) {
 			d3.select(this).attr('y', 18).style("fill", "#666666");
@@ -241,6 +241,20 @@ function drawChart() {
 		.attr("fill", primary_fill_color)
 		.attr("cx", function(d, e) { return x(e); })
 		.attr("cy", function(d, e) { return y(d); })
+		.on("click", function (d, e) {
+
+			if(showData) {
+				let saleSold = this.dataset.type;
+				let xCoord = d3.event.pageX;
+				let yCoord = d3.event.clientY - 65;
+				showToolTip(e, xCoord, yCoord, d, saleSold);
+				showData = false;
+			} else {
+
+				handleMouseOut();
+				showData = true;
+			}
+		})
 		.on("mouseover", handleMouseOver)
         .on("mouseleave", handleMouseOut);
 
@@ -274,6 +288,20 @@ function drawChart() {
 		.attr("fill", secondary_fill_color)
 		.attr("cx", function(d, e) { return x(e); })
 		.attr("cy", function(d, e) { return y(d); })
+		.on("click", function (d, e) {
+
+			if(showData) {
+				let saleSold = this.dataset.type;
+				let xCoord = d3.event.pageX;
+				let yCoord = d3.event.clientY - 65;
+				showToolTip(e, xCoord, yCoord, d, saleSold);
+				showData = false;
+			} else {
+
+				handleMouseOut();
+				showData = true;
+			}
+		})
 		.on("mouseover", handleMouseOver)
         .on("mouseleave", handleMouseOut);
 	}
@@ -354,6 +382,9 @@ afterUpdate(() => {
 
 // desc ID
 let desc;
+
+// show tool tip
+let showData = true;
 
 let tickSplits;
 export let monthYear = '';
