@@ -331,7 +331,6 @@ let src = '/images/sort_carrots.png';
                     <th class="time-period-th data-table-header date-group"><div class="time-th-div-header">Time Period</div>
                     </th>
                 {#each row_headers as row_header, i}
-                        <!-- {console.log(row_header)} -->
                        {#if row_header.label !== 'Median For Sale vs Median Sold' && row_header.label !== 'Median Sold Price' && row_header.label !== 'Median For Sale Price' && row_header.label !== 'For Sale vs Sold Listings'}
                             <th class="column-th data-table-header group-{row_header.group}" id="{keys[i]}"><div class="th-div-header">{row_header.label}</div></th>
                         {:else if row_header.label === 'For Sale vs Sold Listings'}    
@@ -350,7 +349,6 @@ let src = '/images/sort_carrots.png';
                 <tr>
                     <td align="right" data-order='{unixTimeStamp(row.currentDate)}'>{row.currentDate}</td>
                     {#each row.report_row_data as data}
-
                        {#if data.key !== 'saleMedianSoldMedian' && data.key !== 'soldMedian' && data.key !== 'forSaleMedian'}
                             {#if data.key === 'supplyDemand'}    
                                 <td class="td-cell {data.key} group-{data.group}" align="right">
