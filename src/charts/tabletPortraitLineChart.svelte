@@ -404,7 +404,6 @@ function showToolTip(i, leftX, topY, point, dataType) {
 // hid tool tip 
 function hideToolTip() {
 	desc = document.querySelector('.description');
-	console.log(desc);
 	desc.style.display = "none";
 }
 
