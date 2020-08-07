@@ -401,6 +401,16 @@ let resizeImg;
         text-align: right;
     }
 
+    .comp-website > a {
+        font-size: 11px;
+        line-height: 11px;
+        height: 11px;
+        width: 100%;
+        display: inline-block;
+        text-align: right;
+        color: #3366cc;;
+    }
+
     @media only screen and (min-width: 1025px) {
         .ham-menu {
             display:none;
@@ -490,7 +500,9 @@ let resizeImg;
             <span class="comp-info">{address}</span>
             <span class="comp-info">{city}, {state} {zipcode}</span>
             <span class="comp-info">{phone}</span>
-            <span class="comp-info">{website}</span>
+            {#if website !== ''}
+                <span class="comp-website"><a href="{website}" target="_blank">{website}</a></span>
+            {/if}
         </div>
     </div>    
 	<div class="navbar-td" id="navbar-td" style="background-color: {theme_color};">
