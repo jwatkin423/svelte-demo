@@ -604,7 +604,6 @@ function formatChartTitle(title) {
 							initWidth={screenSize - 20}
 							margins={{ top: 15, right: 20, bottom: 25, left: 20}}
 							wRatio={screenSize}
-							sideBarWidth={0}
 							radius={2}
 							/>
 				{/if}
