@@ -202,7 +202,7 @@ function drawChart() {
 			if(showData) {
 				let saleSold = this.dataset.type;
 				let xCoord = d3.event.pageX;
-				let yCoord = d3.event.clientY - 65;
+				let yCoord = d3.event.clientY - 80;
 				showToolTip(e, xCoord, yCoord, d, saleSold);
 				showData = false;
 			} else {
@@ -247,7 +247,7 @@ function drawChart() {
 			if(showData) {
 				let saleSold = this.dataset.type;
 				let xCoord = d3.event.pageX;
-				let yCoord = d3.event.clientY - 5;
+				let yCoord = d3.event.clientY - 65;
 				showToolTip(e, xCoord, yCoord, d, saleSold);
 				showData = false;
 			} else {
@@ -328,7 +328,7 @@ function showToolTip(i, leftX, topY, point, dataType) {
 	desc = document.getElementById('desc');
 	desc.style.display = 'block';
 	leftX += 'px';
-	topY = (topY - 70) + 'px';
+	topY = (topY) + 'px';
 	desc.style.left = leftX;
 	desc.style.top = topY;
 	let date = ttReportPeriodData[i];
