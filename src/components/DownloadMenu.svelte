@@ -82,7 +82,7 @@ function validateForm() {
         background-color: white;
         z-index: 9;
         position: absolute;
-        top: 30px;
+        top: 105px;
         right: 10px;
         border-bottom: 5px solid #666666;
         -webkit-box-shadow: 2px 0px 0px 0px #ccc; 
@@ -251,6 +251,7 @@ function validateForm() {
         .menu-wrapper {
             width: 100%;
             right: 0 !important;
+            top: 105px;
         }    
 
         .form-content {
@@ -269,7 +270,7 @@ function validateForm() {
 
     @media only screen and (max-width: 480px) {
         .menu-wrapper {
-            top: 55px;
+            top: 110px;
             right: 0;
             width: 100%;
             text-align: center;
@@ -303,15 +304,21 @@ function validateForm() {
             <form id="pdf-download" action='{url}' method="POST">
                 <div class="form-content">
                     {#each options as option}
-                        <div class="option-wrapper">
-                        <input
-                            class="input-select dl-item"
-                            type="checkbox"
-                            name="matReports[]"
-                            value="{option.value}"
-                            on:change={validateForm}>
-                        <label class="option-label">{option.label}</label>
-                        </div>
+                        {#if option.value !== 'supplyDemand' 
+                        && option.value !== 'offUnits'
+                        && option.value !== 'avgSalePrice'
+                        && option.value !== 'forSaleMedian'
+                        && option.value !== 'saleMedianSoldMedian'}
+                            <div class="option-wrapper">
+                            <input
+                                class="input-select dl-item"
+                                type="checkbox"
+                                name="matReports[]"
+                                value="{option.value}"
+                                on:change={validateForm}>
+                            <label class="option-label">{option.label}</label>
+                            </div>
+                       {/if} 
                     {/each}    
                 </div>
             <div class="pull-right done-btn">

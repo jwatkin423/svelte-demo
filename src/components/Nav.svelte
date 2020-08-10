@@ -469,11 +469,17 @@ let resizeImg;
 
         .comp-name {
             font-size: 10px;
-            line-height: 8px;
-            height: 8px;
+            line-height: 6px;
+            height: 6px;
         }
 
         .comp-info {
+            font-size: 8px;
+            line-height: 6px;
+            height: 6px;
+        }
+
+        .comp-website {
             font-size: 8px;
             line-height: 6px;
             height: 6px;
