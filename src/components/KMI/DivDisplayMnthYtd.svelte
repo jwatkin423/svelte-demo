@@ -188,8 +188,8 @@ export let s_color;
         <div class="sale-item">
             <i>
                 <Icon customColor={p_color} class="year" tempId="line-one" icon={icon[2]} />
-                {monthDate}
             </i>
+            {monthDate}
         </div>
         <div class="sold-item">
             <i>
