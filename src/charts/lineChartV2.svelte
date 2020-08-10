@@ -246,7 +246,7 @@ function drawChart() {
 			if(showData) {
 				let saleSold = this.dataset.type;
 				let xCoord = d3.event.pageX;
-				let yCoord = d3.event.clientY - 65;
+				let yCoord = d3.event.clientY - 15;
 				showToolTip(e, xCoord, yCoord, d, saleSold);
 				showData = false;
 			} else {
@@ -293,7 +293,7 @@ function drawChart() {
 			if(showData) {
 				let saleSold = this.dataset.type;
 				let xCoord = d3.event.pageX;
-				let yCoord = d3.event.clientY - 65;
+				let yCoord = d3.event.clientY - 15;
 				showToolTip(e, xCoord, yCoord, d, saleSold);
 				showData = false;
 			} else {
