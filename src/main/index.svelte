@@ -562,7 +562,7 @@ function formatChartTitle(title) {
 						initWidth={1004}
 						margins={{top: 25, right: 25, bottom: 30, left: 30}}
 						wRatio={1024}
-						radius={4}
+						radius={3}
 						/>
 				{/if}
 				{#if screenSize <= 768 && screenSize > 480}
@@ -583,7 +583,7 @@ function formatChartTitle(title) {
 						initWidth={1004}
 						margins={{top: 25, right: 25, bottom: 30, left: 30}}
 						wRatio={1024}
-						radius={4}
+						radius={3}
 						/>
 				{/if}
 				{#if screenSize <= 480}

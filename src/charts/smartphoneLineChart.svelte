@@ -160,6 +160,37 @@ function drawChart() {
 			}
 		});
 
+		// create second x axis for year
+	let xAxisTwo = d3.axisBottom(xScale)
+		.ticks(reportPeriod.length)
+		.tickValues(tickVals)
+		.tickFormat(function(d,i) {
+			if (reportPeriod[i].includes('<br>')) {
+				let tempArr = reportPeriod[i].split('<br>');
+				return formatLastTickYear(tempArr[1]);
+			} 
+			else if (i == reportPeriod.length - 1) {
+				return formatLastTickYear(reportYear);
+			}
+			else {
+				return "";
+			}
+		});
+
+	// append the second axis
+	svg.append("g")
+		.attr("class", "x-axis-ticks-two")
+		.attr("transform", "translate(" + xShift + "," + yShift + ")")
+		.call(xAxisTwo)
+		.select(".domain").remove();
+
+	// format the year x
+	d3.selectAll('.x-axis-ticks-two > .tick > text').each(function (d, i) {
+		if (reportPeriod[i].includes('<br>') || reportPeriod.length === i+1) {
+			d3.select(this).attr('y', 18).style("fill", "#666666");
+		}
+	});
+
 		// line function convention (feeds an array)
 	let lineOne = d3.line()
 		.x(function(d) { return xScale(d.x); })

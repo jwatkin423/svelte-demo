@@ -39,6 +39,8 @@
     "autobuild": "rollup -c -w",
     "dev": "run-p start:dev autobuild",
     "start": "sirv public --single",
-    "start:dev": "sirv public --single --dev"
+    "start:dev": "sirv public --single --dev",
+    "bc": "rollup -c && cp /Users/joe/Documents/terradatum_projects/svelte/public/*.js /Users/joe/Documents/terradatum_projects/svelte/public/*.map /Users/joe/Documents/terradatum_projects/svelte/public/*.css /Users/joe/Documents/terradatum_projects/staging/webroot/mats",
+    "devcp": "run-p start:dev autobuild && cp /Users/joe/Documents/terradatum_projects/svelte/public/*.js /Users/joe/Documents/terradatum_projects/svelte/public/*.map /Users/joe/Documents/terradatum_projects/svelte/public/*.css /Users/joe/Documents/terradatum_projects/staging/webroot/mats"
   }
 }

@@ -229,6 +229,7 @@ let src = '/images/sort_carrots.png';
     }
 
     table {
+        table-layout: fixed;
         border-collapse: collapse;
     }
 
